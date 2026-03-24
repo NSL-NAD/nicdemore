@@ -1,309 +1,261 @@
 "use client";
 
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { ease, fadeInUp, viewportOnce } from "@/lib/motion";
-import { SectionReveal } from "@/components/SectionReveal";
 import { useParams } from "next/navigation";
-import { useRef } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ease, viewportOnce } from "@/lib/motion";
 
-/* ─── Data ────────────────────────────────────────────────────────── */
+interface CoverLetter {
+  company: string;
+  greeting: string;
+  paragraphs: string[];
+  closing: string;
+}
 
-const coverLetters: Record<string, string> = {
-  anthropic:
-    "I\u2019m building AI-native infrastructure for a portfolio of ventures \u2014 using Claude as the backbone of an agentic system I designed and operate daily. I\u2019m not just using AI; I\u2019m building with it at the systems level. That\u2019s the work I want to do more of, at scale, with people who are shaping where this goes.",
-  apple:
-    "I build things that are complete \u2014 not just functional. From the agency I co-founded to the venture infrastructure I\u2019m building today, the bar has always been: does this feel right? Apple\u2019s standard for that is the one I grew up with. I\u2019d like to bring that same standard to what you\u2019re building next.",
+const coverLetters: Record<string, CoverLetter> = {
+  anthropic: {
+    company: "Anthropic",
+    greeting: "To the team at Anthropic,",
+    paragraphs: [
+      "I\u2019ve been building AI-native infrastructure since early 2025. Not because it was strategic \u2014 because I couldn\u2019t stop. I built Alfred, a persistent AI chief-of-staff who manages my ventures, runs autonomous agents, and helps me operate at a scale that shouldn\u2019t be possible for a solo founder. I built The Grid, a venture operations dashboard where the agent team works. I wrote SOUL.md and MEMORY.md \u2014 the files that give AI systems continuity and character. I\u2019ve been living inside the problem Anthropic is trying to solve, and I\u2019ve built a body of work that proves it.",
+      "What draws me to Anthropic isn\u2019t just the technology \u2014 it\u2019s the posture. Building powerful AI and taking safety seriously isn\u2019t a contradiction; it\u2019s the only version of this that works. I\u2019ve seen firsthand what happens when AI systems operate autonomously in real business contexts. The alignment questions aren\u2019t theoretical to me. They\u2019re Tuesday.",
+      "I bring an unusual combination: a mechanical engineering foundation that trained me to think in systems and constraints, a decade of entrepreneurship that taught me to ship under pressure, and a year of deep, daily work building with Claude at the systems level. I don\u2019t just use the API. I build infrastructure on top of it \u2014 agent orchestration, persistent memory, autonomous workflows.",
+      "I want to help build the tools and systems that make AI useful, safe, and genuinely aligned with the people who use it. I\u2019ve been doing that independently. I\u2019d like to do it with the team that\u2019s setting the standard.",
+    ],
+    closing: "\u2014 Nic DeMore",
+  },
+  apple: {
+    company: "Apple",
+    greeting: "To the team at Apple,",
+    paragraphs: [
+      "I build things that are complete \u2014 not just functional, but considered. The gap between something that works and something that feels right is where I live. That\u2019s a gap I\u2019ve been closing my entire career, from mechanical engineering to digital products to the AI-native systems I build today.",
+      "My training is in engineering, but my instinct is design. I fell in love with architecture \u2014 the discipline of making spaces that serve people beautifully. I studied it obsessively, built a course to teach others what I learned, and apply that same eye to every product I touch. The way a great building balances structure and beauty, load and light \u2014 that\u2019s the same tension that makes great software.",
+      "I co-founded and operated a 7-figure digital agency, learning what it takes to serve the world\u2019s most demanding brands at scale. Now I\u2019m building AI-native infrastructure: autonomous agent systems, venture operations platforms, and tools that let small teams operate with the precision and reach of much larger ones. The common thread is craft \u2014 the conviction that how something is built matters as much as what it does.",
+      "Apple\u2019s standard is the one I grew up with and the one I hold myself to. I\u2019d like to bring my engineering foundation, my design eye, and my builder\u2019s instinct to a team that refuses to ship anything less than excellent.",
+    ],
+    closing: "\u2014 Nic DeMore",
+  },
 };
 
-interface TimelineEntry {
-  side: "right" | "left";
-  role: string;
-  company: string;
-  date: string;
-  bullets: string[];
-}
-
-const timeline: TimelineEntry[] = [
+const timeline = [
   {
-    side: "right",
-    role: "Co-Founder, President & COO",
-    company: "Margle Media",
-    date: "Feb 2017 \u2013 Present",
-    bullets: [
-      "Full-service digital marketing agency",
-      "Clients: Cousins Subs, Johnsonville, Frito-Lay, Instant Pot",
-      "Built from zero across strategy, media, content, management",
-    ],
+    year: "2025\u2013Present",
+    title: "Founder",
+    org: "Good at Scale Studio",
+    description:
+      "Building AI-native operational infrastructure \u2014 autonomous agents, venture automation, intelligence systems. Building the future of how one-person studios operate at enterprise scale.",
   },
   {
-    side: "left",
-    role: "Mechanical Engineering",
-    company: "Marquette University",
-    date: "2012 \u2013 2016",
-    bullets: [
-      "Engineering degree",
-      "Systems thinking that underlies everything since",
-    ],
+    year: "2025\u2013Present",
+    title: "Course Creator",
+    org: "Foundations of Architecture",
+    description:
+      "Built and launched an online architecture education platform as a self-funded, solo-built product. 0 to live in 8 weeks.",
   },
   {
-    side: "right",
-    role: "Founder",
-    company: "Good at Scale Studio",
-    date: "2025 \u2013 Present",
-    bullets: [
-      "AI-native venture studio",
-      "Building purposeful ventures powered by automation and agentic AI systems",
-    ],
+    year: "2017\u20132026",
+    title: "Co-Founder, President & COO",
+    org: "Margle Media",
+    description:
+      "Built a 7-figure digital marketing agency from zero. Led operations, strategy, and a team serving Fortune 500 brands including Johnsonville, Frito-Lay, and Cousins Subs. Exiting 2026.",
   },
   {
-    side: "left",
-    role: "Course Creator",
-    company: "Foundations of Architecture",
-    date: "2025 \u2013 Present",
-    bullets: [
-      "Self-educated through designing a personal dream home",
-      "Built a course for aspiring homeowners",
-      "Live at foacourse.com",
-    ],
-  },
-  {
-    side: "right",
-    role: "Building",
-    company: "Giveable",
-    date: "2026 \u2013 Present",
-    bullets: [
-      "Curated marketplace for impact-driven brands",
-      "The registry platform where every gift creates measurable good",
-    ],
+    year: "2012\u20132016",
+    title: "B.S. Mechanical Engineering",
+    org: "Marquette University",
+    description:
+      "Engineering fundamentals: thermodynamics, materials science, systems design. The training that taught me to think in constraints and tolerances.",
   },
 ];
 
-const skills = [
-  "Company Building",
-  "Digital Marketing",
-  "AI & Automation",
-  "Venture Design",
-  "Systems Thinking",
-  "Product Development",
+const skillGroups = [
+  {
+    name: "Engineering & Systems",
+    skills: [
+      "Mechanical Engineering",
+      "Systems Architecture",
+      "Infrastructure Design",
+      "Technical Operations",
+      "CI/CD & DevOps",
+    ],
+  },
+  {
+    name: "AI & Automation",
+    skills: [
+      "LLM Integration",
+      "Agent Systems",
+      "Prompt Engineering",
+      "AI-Native Development",
+      "Autonomous Operations",
+    ],
+  },
+  {
+    name: "Product & Strategy",
+    skills: [
+      "Product Management",
+      "Venture Building",
+      "Growth Strategy",
+      "Business Operations",
+      "Team Leadership",
+    ],
+  },
+  {
+    name: "Creative & Design",
+    skills: [
+      "Architectural Design",
+      "UI/UX",
+      "Brand Development",
+      "Visual Design",
+      "Sketching & Drawing",
+    ],
+  },
 ];
-
-/* ─── Timeline Card ───────────────────────────────────────────────── */
-
-function TimelineCard({ entry, index }: { entry: TimelineEntry; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-  const isRight = entry.side === "right";
-
-  return (
-    <div
-      ref={ref}
-      className={`relative grid grid-cols-[24px_1fr] md:grid-cols-[1fr_24px_1fr] gap-4 md:gap-8 ${
-        index !== timeline.length - 1 ? "pb-12 md:pb-16" : ""
-      }`}
-    >
-      {/* Left column — card or empty */}
-      <div className="hidden md:block">
-        {!isRight && (
-          <motion.div
-            initial={{ opacity: 0, x: -60 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -60 }}
-            transition={{ duration: 0.6, ease }}
-            className="bg-surface rounded-lg p-6 sm:p-8 border border-line"
-          >
-            <CardContent entry={entry} />
-          </motion.div>
-        )}
-      </div>
-
-      {/* Center dot */}
-      <div className="flex justify-center relative z-10">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={isInView ? { scale: 1 } : { scale: 0 }}
-          transition={{ duration: 0.4, ease, delay: 0.2 }}
-          className="w-3 h-3 rounded-full bg-accent mt-2 ring-4 ring-background"
-        />
-      </div>
-
-      {/* Right column — card or empty on desktop / always card on mobile */}
-      <div>
-        {/* Desktop: only show if right-side entry */}
-        {isRight && (
-          <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 60 }}
-            transition={{ duration: 0.6, ease }}
-            className="hidden md:block bg-surface rounded-lg p-6 sm:p-8 border border-line"
-          >
-            <CardContent entry={entry} />
-          </motion.div>
-        )}
-
-        {/* Mobile: always show card on the right */}
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
-          transition={{ duration: 0.6, ease }}
-          className="md:hidden bg-surface rounded-lg p-6 sm:p-8 border border-line"
-        >
-          <CardContent entry={entry} />
-        </motion.div>
-
-        {/* Desktop: empty spacer for left-side entries */}
-        {!isRight && <div className="hidden md:block" />}
-      </div>
-    </div>
-  );
-}
-
-function CardContent({ entry }: { entry: TimelineEntry }) {
-  return (
-    <>
-      <h3 className="font-display text-xl font-semibold text-ink">
-        {entry.role}
-      </h3>
-      <p className="text-accent font-mono text-sm mt-1">{entry.company}</p>
-      <p className="font-mono text-xs text-ink-muted mt-1">{entry.date}</p>
-      <ul className="mt-4 space-y-2">
-        {entry.bullets.map((bullet) => (
-          <li
-            key={bullet}
-            className="text-sm text-ink-muted flex items-start gap-2"
-          >
-            <span className="mt-1.5 block h-1.5 w-1.5 rounded-full bg-accent/40 shrink-0" />
-            {bullet}
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
-
-/* ─── Page ─────────────────────────────────────────────────────────── */
 
 export default function ResumePage() {
-  const params = useParams<{ company?: string[] }>();
-  const companySlug = params.company?.[0]?.toLowerCase();
-  const coverLetter = companySlug ? coverLetters[companySlug] : null;
-
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ["start 80%", "end 20%"],
-  });
-  const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const params = useParams();
+  const companySlug = (params?.company as string[] | undefined)?.[0];
+  const letter = companySlug ? coverLetters[companySlug] : null;
 
   return (
-    <>
-      {/* Header */}
-      <section className="pt-32 pb-16 sm:pt-40 sm:pb-20">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <SectionReveal>
-            <p className="font-mono text-xs tracking-[0.2em] uppercase text-accent mb-4">
-              Resum&eacute;
-            </p>
-          </SectionReveal>
-          <SectionReveal delay={0.1}>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-ink leading-tight">
-              Nic DeMore
-            </h1>
-          </SectionReveal>
-          <SectionReveal delay={0.2}>
-            <p className="mt-4 text-lg text-ink-muted max-w-xl mx-auto">
-              Founder. Operator. Builder. Based in Milwaukee.
-            </p>
-          </SectionReveal>
-        </div>
-      </section>
+    <div className="pt-24 pb-16">
+      <div className="mx-auto max-w-3xl px-6">
+        {/* Back link */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease }}
+          className="mb-12"
+        >
+          <Link
+            href="/"
+            className="text-sm text-ink-muted hover:text-ink animated-underline transition-colors"
+          >
+            &larr; Back to nicdemore.com
+          </Link>
+        </motion.div>
 
-      {/* Cover Letter (conditional) */}
-      {coverLetter && (
-        <section className="pb-16 sm:pb-20">
-          <div className="mx-auto max-w-3xl px-6">
-            <SectionReveal>
-              <div className="bg-accent-light/30 rounded-lg p-8 sm:p-10">
-                <p className="font-display text-lg sm:text-xl leading-relaxed text-ink italic">
-                  &ldquo;{coverLetter}&rdquo;
-                </p>
-              </div>
-            </SectionReveal>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease }}
+          className="mb-16"
+        >
+          <h1 className="font-display text-4xl sm:text-5xl text-ink mb-2">
+            Nic DeMore
+          </h1>
+          <p className="text-ink-muted text-lg">Builder. Engineer. Founder.</p>
+          <div className="flex flex-wrap gap-4 mt-4 text-sm text-ink-muted">
+            <span>Milwaukee, WI</span>
+            <span className="text-line">|</span>
+            <a
+              href="mailto:nademore@gmail.com"
+              className="text-accent animated-underline"
+            >
+              nademore@gmail.com
+            </a>
           </div>
-        </section>
-      )}
+        </motion.div>
 
-      {/* Timeline */}
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto max-w-5xl px-6">
-          <SectionReveal>
-            <p className="font-mono text-xs tracking-[0.2em] uppercase text-accent mb-12 text-center">
-              Timeline
-            </p>
-          </SectionReveal>
+        {/* Cover letter */}
+        {letter && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease, delay: 0.1 }}
+            className="mb-20 bg-white rounded-lg border border-line p-8 sm:p-10"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-8 bg-accent rounded-full" />
+              <h2 className="font-display text-xl text-ink">
+                A note for {letter.company}
+              </h2>
+            </div>
 
-          <div ref={timelineRef} className="relative">
-            {/* Animated vertical line */}
-            <motion.div
-              style={{ scaleY: lineScaleY, transformOrigin: "top" }}
-              className="absolute left-[11px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-accent"
-            />
+            <p className="text-ink-muted italic mb-6">{letter.greeting}</p>
 
-            {/* Static track (subtle, behind the animated line) */}
-            <div className="absolute left-[11px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-line" />
-
-            {/* Cards */}
-            {timeline.map((entry, i) => (
-              <TimelineCard key={entry.company} entry={entry} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Skills Grid */}
-      <section className="border-y border-line">
-        <div className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
-          <SectionReveal>
-            <p className="font-mono text-xs tracking-[0.2em] uppercase text-accent mb-10 text-center">
-              Skills &amp; Expertise
-            </p>
-          </SectionReveal>
-          <SectionReveal delay={0.1}>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {skills.map((skill) => (
-                <div
-                  key={skill}
-                  className="bg-surface rounded-lg p-4 text-center border border-transparent hover:border-line transition-colors"
-                >
-                  <span className="font-mono text-sm text-ink">{skill}</span>
-                </div>
+            <div className="space-y-4 text-ink-muted leading-relaxed">
+              {letter.paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
               ))}
             </div>
-          </SectionReveal>
-        </div>
-      </section>
 
-      {/* CTA */}
-      <section className="py-24 sm:py-32">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <SectionReveal>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold text-ink">
-              Let&apos;s talk.
-            </h2>
-          </SectionReveal>
-          <SectionReveal delay={0.1}>
-            <p className="mt-4 text-lg text-ink-muted">
-              Looking for what&apos;s next. Open to the right opportunity.
-            </p>
-          </SectionReveal>
-          <SectionReveal delay={0.2}>
-            <a
-              href="mailto:nic@nicdemore.com"
-              className="inline-flex items-center mt-8 px-8 py-3 bg-accent text-white text-sm font-medium rounded-md hover:bg-ink transition-colors"
-            >
-              Get in Touch
-            </a>
-          </SectionReveal>
-        </div>
-      </section>
-    </>
+            <p className="mt-8 font-medium text-ink">{letter.closing}</p>
+          </motion.div>
+        )}
+
+        {/* Timeline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.6, ease }}
+          className="mb-20"
+        >
+          <h2 className="font-display text-2xl text-ink mb-10">Experience</h2>
+
+          <div className="relative">
+            <div className="absolute left-3 top-2 bottom-2 w-px bg-line" />
+
+            <div className="space-y-10">
+              {timeline.map((entry, i) => (
+                <motion.div
+                  key={entry.org}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={viewportOnce}
+                  transition={{ duration: 0.5, ease, delay: i * 0.05 }}
+                  className="relative pl-10"
+                >
+                  <div className="absolute left-1.5 top-1.5 w-3 h-3 rounded-full bg-accent border-2 border-background" />
+                  <span className="font-mono text-xs text-accent tracking-wide">
+                    {entry.year}
+                  </span>
+                  <h3 className="font-display text-lg text-ink mt-1">
+                    {entry.title}
+                  </h3>
+                  <p className="font-medium text-ink-muted text-sm mb-1.5">
+                    {entry.org}
+                  </p>
+                  <p className="text-ink-muted text-sm leading-relaxed">
+                    {entry.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Skills */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.6, ease }}
+        >
+          <h2 className="font-display text-2xl text-ink mb-10">Skills</h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {skillGroups.map((group) => (
+              <div key={group.name}>
+                <h3 className="font-display text-base text-ink mb-3">
+                  {group.name}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {group.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="font-mono text-xs text-ink-muted bg-surface border border-line px-2.5 py-1.5 rounded"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 }

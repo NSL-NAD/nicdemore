@@ -1,117 +1,162 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { ease } from "@/lib/motion";
 
-const links = [
-  { href: "/about", label: "About" },
-  { href: "/ventures", label: "Ventures" },
-  { href: "/resume", label: "Resume" },
-  { href: "/contact", label: "Contact" },
+const sections = [
+  { id: "overview", label: "Overview" },
+  { id: "about", label: "About" },
+  { id: "work", label: "Work" },
+  { id: "architecture", label: "Architecture" },
+  { id: "resume", label: "Resume" },
+  { id: "contact", label: "Contact" },
 ];
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("overview");
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const { scrollY } = useScroll();
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 40);
-  });
+  const isHome = pathname === "/";
 
   useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isHome) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    );
+
+    const ids = sections.map((s) => s.id);
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, [isHome]);
+
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+      if (isHome) {
+        e.preventDefault();
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+          setMobileOpen(false);
+        }
+      } else {
+        setMobileOpen(false);
+      }
+    },
+    [isHome]
+  );
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-line"
+          ? "bg-background/80 backdrop-blur-md border-b border-line/50"
           : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+      <nav className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <Link
           href="/"
-          className="font-display text-xl font-semibold text-ink hover:text-accent transition-colors"
+          className="font-display text-lg text-ink hover:text-accent transition-colors"
         >
           Nic DeMore
         </Link>
 
-        {/* Desktop */}
-        <ul className="hidden md:flex items-center gap-8">
-          {links.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className={`text-sm font-medium transition-colors hover:text-accent ${
-                  pathname === link.href || pathname?.startsWith(link.href + "/")
-                    ? "text-accent"
-                    : "text-ink-muted"
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-1">
+          {sections.map((section) => {
+            const isActive = isHome && activeSection === section.id;
+            const href = isHome ? `#${section.id}` : `/#${section.id}`;
+
+            return (
+              <a
+                key={section.id}
+                href={href}
+                onClick={(e) => handleNavClick(e, section.id)}
+                className={`relative px-3 py-2 text-sm transition-colors ${
+                  isActive ? "text-ink" : "text-ink-muted hover:text-ink"
                 }`}
               >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+                {section.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute bottom-0 left-3 right-3 h-0.5 bg-accent"
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+              </a>
+            );
+          })}
+        </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden relative w-8 h-8 flex items-center justify-center"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-1.5"
+          aria-label="Toggle menu"
         >
-          <span className="sr-only">{mobileOpen ? "Close" : "Open"} menu</span>
-          <div className="w-5 flex flex-col gap-1.5">
-            <motion.span
-              animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2, ease }}
-              className="block h-[1.5px] w-full bg-ink origin-center"
-            />
-            <motion.span
-              animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-              transition={{ duration: 0.1 }}
-              className="block h-[1.5px] w-full bg-ink"
-            />
-            <motion.span
-              animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-              transition={{ duration: 0.2, ease }}
-              className="block h-[1.5px] w-full bg-ink origin-center"
-            />
-          </div>
+          <motion.span
+            animate={mobileOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
+            className="w-5 h-0.5 bg-ink block"
+          />
+          <motion.span
+            animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
+            className="w-5 h-0.5 bg-ink block"
+          />
+          <motion.span
+            animate={mobileOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
+            className="w-5 h-0.5 bg-ink block"
+          />
         </button>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease }}
-            className="md:hidden overflow-hidden bg-background/95 backdrop-blur-md border-b border-line"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease }}
+            className="fixed inset-0 top-16 bg-background/95 backdrop-blur-md md:hidden z-30"
           >
-            <ul className="px-6 py-4 flex flex-col gap-4">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`block text-lg font-medium transition-colors hover:text-accent ${
-                      pathname === link.href ? "text-accent" : "text-ink-muted"
-                    }`}
+            <nav className="flex flex-col items-center justify-center h-full gap-8">
+              {sections.map((section) => {
+                const href = isHome ? `#${section.id}` : `/#${section.id}`;
+                return (
+                  <a
+                    key={section.id}
+                    href={href}
+                    onClick={(e) => handleNavClick(e, section.id)}
+                    className="font-display text-2xl text-ink hover:text-accent transition-colors"
                   >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    {section.label}
+                  </a>
+                );
+              })}
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>

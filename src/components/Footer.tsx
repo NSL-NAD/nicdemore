@@ -1,83 +1,58 @@
 import Link from "next/link";
 
-const footerLinks = [
-  { href: "/about", label: "About" },
-  { href: "/ventures", label: "Ventures" },
-  { href: "/resume", label: "Resume" },
-  { href: "/contact", label: "Contact" },
-];
-
-const legalLinks = [
-  { href: "/privacy", label: "Privacy" },
-  { href: "/terms", label: "Terms" },
-];
-
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-surface/50">
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="border-t border-line py-12">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
             <Link
               href="/"
-              className="font-display text-lg font-semibold text-ink hover:text-accent transition-colors"
+              className="font-display text-base text-ink hover:text-accent transition-colors"
             >
               Nic DeMore
             </Link>
-            <p className="mt-2 text-sm text-ink-muted">
-              Founder. Operator. Builder.
-              <br />
-              Milwaukee, WI
+            <p className="text-ink-muted text-sm mt-1">
+              Builder. Engineer. Founder. Milwaukee, WI.
             </p>
           </div>
 
-          <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-ink-muted mb-3">
-              Pages
-            </h4>
-            <ul className="flex flex-col gap-2">
-              {footerLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-ink-muted hover:text-accent transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-mono text-xs uppercase tracking-wider text-ink-muted mb-3">
-              Connect
-            </h4>
+          <div className="flex items-center gap-6 text-sm text-ink-muted">
             <a
               href="mailto:nademore@gmail.com"
-              className="text-sm text-ink-muted hover:text-accent transition-colors"
+              className="hover:text-ink transition-colors"
             >
-              nademore@gmail.com
+              Email
             </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-ink transition-colors"
+            >
+              LinkedIn
+            </a>
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-ink transition-colors"
+            >
+              GitHub
+            </a>
+            <Link href="/privacy" className="hover:text-ink transition-colors">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-ink transition-colors">
+              Terms
+            </Link>
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-line flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-ink-muted">
+        <div className="mt-8 pt-6 border-t border-line/50">
+          <p className="text-xs text-ink-muted/50">
             &copy; {new Date().getFullYear()} Nic DeMore. All rights reserved.
           </p>
-          <ul className="flex gap-4">
-            {legalLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="text-xs text-ink-muted hover:text-accent transition-colors"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </footer>

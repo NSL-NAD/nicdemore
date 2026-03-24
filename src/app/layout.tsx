@@ -25,14 +25,14 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nic DeMore | Founder & Builder",
+  title: "Nic DeMore | Builder. Engineer. Founder.",
   description:
-    "Co-founder of Margle Media. Building AI-native ventures at Good at Scale Studio.",
+    "Mechanical engineer turned entrepreneur. Building AI-native systems and purpose-driven ventures.",
   metadataBase: new URL("https://nicdemore.com"),
   openGraph: {
-    title: "Nic DeMore | Founder & Builder",
+    title: "Nic DeMore | Builder. Engineer. Founder.",
     description:
-      "Co-founder of Margle Media. Building AI-native ventures at Good at Scale Studio.",
+      "Mechanical engineer turned entrepreneur. Building AI-native systems and purpose-driven ventures.",
     url: "https://nicdemore.com",
     siteName: "Nic DeMore",
     locale: "en_US",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nic DeMore | Founder & Builder",
+    title: "Nic DeMore | Builder. Engineer. Founder.",
     description:
-      "Co-founder of Margle Media. Building AI-native ventures at Good at Scale Studio.",
+      "Mechanical engineer turned entrepreneur. Building AI-native systems and purpose-driven ventures.",
   },
   alternates: {
     canonical: "https://nicdemore.com",
@@ -54,7 +54,7 @@ const jsonLd = {
   "@type": "Person",
   name: "Nic DeMore",
   url: "https://nicdemore.com",
-  jobTitle: "Founder & Operator",
+  jobTitle: "Founder & Builder",
   worksFor: {
     "@type": "Organization",
     name: "Good at Scale Studio",
@@ -64,7 +64,7 @@ const jsonLd = {
     "@type": "CollegeOrUniversity",
     name: "Marquette University",
   },
-  sameAs: ["https://goodatscale.studio", "https://www.marglemedia.com"],
+  sameAs: ["https://goodatscale.studio", "https://foacourse.com"],
 };
 
 export default function RootLayout({
