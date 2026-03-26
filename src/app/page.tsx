@@ -1,18 +1,18 @@
 import { Hero } from "@/components/sections/Hero";
-import { About } from "@/components/sections/About";
+import { BriefHistory } from "@/components/sections/BriefHistory";
 import { Ventures } from "@/components/sections/Ventures";
 import { Architecture } from "@/components/sections/Architecture";
-import { ResumeSection } from "@/components/sections/ResumeSection";
+import { Giveable } from "@/components/sections/Giveable";
 import { Contact } from "@/components/sections/Contact";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <About />
+      <BriefHistory />
       <Ventures />
       <Architecture />
-      <ResumeSection />
+      <Giveable />
       <Contact />
     </>
   );

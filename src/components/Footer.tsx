@@ -2,56 +2,116 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="border-t border-line py-12">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    <footer
+      className="border-t py-12 sm:py-16"
+      style={{
+        background: '#1C1917',
+        borderColor: 'rgba(255,255,255,0.06)',
+      }}
+    >
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
+          {/* Brand */}
           <div>
-            <Link
-              href="/"
-              className="font-display text-base text-ink hover:text-accent transition-colors"
+            <div className="flex items-center gap-2 mb-2">
+              {/* GAS dot mark */}
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ background: '#F4631E' }}
+                aria-hidden="true"
+              />
+              <Link
+                href="/"
+                className="font-display font-bold text-base transition-colors hover:text-accent"
+                style={{ color: '#FAF9F6', fontFamily: 'var(--font-syne)' }}
+              >
+                Nic DeMore
+              </Link>
+            </div>
+            <p
+              className="text-sm"
+              style={{
+                color: 'rgba(250, 249, 246, 0.4)',
+                fontFamily: 'var(--font-jetbrains)',
+                fontSize: '11px',
+                letterSpacing: '0.06em',
+              }}
             >
-              Nic DeMore
-            </Link>
-            <p className="text-ink-muted text-sm mt-1">
-              Builder. Engineer. Founder. Milwaukee, WI.
+              Builder. Engineer. Founder. — Milwaukee, WI
             </p>
           </div>
 
-          <div className="flex items-center gap-6 text-sm text-ink-muted">
+          {/* Links */}
+          <div className="flex flex-wrap items-center gap-5 text-sm" style={{ color: 'rgba(250,249,246,0.4)' }}>
             <a
               href="mailto:nademore@gmail.com"
-              className="hover:text-ink transition-colors"
+              className="transition-colors hover:text-accent"
+              style={{ color: 'rgba(250,249,246,0.4)', fontFamily: 'var(--font-syne)', fontSize: '13px' }}
             >
               Email
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/nic-demore"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-ink transition-colors"
+              className="transition-colors hover:text-accent"
+              style={{ color: 'rgba(250,249,246,0.4)', fontFamily: 'var(--font-syne)', fontSize: '13px' }}
             >
               LinkedIn
             </a>
             <a
-              href="https://github.com"
+              href="https://www.instagram.com/nicdemore/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-ink transition-colors"
+              className="transition-colors hover:text-accent"
+              style={{ color: 'rgba(250,249,246,0.4)', fontFamily: 'var(--font-syne)', fontSize: '13px' }}
             >
-              GitHub
+              Instagram
             </a>
-            <Link href="/privacy" className="hover:text-ink transition-colors">
+            <a
+              href="https://goodatscale.studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-accent"
+              style={{ color: 'rgba(250,249,246,0.4)', fontFamily: 'var(--font-syne)', fontSize: '13px' }}
+            >
+              GAS Studio
+            </a>
+            <Link
+              href="/privacy"
+              className="transition-colors hover:text-accent"
+              style={{ color: 'rgba(250,249,246,0.4)', fontFamily: 'var(--font-syne)', fontSize: '13px' }}
+            >
               Privacy
-            </Link>
-            <Link href="/terms" className="hover:text-ink transition-colors">
-              Terms
             </Link>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-line/50">
-          <p className="text-xs text-ink-muted/50">
-            &copy; {new Date().getFullYear()} Nic DeMore. All rights reserved.
+        <div
+          className="pt-6 border-t flex items-center justify-between"
+          style={{ borderColor: 'rgba(255,255,255,0.06)' }}
+        >
+          <p
+            className="text-xs"
+            style={{
+              color: 'rgba(250,249,246,0.25)',
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '10px',
+              letterSpacing: '0.04em',
+            }}
+          >
+            &copy; {new Date().getFullYear()} Nic DeMore / Good at Scale Studio. All rights reserved.
+          </p>
+          <p
+            className="text-xs hidden sm:block"
+            style={{
+              color: 'rgba(250,249,246,0.2)',
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '10px',
+              letterSpacing: '0.04em',
+            }}
+          >
+            Always do your best.
           </p>
         </div>
       </div>
