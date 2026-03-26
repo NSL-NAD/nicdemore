@@ -72,11 +72,12 @@ export function Contact() {
     }
   };
 
-  const inputStyle = {
+  const inputStyle: React.CSSProperties = {
     background: 'var(--color-surface)',
     color: 'var(--color-text-primary)',
     border: '1px solid var(--color-border)',
     fontFamily: 'var(--font-syne)',
+    fontSize: '16px', // Prevents iOS auto-zoom on focus
   };
 
   return (
@@ -276,7 +277,7 @@ export function Contact() {
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="inline-flex items-center gap-2 px-8 py-3.5 font-bold text-sm transition-all hover:scale-[1.02] disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 font-bold text-sm transition-all hover:scale-[1.02] disabled:opacity-60"
                 style={{
                   background: 'var(--color-accent)',
                   color: '#fff',

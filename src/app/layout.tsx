@@ -93,7 +93,7 @@ export default function RootLayout({
       <head>
         <PersonSchema />
       </head>
-      <body className="min-h-full flex flex-col antialiased" style={{ background: 'var(--color-base)', color: 'var(--color-text-primary)' }}>
+      <body className="min-h-full flex flex-col antialiased overflow-x-hidden" style={{ background: 'var(--color-base)', color: 'var(--color-text-primary)' }}>
         <div className="grain-overlay" aria-hidden="true" />
         <RetroProvider>
           <Navigation />

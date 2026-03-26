@@ -172,7 +172,7 @@ export function Navigation() {
               style={{ minWidth: '44px', minHeight: '44px' }}
             >
               <motion.span
-                animate={mobileOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
+                animate={mobileOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
                 className="w-5 h-0.5 block"
                 style={{ background: 'var(--color-text-primary)' }}
               />
@@ -182,7 +182,7 @@ export function Navigation() {
                 style={{ background: 'var(--color-text-primary)' }}
               />
               <motion.span
-                animate={mobileOpen ? { rotate: -45, y: -4 } : { rotate: 0, y: 0 }}
+                animate={mobileOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
                 className="w-5 h-0.5 block"
                 style={{ background: 'var(--color-text-primary)' }}
               />
