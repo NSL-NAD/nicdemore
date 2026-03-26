@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import Image from "next/image";
 import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -90,7 +89,6 @@ function HeroVideoPlayer() {
             className="flex items-center justify-center w-14 h-14 rounded-full"
             style={{ background: 'var(--color-accent)', backdropFilter: 'blur(4px)' }}
           >
-            {/* Play icon */}
             <svg width="20" height="22" viewBox="0 0 20 22" fill="white" aria-hidden="true">
               <path d="M2 1.5l17 9.5-17 9.5V1.5z" />
             </svg>
@@ -135,7 +133,61 @@ function HeroVideoPlayer() {
       >
         NIC DEMORE — INTRO
       </div>
+
+      {/* Milwaukee, WI location tag — overlapping bottom-left of video */}
+      <motion.div
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.2, duration: 0.5 }}
+        className="absolute bottom-4 left-4 rounded-lg px-3 py-2"
+        style={{
+          background: 'rgba(0,0,0,0.6)',
+          border: '1px solid rgba(255,255,255,0.15)',
+          backdropFilter: 'blur(8px)',
+        }}
+      >
+        <p
+          className="text-xs font-bold mb-0.5"
+          style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '9px', letterSpacing: '0.08em' }}
+        >
+          BASED IN
+        </p>
+        <p
+          className="font-display font-semibold text-sm"
+          style={{ color: '#FAF9F6' }}
+        >
+          Milwaukee, WI
+        </p>
+      </motion.div>
     </div>
+  );
+}
+
+function SpotlightGlow() {
+  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const hero = document.getElementById('overview');
+      if (!hero) return;
+      const rect = hero.getBoundingClientRect();
+      setMousePos({
+        x: (e.clientX - rect.left) / rect.width,
+        y: (e.clientY - rect.top) / rect.height,
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        background: `radial-gradient(600px circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, rgba(244, 99, 30, 0.04), transparent 70%)`,
+        transition: 'background 0.15s ease-out',
+      }}
+    />
   );
 }
 
@@ -145,8 +197,8 @@ export function Hero() {
   const { normX, normY } = useMousePosition();
 
   // Parallax springs — only on desktop
-  const portraitX = useSpring(isMobile ? 0 : normX * 8, { stiffness: 50, damping: 20 });
-  const portraitY = useSpring(isMobile ? 0 : normY * 6, { stiffness: 50, damping: 20 });
+  const videoX = useSpring(isMobile ? 0 : normX * 6, { stiffness: 50, damping: 20 });
+  const videoY = useSpring(isMobile ? 0 : normY * 4, { stiffness: 50, damping: 20 });
   const textX = useSpring(isMobile ? 0 : normX * -4, { stiffness: 50, damping: 20 });
 
   // Scroll parallax
@@ -156,6 +208,9 @@ export function Hero() {
   });
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  // Parallax depth: h1 and h2 move at slightly different scroll rates
+  const h1Y = useTransform(scrollYProgress, [0, 1], [0, 30]);
+  const h2Y = useTransform(scrollYProgress, [0, 1], [0, 50]);
 
   return (
     <section
@@ -167,6 +222,9 @@ export function Hero() {
       {/* Subtle grid lines background */}
       <div className="absolute inset-0 grid-lines opacity-60" aria-hidden="true" />
 
+      {/* Spotlight glow that follows mouse */}
+      <SpotlightGlow />
+
       {/* Vaporwave Sun — retro mode only */}
       <VaporwaveSun />
 
@@ -175,14 +233,14 @@ export function Hero() {
         className="relative w-full mx-auto max-w-7xl px-6 pt-28 pb-16 md:pt-32 md:pb-20"
       >
         {/* MOBILE LAYOUT */}
-        <div className="md:hidden flex flex-col gap-8">
-          {/* Name + words */}
+        <div className="md:hidden flex flex-col gap-6">
+          {/* Name + tagline — tight */}
           <div>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="font-mono text-xs tracking-widest uppercase mb-4"
+              className="font-mono text-xs tracking-widest uppercase mb-3"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
             >
               01 / Overview
@@ -193,11 +251,11 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASING_PREMIUM }}
               data-neon-header="pink"
-              className="font-display font-extrabold leading-none tracking-tight mb-4"
+              className="font-display font-extrabold leading-none mb-1"
               style={{
                 fontSize: 'clamp(52px, 14vw, 80px)',
                 color: 'var(--color-text-primary)',
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.035em',
               }}
             >
               Nic DeMore
@@ -207,7 +265,7 @@ export function Hero() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="mb-6"
+              className="mb-5"
             >
               {words.map((word, i) => (
                 <motion.div
@@ -230,7 +288,7 @@ export function Hero() {
               custom={1.0}
               initial="hidden"
               animate="visible"
-              className="text-base leading-relaxed max-w-sm mb-6"
+              className="text-base leading-relaxed max-w-sm mb-5"
               style={{ color: 'var(--color-text-secondary)' }}
             >
               Milwaukee native. Mechanical engineer turned entrepreneur.
@@ -269,50 +327,25 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Portrait */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: EASING_PREMIUM }}
-            className="relative w-full max-w-xs mx-auto"
-          >
-            <div className="relative rounded-lg overflow-hidden aspect-[3/4]" style={{ boxShadow: 'var(--shadow-lg)' }}>
-              <Image
-                src="/nicdemore.jpg"
-                alt="Nic DeMore, founder and entrepreneur based in Milwaukee, WI"
-                fill
-                priority
-                className="object-cover object-top"
-                sizes="(max-width: 768px) 280px, 400px"
-              />
-            </div>
-          </motion.div>
-
-          {/* Video */}
+          {/* Video — full width on mobile */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5, ease: EASING_PREMIUM }}
           >
-            <p
-              className="text-xs tracking-widest uppercase mb-3"
-              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
-            >
-              A brief introduction
-            </p>
             <HeroVideoPlayer />
           </motion.div>
         </div>
 
         {/* DESKTOP LAYOUT */}
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-[1fr_420px] gap-12 lg:gap-16 items-start">
-          {/* Left: Text */}
+        <div className="hidden md:block">
+          {/* h1 + h2 — tight, full width */}
           <motion.div style={{ x: textX }}>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-xs tracking-widest uppercase mb-6"
+              className="text-xs tracking-widest uppercase mb-4"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
             >
               01 / Overview
@@ -323,11 +356,12 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASING_PREMIUM }}
               data-neon-header="pink"
-              className="font-display font-extrabold leading-none tracking-tight mb-6"
+              className="font-display font-extrabold leading-none mb-2"
               style={{
                 fontSize: 'clamp(64px, 7vw, 100px)',
                 color: 'var(--color-text-primary)',
-                letterSpacing: '-0.025em',
+                letterSpacing: '-0.035em',
+                y: h1Y,
               }}
             >
               Nic DeMore
@@ -337,7 +371,8 @@ export function Hero() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="mb-8 space-y-1"
+              className="mb-10 space-y-0"
+              style={{ y: h2Y }}
             >
               {words.map((word, i) => (
                 <motion.div
@@ -354,158 +389,75 @@ export function Hero() {
                 </motion.div>
               ))}
             </motion.div>
+          </motion.div>
 
-            <motion.p
-              variants={fadeUp}
-              custom={1.0}
-              initial="hidden"
-              animate="visible"
-              className="text-lg leading-relaxed max-w-md mb-8"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              Milwaukee native. Mechanical engineer turned entrepreneur.
-              Building AI-native ventures and tools that let small teams
-              operate at scale.
-            </motion.p>
-
-            <motion.div
-              variants={fadeUp}
-              custom={1.3}
-              initial="hidden"
-              animate="visible"
-              className="flex items-center gap-4 mb-12"
-            >
-              <a
-                href="#work"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
-                style={{
-                  background: 'var(--color-accent)',
-                  color: '#fff',
-                  fontFamily: 'var(--font-syne)',
-                  boxShadow: 'var(--shadow-md)',
-                }}
+          {/* Two columns: left = body + CTAs, right = video */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_520px] gap-12 lg:gap-16 items-start">
+            {/* Left: body copy + CTA buttons */}
+            <motion.div style={{ x: textX }}>
+              <motion.p
+                variants={fadeUp}
+                custom={1.0}
+                initial="hidden"
+                animate="visible"
+                className="text-lg leading-relaxed max-w-md mb-8"
+                style={{ color: 'var(--color-text-secondary)' }}
               >
-                See my work
-                <span>↓</span>
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all underline-reveal"
-                style={{
-                  color: 'var(--color-text-primary)',
-                  border: '1px solid var(--color-border)',
-                  fontFamily: 'var(--font-syne)',
-                }}
-              >
-                Get in touch
-                <span>→</span>
-              </a>
-            </motion.div>
+                Milwaukee native. Mechanical engineer turned entrepreneur.
+                Building AI-native ventures and tools that let small teams
+                operate at scale.
+              </motion.p>
 
-            {/* Video: featured foreground element, below hero text on left */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.8, ease: EASING_PREMIUM }}
-              className="max-w-md"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <p
-                  className="text-xs tracking-widest uppercase"
-                  style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
-                >
-                  A brief introduction
-                </p>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
+              <motion.div
+                variants={fadeUp}
+                custom={1.3}
+                initial="hidden"
+                animate="visible"
+                className="flex items-center gap-4"
+              >
+                <a
+                  href="#work"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                   style={{
-                    background: 'var(--color-surface)',
-                    color: 'var(--color-text-secondary)',
-                    fontFamily: 'var(--font-jetbrains)',
-                    fontSize: '9px',
-                    border: '1px solid var(--color-border)',
+                    background: 'var(--color-accent)',
+                    color: '#fff',
+                    fontFamily: 'var(--font-syne)',
+                    boxShadow: 'var(--shadow-md)',
                   }}
                 >
-                  28s
-                </span>
-              </div>
-              <HeroVideoPlayer />
-            </motion.div>
-          </motion.div>
-
-          {/* Right: Portrait */}
-          <motion.div
-            style={{ x: portraitX, y: portraitY }}
-            className="relative mt-4 lg:mt-8"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.25, ease: EASING_PREMIUM }}
-              className="relative"
-            >
-              {/* Accent line top */}
-              <div
-                className="absolute -top-3 left-0 right-0 h-0.5 rounded-full"
-                style={{ background: 'var(--color-accent)', opacity: 0.6 }}
-              />
-              <div className="relative rounded-lg overflow-hidden" style={{ aspectRatio: '3/4', boxShadow: 'var(--shadow-lg)' }}>
-                <Image
-                  src="/nicdemore.jpg"
-                  alt="Nic DeMore, founder and entrepreneur based in Milwaukee, WI"
-                  fill
-                  priority
-                  className="object-cover object-top"
-                  sizes="(max-width: 1024px) 360px, 420px"
-                />
-              </div>
-
-              {/* Badge overlay */}
-              <motion.div
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.2, duration: 0.5 }}
-                className="absolute bottom-4 -left-4 rounded-lg p-4"
-                style={{
-                  background: 'var(--color-base)',
-                  border: '1px solid var(--color-border)',
-                  boxShadow: 'var(--shadow-md)',
-                  minWidth: '160px',
-                }}
-              >
-                <p
-                  className="text-xs font-bold mb-1"
-                  style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px', letterSpacing: '0.08em' }}
+                  See my work
+                  <span>↓</span>
+                </a>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all underline-reveal"
+                  style={{
+                    color: 'var(--color-text-primary)',
+                    border: '1px solid var(--color-border)',
+                    fontFamily: 'var(--font-syne)',
+                  }}
                 >
-                  BASED IN
-                </p>
-                <p
-                  className="font-display font-semibold text-sm"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
-                  Milwaukee, WI
-                </p>
+                  Get in touch
+                  <span>→</span>
+                </a>
               </motion.div>
             </motion.div>
-          </motion.div>
-        </div>
-      </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-5 h-8 rounded-full border flex justify-center pt-1.5"
-          style={{ borderColor: 'var(--color-border)' }}
-        >
-          <div className="w-1 h-1.5 rounded-full" style={{ background: 'var(--color-accent)' }} />
-        </motion.div>
+            {/* Right: Hero Video — large, prominent */}
+            <motion.div
+              style={{ x: videoX, y: videoY }}
+              className="relative"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.25, ease: EASING_PREMIUM }}
+              >
+                <HeroVideoPlayer />
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
       </motion.div>
     </section>
   );
