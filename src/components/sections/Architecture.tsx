@@ -7,7 +7,7 @@ import { EASING_PREMIUM, EASING_SNAPPY, viewportOnce } from "@/lib/motion";
 
 const archImages = [
   {
-    src: "/imagery/New York Architecture.jpeg",
+    src: "/imagery/ny-architecture.jpeg",
     alt: "New York architecture — geometric glass facade",
   },
   {
@@ -19,7 +19,7 @@ const archImages = [
     alt: "Urban architecture — the built environment",
   },
   {
-    src: "/imagery/New York Bridge.jpeg",
+    src: "/imagery/ny-bridge.jpeg",
     alt: "New York bridge — structural engineering and design",
   },
 ];
@@ -89,7 +89,7 @@ export function Architecture() {
         className="absolute inset-0 z-0"
       >
         <Image
-          src="/imagery/IMG_9277.JPG"
+          src="/imagery/ny-building.jpeg"
           alt="Architecture photography — Nic DeMore's passion for architectural design"
           fill
           quality={80}

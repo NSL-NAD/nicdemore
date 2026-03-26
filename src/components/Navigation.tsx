@@ -22,6 +22,7 @@ export function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isResumePage = pathname.startsWith("/resume");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -129,15 +130,17 @@ export function Navigation() {
               );
             })}
 
-            {/* Retro toggle */}
-            <div className="ml-3">
-              <RetroToggle />
-            </div>
+            {/* Retro toggle — excluded from resume pages */}
+            {!isResumePage && (
+              <div className="ml-3">
+                <RetroToggle />
+              </div>
+            )}
           </div>
 
           {/* Mobile: RetroToggle + Hamburger */}
           <div className="md:hidden flex items-center gap-3">
-            <RetroToggle />
+            {!isResumePage && <RetroToggle />}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="relative w-10 h-10 flex flex-col items-center justify-center gap-1.5"
