@@ -142,7 +142,7 @@ body {
   background-image:
     linear-gradient(var(--retro-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--retro-grid) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-size: 22px 22px;
 }
 
 /* ===================================================
@@ -288,18 +288,19 @@ body {
   background-size: 256px 256px;
 }
 
-/* Subtle engineering grid (ow.studio approach) */
+/* Subtle engineering grid — architectural, precise */
 .grid-lines {
   background-image:
-    linear-gradient(rgba(28, 25, 23, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28, 25, 23, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(28, 25, 23, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 25, 23, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 [data-theme="retro"] .grid-lines {
   background-image:
-    linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(0, 229, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
 /* Pulsing dot animation */
@@ -357,6 +358,15 @@ img {
 [data-theme="retro"] .text-accent,
 [data-theme="retro"] [style*="color: var(--color-accent)"] {
   color: var(--retro-orange) !important;
+}
+
+/* ===================================================
+   CARD HOVER POLISH — weighty, responsive
+   =================================================== */
+[style*="border: 1px solid var(--color-border)"] {
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
 /* Mobile retro scanline reduce */
