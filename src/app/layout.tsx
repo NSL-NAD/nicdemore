@@ -6,6 +6,7 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { Analytics } from "@/components/Analytics";
 import { RetroProvider } from "@/contexts/RetroContext";
 import { PersonSchema } from "@/components/PersonSchema";
+import { VentureOSWrapper } from "@/components/venture-os/VentureOSWrapper";
 import "./globals.css";
 
 const syne = Syne({
@@ -98,6 +99,7 @@ export default function RootLayout({
           <Navigation />
           <main className="flex-1">{children}</main>
           <Footer />
+          <VentureOSWrapper />
         </RetroProvider>
         <CookieConsent />
         <Analytics />
