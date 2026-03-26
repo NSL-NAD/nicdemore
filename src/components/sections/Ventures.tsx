@@ -58,7 +58,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
       transition={{ duration: 0.5, ease: EASING_PREMIUM, delay: index * 0.07 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative overflow-hidden cursor-default"
+      className="relative overflow-hidden cursor-default flex flex-col"
       style={{
         border: '1px solid var(--color-border)',
         background: hovered ? 'var(--color-forest)' : 'var(--color-base)',
@@ -74,7 +74,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
         style={{ background: 'var(--color-accent)', transformOrigin: 'left' }}
       />
 
-      <div className="p-6 sm:p-8">
+      <div className="p-6 sm:p-8 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-4 mb-4">
           <h3
             className="font-display font-bold text-xl leading-tight transition-colors duration-300"
@@ -86,7 +86,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
         </div>
 
         <p
-          className="text-sm leading-relaxed mb-5 transition-colors duration-300"
+          className="text-sm leading-relaxed mb-5 transition-colors duration-300 flex-1"
           style={{ color: hovered ? 'rgba(242, 237, 229, 0.75)' : 'var(--color-text-secondary)' }}
         >
           {venture.description}
