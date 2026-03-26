@@ -9,7 +9,7 @@ import { RetroToggle } from "@/components/RetroToggle";
 import { NeonScrollHandler } from "@/components/NeonScrollHandler";
 
 const sections = [
-  { id: "overview", label: "About" },
+  { id: "overview", label: "Overview" },
   { id: "skillset", label: "My Skillset" },
   { id: "work", label: "Ventures" },
   { id: "architecture", label: "Architecture" },
@@ -130,6 +130,30 @@ export function Navigation() {
               );
             })}
 
+            {/* About page link */}
+            <Link
+              href="/about"
+              className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase underline-reveal transition-colors ${
+                pathname === '/about' ? 'text-primary' : 'text-muted hover:text-primary'
+              }`}
+              style={{
+                color: pathname === '/about' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                fontFamily: 'var(--font-jetbrains)',
+                fontSize: '11px',
+                letterSpacing: '0.08em',
+              }}
+            >
+              About
+              {pathname === '/about' && (
+                <motion.div
+                  layoutId="nav-indicator"
+                  className="absolute bottom-0 left-3 right-3 h-px"
+                  style={{ background: 'var(--color-accent)' }}
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                />
+              )}
+            </Link>
+
             {/* Retro toggle — excluded from resume pages */}
             {!isResumePage && (
               <div className="ml-3">
@@ -192,6 +216,14 @@ export function Navigation() {
                     </a>
                   );
                 })}
+                <Link
+                  href="/about"
+                  onClick={() => setMobileOpen(false)}
+                  className="font-display text-2xl font-bold transition-colors hover:text-accent"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  About
+                </Link>
               </nav>
             </motion.div>
           )}
