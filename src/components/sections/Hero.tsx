@@ -6,6 +6,7 @@ import Image from "next/image";
 import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { VaporwaveSun } from "@/components/VaporwaveSun";
 
 const words = ["Builder.", "Engineer.", "Founder."];
 
@@ -165,6 +166,9 @@ export function Hero() {
     >
       {/* Subtle grid lines background */}
       <div className="absolute inset-0 grid-lines opacity-60" aria-hidden="true" />
+
+      {/* Vaporwave Sun — retro mode only */}
+      <VaporwaveSun />
 
       <motion.div
         style={{ opacity: heroOpacity, y: heroY }}
