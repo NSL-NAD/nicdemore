@@ -1,91 +1,204 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ease, viewportOnce } from "@/lib/motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
+import { EASING_PREMIUM, EASING_SNAPPY, viewportOnce } from "@/lib/motion";
 
-const concepts = [
-  { name: "Spatial Flow", desc: "How movement through a space shapes experience" },
-  { name: "Materiality", desc: "The honesty and character of raw materials" },
-  { name: "Light & Shadow", desc: "Architecture's most powerful and free material" },
-  { name: "Proportion", desc: "The mathematics of what feels right" },
+const archImages = [
+  {
+    src: "/imagery/New York Architecture.jpeg",
+    alt: "New York architecture — geometric glass facade",
+  },
+  {
+    src: "/imagery/DSC02423.jpeg",
+    alt: "Architectural detail — light and structure",
+  },
+  {
+    src: "/imagery/IMG_7214.JPG",
+    alt: "Urban architecture — the built environment",
+  },
+  {
+    src: "/imagery/New York Bridge.jpeg",
+    alt: "New York bridge — structural engineering and design",
+  },
 ];
 
-export function Architecture() {
+function ArchImageReveal({
+  src,
+  alt,
+  index,
+}: {
+  src: string;
+  alt: string;
+  index: number;
+}) {
   return (
-    <section id="architecture" className="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
-      {/* Background architectural word */}
+    <motion.div
+      initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.6 }}
+      whileInView={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: 0.9,
+        ease: EASING_SNAPPY,
+        delay: index * 0.12,
+      }}
+      className="relative overflow-hidden aspect-[4/3]"
+      style={{ borderRadius: 0 }}
+    >
       <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={viewportOnce}
-        transition={{ duration: 2, ease }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-text"
-        aria-hidden="true"
+        whileHover={{ scale: 1.04 }}
+        transition={{ duration: 0.6, ease: EASING_PREMIUM }}
+        className="w-full h-full"
       >
-        MATERIALITY
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          loading="lazy"
+          quality={72}
+          className="object-cover"
+          sizes="(max-width: 768px) 50vw, 25vw"
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export function Architecture() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
+
+  return (
+    <section
+      ref={sectionRef}
+      id="architecture"
+      className="relative overflow-hidden"
+      style={{ minHeight: "80vh" }}
+    >
+      {/* Full-bleed background photo with parallax */}
+      <motion.div
+        style={{ y: bgY }}
+        className="absolute inset-0 z-0"
+      >
+        <Image
+          src="/imagery/IMG_9277.JPG"
+          alt="Architecture photography — Nic DeMore's passion for architectural design"
+          fill
+          quality={80}
+          loading="lazy"
+          className="object-cover"
+          sizes="100vw"
+        />
+        {/* Dark overlay for text readability */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(26,46,61,0.82) 0%, rgba(26,46,61,0.70) 60%, rgba(26,46,61,0.85) 100%)',
+          }}
+        />
       </motion.div>
 
-      <div className="relative mx-auto max-w-6xl px-6">
+      {/* Content */}
+      <motion.div
+        style={{ y: textY }}
+        className="relative z-10 mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:py-40"
+      >
         {/* Section label */}
         <motion.span
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
-          transition={{ duration: 0.5, ease }}
-          className="font-mono text-xs tracking-widest text-accent uppercase mb-4 block"
+          transition={{ duration: 0.5 }}
+          className="block text-xs tracking-widest uppercase mb-6"
+          style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
         >
-          Passion Project
+          04 / Passion Project
         </motion.span>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, ease }}
-          className="font-display text-4xl sm:text-5xl lg:text-6xl text-ink mb-6 max-w-3xl"
-        >
-          Architecture as a way of seeing
-        </motion.h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
+          {/* Left: headline */}
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.65, ease: EASING_PREMIUM }}
+              data-neon-header="pink"
+              className="font-display font-bold mb-6 leading-tight"
+              style={{
+                fontSize: 'clamp(36px, 5vw, 64px)',
+                color: '#FAF9F6',
+                letterSpacing: '-0.02em',
+                textShadow: '0 0 60px rgba(0,0,0,0.4)',
+              }}
+            >
+              Architecture as a Way of Seeing
+            </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, ease, delay: 0.1 }}
-          className="text-ink-muted text-lg max-w-2xl mb-16 leading-relaxed"
-        >
-          I&apos;m not an architect. I&apos;m an engineer who fell in love with how buildings
-          think. It started when I decided to design my dream home from scratch — and
-          realized I needed to learn how to see the world the way architects do.
-        </motion.p>
+            <motion.blockquote
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
+              className="mb-8"
+              style={{
+                fontFamily: 'var(--font-dm-serif)',
+                fontStyle: 'italic',
+                fontSize: 'clamp(18px, 2vw, 24px)',
+                color: 'rgba(242, 237, 229, 0.85)',
+                lineHeight: 1.55,
+              }}
+            >
+              &ldquo;I spent two years learning architecture to design my dream home. That obsession became a course.&rdquo;
+            </motion.blockquote>
 
-        {/* Editorial image placeholder */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.8, ease }}
-          className="bg-surface border border-line rounded-lg aspect-[21/9] mb-16 flex items-center justify-center"
-        >
-          <span className="font-mono text-sm text-ink-muted/50 tracking-wide">
-            [ Architectural photograph ]
-          </span>
-        </motion.div>
+            <motion.a
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.5, delay: 0.25 }}
+              href="https://foacourse.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-sm transition-all"
+              style={{
+                background: 'var(--color-accent)',
+                color: '#fff',
+                fontFamily: 'var(--font-syne)',
+              }}
+            >
+              Explore FOA Course
+              <span>→</span>
+            </motion.a>
+          </div>
 
-        {/* Story + concepts grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          {/* Right: story */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
-            transition={{ duration: 0.6, ease }}
-            className="space-y-5 text-ink-muted leading-relaxed"
+            transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.15 }}
+            className="space-y-5 text-base leading-relaxed"
+            style={{ color: 'rgba(242, 237, 229, 0.75)' }}
           >
             <p>
-              That obsession became hundreds of hours studying residential design,
-              construction systems, and the principles that make great spaces feel
-              inevitable. I learned from architects — as collaborators and mentors,
-              never competitors.
+              I&apos;m not an architect. I&apos;m an engineer who fell in love with how buildings think.
+              It started when I decided to design my dream home from scratch — and realized
+              I needed to learn how to see the world the way architects do.
+            </p>
+            <p>
+              That obsession became hundreds of hours studying residential design, spatial flow,
+              materiality, and the principles that make great spaces feel inevitable. I learned
+              alongside architects — as collaborators, never competitors.
             </p>
             <p>
               I built{" "}
@@ -93,39 +206,31 @@ export function Architecture() {
                 href="https://foacourse.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-accent animated-underline"
+                className="underline-reveal font-medium"
+                style={{ color: 'var(--color-accent)' }}
               >
                 Foundations of Architecture
               </a>
-              {" "}to give other non-architects the same framework: a way to think
-              about space, light, materials, and proportion so you can be a better
-              partner to the professionals who bring buildings to life.
-            </p>
-            <p>
-              This passion bleeds into everything I do. The way I think about product
-              design, user experience, and systems architecture — it all comes back
-              to the same question: does this space serve the people in it?
+              {" "}to give other non-architects the same framework: a way to think about space,
+              light, materials, and proportion so they can be a better partner to the professionals
+              who bring buildings to life.
             </p>
           </motion.div>
-
-          {/* Concepts */}
-          <div className="space-y-4">
-            {concepts.map((concept, i) => (
-              <motion.div
-                key={concept.name}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={viewportOnce}
-                transition={{ duration: 0.5, ease, delay: i * 0.1 }}
-                className="border-l-2 border-accent/30 pl-6 py-3 hover:border-accent transition-colors"
-              >
-                <h3 className="font-display text-lg text-ink mb-1">{concept.name}</h3>
-                <p className="text-ink-muted text-sm">{concept.desc}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
-      </div>
+
+        {/* Architecture image grid */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.4 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-2"
+        >
+          {archImages.map((img, i) => (
+            <ArchImageReveal key={img.src} src={img.src} alt={img.alt} index={i} />
+          ))}
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
