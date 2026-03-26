@@ -1,10 +1,13 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://nicdemore.com";
   return [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: "monthly", priority: 1 },
-    { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
-    { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    {
+      url: "https://nicdemore.com",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 1,
+    },
   ];
+  // NOTE: /resume, /resume/anthropic, /resume/apple excluded intentionally — noindex pages
 }
