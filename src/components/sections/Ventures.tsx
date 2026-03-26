@@ -1,156 +1,179 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ease, viewportOnce } from "@/lib/motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
+import { ventures, type VentureStatus } from "@/data/ventures";
 
-interface Venture {
-  name: string;
-  description: string;
-  tags: string[];
-  status: "Live" | "Pre-launch" | "In Development";
-  stack?: string[];
-  url?: string;
-  featured?: boolean;
-}
-
-const ventures: Venture[] = [
-  {
-    name: "FOA Course",
-    description:
-      "Foundations of Architecture — a course for non-architects who want to design their dream home. From spatial flow to materiality, the framework to think like the pros.",
-    tags: ["Education", "Architecture"],
-    status: "Live",
-    stack: ["Next.js", "Supabase", "Stripe"],
-    url: "https://foacourse.com",
-    featured: true,
-  },
-  {
-    name: "Giveable",
-    description:
-      "Curated marketplace of impact-driven brands for conscious gift registries.",
-    tags: ["Marketplace", "Social Impact"],
-    status: "Pre-launch",
-    stack: ["Next.js", "Supabase", "Stripe Connect"],
-    url: "https://giveable.vercel.app",
-  },
-  {
-    name: "Good at Scale Studio",
-    description:
-      "Venture building brand. AI-native systems, purpose-driven businesses. The ethos: doing good at scale.",
-    tags: ["Studio", "Brand"],
-    status: "Live",
-    url: "https://goodatscale.studio",
-  },
-  {
-    name: "The Grid",
-    description:
-      "Internal venture operations dashboard. A command center for the agent team — where autonomous AI systems coordinate, report, and build.",
-    tags: ["Internal Tool", "AI"],
-    status: "In Development",
-  },
-];
-
-function StatusBadge({ status }: { status: Venture["status"] }) {
-  const colors = {
-    Live: "bg-green-100 text-green-800",
-    "Pre-launch": "bg-amber-100 text-amber-800",
-    "In Development": "bg-blue-100 text-blue-800",
+function StatusDot({ status }: { status: VentureStatus }) {
+  const colors: Record<VentureStatus, string> = {
+    LIVE:    '#F4631E',
+    BUILD:   '#C4A45A',
+    TEST:    '#4A90D9',
+    QUEUE:   'var(--color-text-light)',
+    STEALTH: 'var(--color-border)',
   };
-
   return (
     <span
-      className={`inline-flex items-center gap-1.5 font-mono text-xs px-2.5 py-1 rounded-full ${colors[status]}`}
+      className="inline-block w-2 h-2 rounded-full"
+      style={{ background: colors[status] }}
+    />
+  );
+}
+
+function StatusBadge({ status }: { status: VentureStatus }) {
+  const labels: Record<VentureStatus, string> = {
+    LIVE:    'Live',
+    BUILD:   'Building',
+    TEST:    'Testing',
+    QUEUE:   'Queued',
+    STEALTH: '████████',
+  };
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium"
+      style={{
+        fontFamily: 'var(--font-jetbrains)',
+        fontSize: '10px',
+        letterSpacing: '0.06em',
+        color: status === 'LIVE' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+        background: 'var(--color-surface-alt)',
+        border: '1px solid var(--color-border)',
+      }}
     >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${
-          status === "Live"
-            ? "bg-green-500"
-            : status === "Pre-launch"
-            ? "bg-amber-500"
-            : "bg-blue-500"
-        }`}
-      />
-      {status}
+      <StatusDot status={status} />
+      {labels[status]}
     </span>
   );
 }
 
-function VentureCard({ venture, index }: { venture: Venture; index: number }) {
-  const isFeatured = venture.featured;
+function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: number }) {
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={viewportOnce}
-      transition={{ duration: 0.5, ease, delay: index * 0.1 }}
-      whileHover={{ y: -4 }}
-      className={`group bg-white rounded-lg border border-line p-6 sm:p-8 transition-shadow hover:shadow-lg hover:border-accent/40 ${
-        isFeatured ? "lg:col-span-3" : ""
-      }`}
+      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, ease: EASING_PREMIUM, delay: index * 0.07 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative overflow-hidden cursor-default"
+      style={{
+        border: '1px solid var(--color-border)',
+        background: hovered ? 'var(--color-forest)' : 'var(--color-base)',
+        transition: 'background 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+      }}
     >
-      <div className={isFeatured ? "grid grid-cols-1 lg:grid-cols-2 gap-8" : ""}>
-        <div>
-          <div className="flex items-start justify-between mb-4">
-            <h3
-              className={`font-display text-ink ${
-                isFeatured ? "text-2xl sm:text-3xl" : "text-xl"
-              }`}
-            >
-              {venture.name}
-            </h3>
-            <StatusBadge status={venture.status} />
-          </div>
+      {/* Accent top line — reveals on hover */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-0.5"
+        animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
+        initial={{ scaleX: 0, opacity: 0 }}
+        transition={{ duration: 0.35, ease: EASING_PREMIUM }}
+        style={{ background: 'var(--color-accent)', transformOrigin: 'left' }}
+      />
 
-          <p
-            className={`text-ink-muted leading-relaxed mb-6 ${
-              isFeatured ? "text-base" : "text-sm"
-            }`}
+      <div className="p-6 sm:p-8">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h3
+            className="font-display font-bold text-xl leading-tight transition-colors duration-300"
+            style={{ color: hovered ? '#FAF9F6' : 'var(--color-text-primary)' }}
           >
-            {venture.description}
-          </p>
+            {venture.name}
+          </h3>
+          <StatusBadge status={venture.status} />
         </div>
 
-        <div className={isFeatured ? "flex flex-col justify-between" : ""}>
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
+        <p
+          className="text-sm leading-relaxed mb-5 transition-colors duration-300"
+          style={{ color: hovered ? 'rgba(242, 237, 229, 0.75)' : 'var(--color-text-secondary)' }}
+        >
+          {venture.description}
+        </p>
+
+        {/* Tags */}
+        {venture.tags && (
+          <div className="flex flex-wrap gap-1.5 mb-4">
             {venture.tags.map((tag) => (
               <span
                 key={tag}
-                className="font-mono text-xs text-ink-muted bg-surface px-2.5 py-1 rounded"
+                className="text-xs px-2 py-0.5 rounded-sm transition-colors duration-300"
+                style={{
+                  fontFamily: 'var(--font-jetbrains)',
+                  fontSize: '10px',
+                  letterSpacing: '0.06em',
+                  background: hovered ? 'rgba(255,255,255,0.08)' : 'var(--color-surface)',
+                  color: hovered ? 'rgba(242, 237, 229, 0.6)' : 'var(--color-text-secondary)',
+                  border: `1px solid ${hovered ? 'rgba(255,255,255,0.12)' : 'var(--color-border)'}`,
+                }}
               >
                 {tag}
               </span>
             ))}
           </div>
+        )}
 
-          {/* Stack */}
-          {venture.stack && (
-            <div className="flex flex-wrap gap-2 mb-6">
-              {venture.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className="font-mono text-xs text-accent border border-accent/20 px-2.5 py-1 rounded"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          )}
+        {/* Stack */}
+        {venture.stack && (
+          <div className="flex flex-wrap gap-1.5 mb-5">
+            {venture.stack.map((tech) => (
+              <span
+                key={tech}
+                className="text-xs px-2 py-0.5 rounded-sm transition-colors duration-300"
+                style={{
+                  fontFamily: 'var(--font-jetbrains)',
+                  fontSize: '10px',
+                  letterSpacing: '0.06em',
+                  color: hovered ? 'var(--color-accent)' : 'var(--color-accent)',
+                  background: hovered ? 'rgba(244, 99, 30, 0.15)' : 'transparent',
+                  border: `1px solid ${hovered ? 'rgba(244, 99, 30, 0.3)' : 'rgba(244, 99, 30, 0.25)'}`,
+                }}
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
 
-          {/* Link */}
-          {venture.url && (
+        {/* CTA */}
+        <div className="flex items-center justify-between">
+          <span
+            className="text-xs tracking-widest"
+            style={{
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '10px',
+              color: hovered ? 'rgba(242,237,229,0.4)' : 'var(--color-text-light)',
+            }}
+          >
+            {venture.year}
+          </span>
+          {venture.url ? (
             <a
               href={venture.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-ink hover:text-accent transition-colors group/link"
+              className="inline-flex items-center gap-1.5 text-xs font-medium transition-colors duration-300"
+              style={{
+                color: hovered ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                fontFamily: 'var(--font-syne)',
+                fontSize: '12px',
+              }}
             >
               Visit
-              <span className="transition-transform group-hover/link:translate-x-1">
-                →
-              </span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
             </a>
+          ) : (
+            <span
+              className="text-xs italic"
+              style={{
+                color: hovered ? 'rgba(242,237,229,0.35)' : 'var(--color-text-light)',
+                fontFamily: 'var(--font-dm-serif)',
+                fontSize: '12px',
+              }}
+            >
+              In development
+            </span>
           )}
         </div>
       </div>
@@ -159,60 +182,80 @@ function VentureCard({ venture, index }: { venture: Venture; index: number }) {
 }
 
 export function Ventures() {
-  const featured = ventures.filter((v) => v.featured);
-  const rest = ventures.filter((v) => !v.featured);
-
   return (
-    <section id="work" className="py-24 sm:py-32 lg:py-40 bg-surface/50">
-      <div className="mx-auto max-w-6xl px-6">
-        <motion.span
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.5, ease }}
-          className="font-mono text-xs tracking-widest text-accent uppercase mb-4 block"
-        >
-          Ventures & Work
-        </motion.span>
+    <section
+      id="work"
+      className="py-24 sm:py-32 lg:py-40"
+      style={{ background: 'var(--color-surface)' }}
+    >
+      <div className="mx-auto max-w-7xl px-6">
+        {/* Header */}
+        <div className="mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.5, ease: EASING_SMOOTH }}
+            className="block text-xs tracking-widest uppercase mb-4"
+            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+          >
+            03 / Ventures
+          </motion.span>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, ease }}
-          className="font-display text-4xl sm:text-5xl lg:text-6xl text-ink mb-4"
-        >
-          Things I&apos;ve built
-        </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.55, ease: EASING_SMOOTH }}
+            data-neon-header="pink"
+            className="font-display font-bold mb-4"
+            style={{
+              fontSize: 'clamp(36px, 5vw, 56px)',
+              color: 'var(--color-text-primary)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            What I&apos;m Building
+          </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, ease, delay: 0.1 }}
-          className="text-ink-muted text-lg max-w-2xl mb-16"
-        >
-          From education platforms to AI infrastructure — each venture is a bet
-          on building something that matters.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.55, ease: EASING_PREMIUM, delay: 0.1 }}
+            className="max-w-2xl text-lg leading-relaxed"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            From education platforms to AI infrastructure — each venture is a bet on building something that matters.
+          </motion.p>
+        </div>
 
-        {/* Featured venture */}
-        <div className="grid grid-cols-1 gap-6 mb-6">
-          {featured.map((venture, i) => (
-            <VentureCard key={venture.name} venture={venture} index={i} />
+        {/* Venture grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+          {ventures.map((v, i) => (
+            <VentureCard key={v.id} venture={v} index={i} />
           ))}
         </div>
 
-        {/* Rest */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {rest.map((venture, i) => (
-            <VentureCard
-              key={venture.name}
-              venture={venture}
-              index={i + featured.length}
-            />
-          ))}
-        </div>
+        {/* Bottom flourish */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12 flex items-center gap-4"
+        >
+          <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />
+          <span
+            className="text-xs tracking-widest"
+            style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
+          >
+            {ventures.filter(v => v.status === 'LIVE').length} Live ·{' '}
+            {ventures.filter(v => v.status === 'BUILD').length} Building ·{' '}
+            {new Date().getFullYear()}
+          </span>
+          <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />
+        </motion.div>
       </div>
     </section>
   );
