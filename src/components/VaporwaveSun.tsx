@@ -16,12 +16,13 @@ export function VaporwaveSun() {
       className="pointer-events-none select-none"
       aria-hidden="true"
       style={{
-        position: 'absolute',
-        right: '5%',
-        top: '15%',
+        position: 'fixed',
+        left: '50%',
+        bottom: '0',
+        transform: 'translateX(-50%)',
         zIndex: 2,
-        width: 'clamp(160px, 20vw, 280px)',
-        height: 'clamp(80px, 10vw, 140px)',
+        width: 'clamp(200px, 30vw, 400px)',
+        height: 'clamp(100px, 15vw, 200px)',
         overflow: 'hidden',
       }}
     >
