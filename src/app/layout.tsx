@@ -1,70 +1,82 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter, JetBrains_Mono } from "next/font/google";
+import { Syne, DM_Serif_Display, JetBrains_Mono, Press_Start_2P } from "next/font/google";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CookieConsent } from "@/components/CookieConsent";
 import { Analytics } from "@/components/Analytics";
+import { RetroProvider } from "@/contexts/RetroContext";
+import { PersonSchema } from "@/components/PersonSchema";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const syne = Syne({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const dmSerifDisplay = DM_Serif_Display({
   subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-dm-serif",
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
   variable: "--font-jetbrains",
+  display: "swap",
+});
+
+const pressStart2P = Press_Start_2P({
   subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-press-start",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Nic DeMore | Builder. Engineer. Founder.",
-  description:
-    "Mechanical engineer turned entrepreneur. Building AI-native systems and purpose-driven ventures.",
   metadataBase: new URL("https://nicdemore.com"),
+  title: {
+    default: "Nic DeMore — Builder. Engineer. Founder.",
+    template: "%s | Nic DeMore",
+  },
+  description:
+    "Nic DeMore is a founder, operator, and builder based in Milwaukee, WI. Co-founder of Margle Media and Good at Scale Studio. Building AI-native products and purpose-driven ventures.",
+  authors: [{ name: "Nic DeMore", url: "https://nicdemore.com" }],
   openGraph: {
-    title: "Nic DeMore | Builder. Engineer. Founder.",
-    description:
-      "Mechanical engineer turned entrepreneur. Building AI-native systems and purpose-driven ventures.",
+    type: "website",
+    locale: "en_US",
     url: "https://nicdemore.com",
     siteName: "Nic DeMore",
-    locale: "en_US",
-    type: "website",
+    title: "Nic DeMore — Builder. Engineer. Founder.",
+    description:
+      "Co-founder of Margle Media and Good at Scale Studio. Building AI-native products and purpose-driven ventures from Milwaukee, WI.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Nic DeMore — Builder. Engineer. Founder.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nic DeMore | Builder. Engineer. Founder.",
+    title: "Nic DeMore — Builder. Engineer. Founder.",
     description:
-      "Mechanical engineer turned entrepreneur. Building AI-native systems and purpose-driven ventures.",
+      "Co-founder of Margle Media and Good at Scale Studio.",
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   alternates: {
     canonical: "https://nicdemore.com",
   },
-};
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Nic DeMore",
-  url: "https://nicdemore.com",
-  jobTitle: "Founder & Builder",
-  worksFor: {
-    "@type": "Organization",
-    name: "Good at Scale Studio",
-    url: "https://goodatscale.studio",
-  },
-  alumniOf: {
-    "@type": "CollegeOrUniversity",
-    name: "Marquette University",
-  },
-  sameAs: ["https://goodatscale.studio", "https://foacourse.com"],
 };
 
 export default function RootLayout({
@@ -75,19 +87,18 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} h-full`}
+      className={`${syne.variable} ${dmSerifDisplay.variable} ${jetbrainsMono.variable} ${pressStart2P.variable} h-full`}
     >
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <PersonSchema />
       </head>
-      <body className="min-h-full flex flex-col font-sans antialiased">
+      <body className="min-h-full flex flex-col antialiased" style={{ background: 'var(--color-base)', color: 'var(--color-text-primary)' }}>
         <div className="grain-overlay" aria-hidden="true" />
-        <Navigation />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <RetroProvider>
+          <Navigation />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </RetroProvider>
         <CookieConsent />
         <Analytics />
       </body>
