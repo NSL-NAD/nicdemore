@@ -44,71 +44,67 @@ const timeline = [
     title: "Founder",
     org: "Good at Scale Studio",
     description:
-      "Building AI-native operational infrastructure \u2014 autonomous agents, venture automation, intelligence systems. Building the future of how one-person studios operate at enterprise scale.",
+      "Building AI-native operational infrastructure \u2014 autonomous agents, venture automation, intelligence systems. Running a 12\u00d712 venture studio: 12 ventures in 12 months. Designing agent systems, MCP protocols, and the operational layer for how small teams scale.",
   },
   {
     year: "2025\u2013Present",
     title: "Course Creator",
     org: "Foundations of Architecture",
     description:
-      "Built and launched an online architecture education platform as a self-funded, solo-built product. 0 to live in 8 weeks.",
+      "Built and launched an online architecture education platform as a self-funded, solo-built product. Curriculum design, content production, e-commerce, and growth \u2014 0 to live in 8 weeks.",
   },
   {
     year: "2017\u20132026",
     title: "Co-Founder, President & COO",
     org: "Margle Media",
     description:
-      "Built a 7-figure digital marketing agency from zero. Led operations, strategy, and a team serving Fortune 500 brands including Johnsonville, Frito-Lay, and Cousins Subs. Exiting 2026.",
+      "Built the agency from zero to seven figures with no outside capital. Directly managed or built every function: sales pipeline, account management, P&L, financial forecasting, cashflow, AR/AP, invoicing, utilization and margin reporting. Grew and managed a leadership team with direct reports across creative, media, strategy, and operations. Clients include Cousins Subs, Johnsonville, Frito-Lay, Florsheim, Instant Pot, Stella & Chewy\u2019s, Quest Products. Personally managed client strategy for Fortune 500 and regional brands across paid search, paid social, organic social, and omnichannel. Built agency operating systems, reporting infrastructure, and client-facing analytics frameworks. Handled HR, IT, vendor relationships, legal coordination, and agency contracts. Nine years of touching every aspect of a full-service agency \u2014 this is the operating credential.",
   },
   {
     year: "2012\u20132016",
     title: "B.S. Mechanical Engineering",
     org: "Marquette University",
     description:
-      "Engineering fundamentals: thermodynamics, materials science, systems design. The training that taught me to think in constraints and tolerances.",
+      "Engineering fundamentals: thermodynamics, materials science, systems design, tolerance analysis, process engineering. The training that taught me to think in constraints and design solutions that hold up under pressure.",
   },
 ];
 
 const skillGroups = [
   {
     name: "Engineering & Systems",
-    skills: [
-      "Mechanical Engineering",
-      "Systems Architecture",
-      "Infrastructure Design",
-      "Technical Operations",
-      "CI/CD & DevOps",
-    ],
+    skills: ["Systems Architecture", "Mechanical Engineering", "Infrastructure Design", "Technical Operations", "Process Engineering", "Tolerance Analysis"],
+  },
+  {
+    name: "Digital Marketing",
+    skills: ["Paid Search (SEM)", "Paid Social", "Organic Social", "Omnichannel Strategy", "Performance Marketing", "Media Planning", "Campaign Management", "Attribution Modeling"],
+  },
+  {
+    name: "Operations & Finance",
+    skills: ["Business Operations", "P&L Management", "Financial Forecasting", "Budgeting", "AR/AP", "Cashflow Management", "Capacity Planning", "Vendor Management"],
   },
   {
     name: "AI & Automation",
-    skills: [
-      "LLM Integration",
-      "Agent Systems",
-      "Prompt Engineering",
-      "AI-Native Development",
-      "Autonomous Operations",
-    ],
+    skills: ["LLM Integration", "Agent Systems", "Prompt Engineering", "Autonomous Workflows", "AI Infrastructure", "MCP Protocols", "Agentic Ops"],
   },
   {
-    name: "Product & Strategy",
-    skills: [
-      "Product Management",
-      "Venture Building",
-      "Growth Strategy",
-      "Business Operations",
-      "Team Leadership",
-    ],
+    name: "Client & Account Management",
+    skills: ["Account Management", "Client Strategy", "Client Reporting", "Relationship Management", "QBRs", "Retention Strategy", "Stakeholder Communication"],
   },
   {
-    name: "Creative & Design",
-    skills: [
-      "Architectural Design",
-      "UI/UX",
-      "Brand Development",
-      "Visual Design",
-      "Sketching & Drawing",
-    ],
+    name: "Business Strategy",
+    skills: ["Business Strategy", "Market Analysis", "Revenue Strategy", "OKR Frameworks", "Go-to-Market", "Pricing Strategy", "Competitive Research"],
+  },
+  {
+    name: "People & Leadership",
+    skills: ["Direct Reports", "Leadership Team Development", "Performance Management", "Hiring & Onboarding", "Culture Building", "Compensation Planning"],
+  },
+  {
+    name: "Product & Ventures",
+    skills: ["Product Management", "Venture Building", "MVP Development", "Growth Strategy", "Launch Strategy", "SaaS Architecture"],
+  },
+  {
+    name: "Design & Architecture",
+    skills: ["Home Design Education", "Spatial Design", "Materiality", "UI/UX Design", "Brand Development", "Visual Identity"],
   },
 ];
 
@@ -125,7 +121,7 @@ export default function ResumePage() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease }}
-          className="mb-12 flex items-center justify-between gap-4 flex-wrap"
+          className="mb-12 flex items-center justify-between gap-4 flex-wrap no-print"
         >
           <Link
             href="/"
@@ -144,7 +140,7 @@ export default function ResumePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease }}
-          className="mb-16"
+          className="mb-16 resume-section"
         >
           <h1 className="font-display text-4xl sm:text-5xl text-ink mb-2">
             Nic DeMore
@@ -195,7 +191,7 @@ export default function ResumePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.6, ease }}
-          className="mb-20"
+          className="mb-20 resume-section"
         >
           <h2 className="font-display text-2xl text-ink mb-10">Experience</h2>
 
@@ -256,10 +252,11 @@ export default function ResumePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.6, ease }}
+          className="resume-section"
         >
           <h2 className="font-display text-2xl text-ink mb-10">Skills</h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {skillGroups.map((group) => (
               <div key={group.name}>
                 <h3 className="font-display text-base text-ink mb-3">

@@ -420,30 +420,83 @@ img {
   }
 }
 
-/* Print polish for resume */
+/* ===================================================
+   PRINT STYLESHEET — Resume PDF (1-2 pages max)
+   =================================================== */
 @media print {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
   body {
     background: white !important;
     color: #1C1917 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+    font-size: 10pt !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  h1, h2, h3 {
-    font-family: Georgia, serif;
+  @page {
+    margin: 0.5in 0.6in;
+    size: letter;
   }
-  body {
-    font-family: Georgia, serif;
-    font-size: 11pt;
-    line-height: 1.6;
+  nav, footer, .grain-overlay, .no-print,
+  .grid-lines, [class*="venture-os"],
+  [class*="cookie"] {
+    display: none !important;
+  }
+  h1 {
+    font-family: Georgia, serif !important;
+    font-size: 22pt !important;
+    margin-bottom: 2pt !important;
+    color: #1C1917 !important;
+    letter-spacing: normal !important;
+  }
+  h2 {
+    font-family: Georgia, serif !important;
+    font-size: 13pt !important;
+    margin-bottom: 6pt !important;
+    color: #1C1917 !important;
+    border-bottom: 0.5pt solid #ccc;
+    padding-bottom: 3pt;
+    letter-spacing: normal !important;
+  }
+  h3 {
+    font-family: Georgia, serif !important;
+    font-size: 11pt !important;
+    color: #1C1917 !important;
   }
   .resume-section {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 12pt !important;
+  }
+  .pt-24, .pb-16 {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .mb-20, .mb-16, .mb-12, .mb-10 {
+    margin-bottom: 10pt !important;
+  }
+  .space-y-10 > * + * {
+    margin-top: 8pt !important;
+  }
+  a {
+    color: #1C1917 !important;
+    text-decoration: none !important;
   }
   a::after {
-    content: " (" attr(href) ")";
-    font-size: 9pt;
-    color: #666;
+    content: " (" attr(href) ")" !important;
+    font-size: 8pt !important;
+    color: #666 !important;
   }
   a[href^="mailto"]::after,
-  a[href^="/"]::after {
-    display: none;
+  a[href^="/"]::after,
+  a[href^="#"]::after {
+    display: none !important;
+  }
+  .max-w-3xl {
+    max-width: 100% !important;
   }
 }
