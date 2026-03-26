@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ease, viewportOnce } from "@/lib/motion";
+import { DownloadPDFButton } from "@/components/DownloadPDFButton";
 
 interface CoverLetter {
   company: string;
@@ -119,12 +120,12 @@ export default function ResumePage() {
   return (
     <div className="pt-24 pb-16">
       <div className="mx-auto max-w-3xl px-6">
-        {/* Back link */}
+        {/* Back link + Download */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease }}
-          className="mb-12"
+          className="mb-12 flex items-center justify-between gap-4 flex-wrap"
         >
           <Link
             href="/"
@@ -132,6 +133,10 @@ export default function ResumePage() {
           >
             &larr; Back to nicdemore.com
           </Link>
+          <DownloadPDFButton
+            label={letter ? `Download Cover Letter — ${letter.company}` : "Download Resume as PDF"}
+            filename={letter ? `nic-demore-cover-letter-${companySlug}` : "nic-demore-resume"}
+          />
         </motion.div>
 
         {/* Header */}
@@ -223,6 +228,25 @@ export default function ResumePage() {
                 </motion.div>
               ))}
             </div>
+          </div>
+        </motion.div>
+
+        {/* Value section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.6, ease }}
+          className="mb-20 resume-section"
+        >
+          <h2 className="font-display text-2xl text-ink mb-6">The Value I Bring to the Table</h2>
+          <div className="space-y-3 text-ink-muted leading-relaxed">
+            <p>
+              A mechanical engineering foundation means I think in systems and constraints — I see the structure underneath things. A decade of agency work means I know how to operate under pressure, serve demanding stakeholders, and ship. And a year of daily, deep work building AI-native infrastructure means I&apos;m not just using these tools — I&apos;m building on top of them.
+            </p>
+            <p>
+              I bring the unusual combination of builder, operator, and strategic thinker to every problem. I can go deep technically and surface commercially. I&apos;ve built things from zero, run teams, served enterprise clients, and built the kind of AI infrastructure most people are still theorizing about.
+            </p>
           </div>
         </motion.div>
 
