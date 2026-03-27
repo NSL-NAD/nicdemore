@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
 
@@ -159,8 +159,19 @@ function CardContent({
   lineWidth: MotionValue<string>;
   align: "left" | "right";
 }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div className="pb-10">
+    <motion.div
+      className="pb-10 p-4 rounded-sm transition-colors duration-300"
+      style={{
+        border: `1px solid ${hovered ? 'var(--color-accent)' : 'transparent'}`,
+        boxShadow: hovered ? '0 8px 30px rgba(244,99,30,0.12)' : 'none',
+      }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {/* Year badge */}
       <span
         className={`inline-block font-mono text-xs tracking-wide px-2 py-0.5 rounded-sm mb-2 ${
@@ -232,7 +243,7 @@ function CardContent({
           </span>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -240,9 +251,14 @@ export function BriefHistory() {
   return (
     <section
       id="skillset"
-      className="py-24 sm:py-32 lg:py-40"
-      style={{ background: 'var(--color-base)' }}
+      className="py-24 sm:py-32 lg:py-40 section-glow"
+      style={{ background: 'var(--color-base)', position: 'relative' }}
     >
+      {/* Grid markers — architectural detail */}
+      <span className="grid-marker" style={{ top: '24px', left: '16px' }}>+</span>
+      <span className="grid-marker" style={{ top: '24px', right: '16px' }}>+</span>
+      <span className="grid-marker" style={{ bottom: '24px', left: '16px' }}>+</span>
+      <span className="grid-marker" style={{ bottom: '24px', right: '16px' }}>+</span>
       <div className="mx-auto max-w-6xl px-6">
         {/* Section header */}
         <div className="mb-16">
@@ -254,7 +270,7 @@ export function BriefHistory() {
             className="block text-xs tracking-widest uppercase mb-4"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
           >
-            02 / My Skillset
+            // My Skillset
           </motion.span>
 
           <motion.h2

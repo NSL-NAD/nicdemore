@@ -3,11 +3,12 @@ import { motion } from 'framer-motion';
 import { ventures, type VentureStatus } from '@/data/ventures';
 
 const statusLabels: Record<VentureStatus, string> = {
-  LIVE:    '[LIVE]  ',
-  BUILD:   '[BUILD] ',
-  TEST:    '[TEST]  ',
-  QUEUE:   '[QUEUE] ',
-  STEALTH: '[████]  ',
+  LIVE:    '[LIVE]   ',
+  BUILD:   '[BUILD]  ',
+  TEST:    '[TEST]   ',
+  QUEUE:   '[QUEUE]  ',
+  STEALTH: '[████]   ',
+  CONCEPT: '[CONCEPT]',
 };
 
 interface Props {

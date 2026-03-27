@@ -12,6 +12,7 @@ function StatusDot({ status }: { status: VentureStatus }) {
     TEST:    '#4A90D9',
     QUEUE:   'var(--color-text-light)',
     STEALTH: 'var(--color-border)',
+    CONCEPT: 'var(--color-text-light)',
   };
   return (
     <span
@@ -28,6 +29,7 @@ function StatusBadge({ status }: { status: VentureStatus }) {
     TEST:    'Testing',
     QUEUE:   'Queued',
     STEALTH: '████████',
+    CONCEPT: 'Concept',
   };
   return (
     <span
@@ -58,7 +60,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
       transition={{ duration: 0.5, ease: EASING_PREMIUM, delay: index * 0.07 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative overflow-hidden cursor-default flex flex-col"
+      className="relative overflow-hidden cursor-default flex flex-col h-full"
       style={{
         border: '1px solid var(--color-border)',
         background: hovered ? 'var(--color-forest)' : 'var(--color-base)',
@@ -199,7 +201,7 @@ export function Ventures() {
             className="block text-xs tracking-widest uppercase mb-4"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
           >
-            03 / Ventures
+            // Ventures
           </motion.span>
 
           <motion.h2
@@ -251,7 +253,7 @@ export function Ventures() {
             style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
           >
             {ventures.filter(v => v.status === 'LIVE').length} Live ·{' '}
-            {ventures.filter(v => v.status === 'BUILD').length} Building ·{' '}
+            {ventures.filter(v => v.status === 'BUILD' || v.status === 'TEST').length} Building ·{' '}
             {new Date().getFullYear()}
           </span>
           <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />

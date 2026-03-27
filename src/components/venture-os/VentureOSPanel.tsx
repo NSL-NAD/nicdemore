@@ -1,6 +1,8 @@
 "use client";
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ventures, type VentureStatus } from '@/data/ventures';
+import { ventureOSFeed } from '@/data/ventureOSFeed';
 
 const statusColors: Record<VentureStatus, string> = {
   LIVE:    '#F4631E',
@@ -8,6 +10,7 @@ const statusColors: Record<VentureStatus, string> = {
   TEST:    '#4A90D9',
   QUEUE:   'var(--color-text-light)',
   STEALTH: 'var(--color-border)',
+  CONCEPT: 'var(--color-text-light)',
 };
 
 const statusLabels: Record<VentureStatus, string> = {
@@ -16,6 +19,7 @@ const statusLabels: Record<VentureStatus, string> = {
   TEST:    'TEST',
   QUEUE:   'QUEUE',
   STEALTH: '████',
+  CONCEPT: 'CONCEPT',
 };
 
 interface Props {
@@ -24,7 +28,18 @@ interface Props {
 
 export function VentureOSPanel({ onClose }: Props) {
   const liveCount = ventures.filter(v => v.status === 'LIVE').length;
-  const buildCount = ventures.filter(v => v.status === 'BUILD').length;
+  const buildCount = ventures.filter(v => v.status === 'BUILD' || v.status === 'TEST').length;
+  const [feedIndex, setFeedIndex] = useState(0);
+
+  // Cycle through feed items every 4.5s
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setFeedIndex(i => (i + 1) % ventureOSFeed.length);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const currentFeed = ventureOSFeed[feedIndex];
 
   return (
     <motion.div
@@ -69,6 +84,42 @@ export function VentureOSPanel({ onClose }: Props) {
         >
           ×
         </button>
+      </div>
+
+      {/* Live Feed — cycling activity item */}
+      <div
+        className="px-4 py-2.5 border-b overflow-hidden"
+        style={{ borderColor: 'var(--color-border)', minHeight: '52px' }}
+      >
+        <div
+          className="text-xs mb-1 flex items-center gap-1.5"
+          style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
+        >
+          <span className="pulse-dot inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-accent)' }} />
+          Activity Feed
+        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentFeed.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p
+              className="text-xs leading-snug"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-syne)', fontSize: '11px' }}
+            >
+              {currentFeed.event}
+            </p>
+            <p
+              className="text-xs mt-0.5"
+              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '9px' }}
+            >
+              {currentFeed.venture}
+            </p>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Ventures list */}

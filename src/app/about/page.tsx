@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { EASING_PREMIUM } from "@/lib/motion";
+import { useRetro } from "@/contexts/RetroContext";
 
 const cards = [
   {
@@ -67,8 +68,15 @@ function FloatingCard({
   index: number;
 }) {
   const [hovered, setHovered] = useState(false);
+  const { isRetro } = useRetro();
   const pos = cardPositions[index];
   const drift = driftKeyframes[index];
+
+  const hoverBorder = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
+  const hoverGlow = isRetro
+    ? '0 0 16px rgba(0,229,255,0.35), 0 0 40px rgba(0,229,255,0.12), var(--shadow-lg)'
+    : '0 0 20px rgba(244, 99, 30, 0.15), var(--shadow-lg)';
+  const hoverTitleColor = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
 
   return (
     <motion.div
@@ -96,16 +104,14 @@ function FloatingCard({
         ...pos,
         transform: index === 6 ? 'translateX(-50%)' : undefined,
         background: 'var(--color-surface)',
-        border: `1px solid ${hovered ? 'var(--color-accent)' : 'var(--color-border)'}`,
-        boxShadow: hovered
-          ? '0 0 20px rgba(244, 99, 30, 0.15), var(--shadow-lg)'
-          : 'var(--shadow-sm)',
+        border: `1px solid ${hovered ? hoverBorder : 'var(--color-border)'}`,
+        boxShadow: hovered ? hoverGlow : 'var(--shadow-sm)',
         zIndex: hovered ? 20 : 10,
       }}
     >
       <h3
         className="font-display font-bold text-sm mb-2"
-        style={{ color: hovered ? 'var(--color-accent)' : 'var(--color-text-primary)' }}
+        style={{ color: hovered ? hoverTitleColor : 'var(--color-text-primary)' }}
       >
         {card.title}
       </h3>
@@ -153,7 +159,7 @@ export default function AboutPage() {
             className="block text-xs tracking-widest uppercase mb-4"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
           >
-            About
+            // About
           </span>
           <h1
             data-neon-header="pink"
@@ -260,6 +266,54 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
+
+        {/* Narrative section — below the floating cards area */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.7, ease: EASING_PREMIUM }}
+          className="mt-24 mx-auto max-w-2xl"
+        >
+          <div className="h-px mb-12" style={{ background: 'var(--color-border)' }} />
+
+          <span
+            className="block text-xs tracking-widest uppercase mb-8"
+            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+          >
+            // Philosophy
+          </span>
+
+          <div className="space-y-6" style={{ color: 'var(--color-text-secondary)', lineHeight: '1.8' }}>
+            <p className="text-base">
+              I believe the best work comes from people who genuinely care — not just about shipping, but about what the thing they&apos;re building does in the world. That&apos;s been my north star since I started my first business at 18, and it&apos;s the lens I bring to everything I build now.
+            </p>
+            <p className="text-base">
+              The mechanical engineering background wasn&apos;t just a degree. It was a way of seeing. Systems. Constraints. Forces in tension. You learn to ask: what is this thing actually doing, and will it hold? That question applies to code, to organizations, to strategy, to life.
+            </p>
+            <p className="text-base">
+              Nine years running Margle taught me that building a business is a deeply human project. You can have the best strategy in the world — but if you can&apos;t build a team that trusts each other, none of it works. I learned operations, finance, client management, and leadership the hard way: by doing all of it, at the same time, under real pressure.
+            </p>
+            <p className="text-base">
+              Now I&apos;m building AI-native infrastructure and purpose-driven ventures. Not because it&apos;s trendy — because I genuinely believe this is the moment where the tools exist to do good work at a scale that wasn&apos;t possible before. That excites me every day.
+            </p>
+          </div>
+
+          <div className="mt-12 pt-8" style={{ borderTop: '1px solid var(--color-border)' }}>
+            <p
+              className="text-sm"
+              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-dm-serif)', fontStyle: 'italic', fontSize: '16px' }}
+            >
+              &ldquo;Always do your best. Leave things better than you found them. It really is a beautiful life.&rdquo;
+            </p>
+            <p
+              className="text-xs mt-3"
+              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+            >
+              — Personal operating system, circa always
+            </p>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

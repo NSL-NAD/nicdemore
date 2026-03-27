@@ -2,10 +2,9 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
+import { EASING_PREMIUM } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { VaporwaveSun } from "@/components/VaporwaveSun";
 
 const words = ["Builder.", "Engineer.", "Founder."];
 
@@ -211,6 +210,8 @@ export function Hero() {
   // Parallax depth: h1 and h2 move at slightly different scroll rates
   const h1Y = useTransform(scrollYProgress, [0, 1], [0, 30]);
   const h2Y = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  // Grid background moves slightly slower than scroll (parallax depth)
+  const gridY = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
   return (
     <section
@@ -219,14 +220,11 @@ export function Hero() {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ background: 'var(--color-base)' }}
     >
-      {/* Subtle grid lines background */}
-      <div className="absolute inset-0 grid-lines opacity-60" aria-hidden="true" />
+      {/* Subtle grid lines background — slow parallax scroll */}
+      <motion.div className="absolute inset-0 grid-lines opacity-70" aria-hidden="true" style={{ y: gridY }} />
 
       {/* Spotlight glow that follows mouse */}
       <SpotlightGlow />
-
-      {/* Vaporwave Sun — retro mode only */}
-      <VaporwaveSun />
 
       <motion.div
         style={{ opacity: heroOpacity, y: heroY }}
@@ -243,7 +241,7 @@ export function Hero() {
               className="font-mono text-xs tracking-widest uppercase mb-3"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
             >
-              01 / Overview
+              // Overview
             </motion.p>
 
             <motion.h1
@@ -348,7 +346,7 @@ export function Hero() {
               className="text-xs tracking-widest uppercase mb-4"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
             >
-              01 / Overview
+              // Overview
             </motion.p>
 
             <motion.h1
@@ -371,7 +369,7 @@ export function Hero() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="mb-10 space-y-0"
+              className="mb-4 space-y-0"
               style={{ y: h2Y }}
             >
               {words.map((word, i) => (
@@ -417,7 +415,7 @@ export function Hero() {
               >
                 <a
                   href="#work"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
+                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                   style={{
                     background: 'var(--color-accent)',
                     color: '#fff',
@@ -426,11 +424,11 @@ export function Hero() {
                   }}
                 >
                   See my work
-                  <span>↓</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1">↓</span>
                 </a>
                 <a
                   href="#contact"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all underline-reveal"
+                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all underline-reveal hover:bg-[var(--color-text-primary)] hover:text-[var(--color-base)]"
                   style={{
                     color: 'var(--color-text-primary)',
                     border: '1px solid var(--color-border)',
@@ -438,7 +436,7 @@ export function Hero() {
                   }}
                 >
                   Get in touch
-                  <span>→</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                 </a>
               </motion.div>
             </motion.div>

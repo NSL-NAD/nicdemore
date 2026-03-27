@@ -53,6 +53,12 @@ export function Navigation() {
     return () => observer.disconnect();
   }, [isHome]);
 
+  // Body scroll lock when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
+
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
       if (isHome) {
@@ -200,8 +206,9 @@ export function Navigation() {
               transition={{ duration: 0.2, ease }}
               className="fixed inset-0 top-16 backdrop-blur-md md:hidden z-30"
               style={{ background: 'color-mix(in srgb, var(--color-base) 96%, transparent)' }}
+              onClick={() => setMobileOpen(false)}
             >
-              <nav className="flex flex-col items-center justify-center h-full gap-8">
+              <nav className="flex flex-col items-center justify-center h-full gap-8" onClick={e => e.stopPropagation()}>
                 {sections.map((section) => {
                   const href = isHome ? `#${section.id}` : `/#${section.id}`;
                   return (

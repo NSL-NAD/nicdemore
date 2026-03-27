@@ -83,7 +83,7 @@ export function Contact() {
   return (
     <section
       id="contact"
-      className="py-24 sm:py-32 lg:py-40"
+      className="py-24 sm:py-32 lg:py-40 section-glow"
       style={{ background: 'var(--color-base)' }}
     >
       <div className="mx-auto max-w-4xl px-6">
@@ -96,7 +96,7 @@ export function Contact() {
             className="block text-xs tracking-widest uppercase mb-6"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
           >
-            06 / Contact
+            // Contact
           </motion.span>
 
           <motion.h2

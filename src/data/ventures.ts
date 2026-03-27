@@ -1,4 +1,4 @@
-export type VentureStatus = 'LIVE' | 'BUILD' | 'TEST' | 'QUEUE' | 'STEALTH'
+export type VentureStatus = 'LIVE' | 'BUILD' | 'TEST' | 'QUEUE' | 'STEALTH' | 'CONCEPT'
 
 export interface Venture {
   id: string
@@ -70,8 +70,8 @@ export const ventures: Venture[] = [
     id: 'blue-hut',
     name: 'Blue Hut',
     shortName: 'blue-hut',
-    status: 'BUILD',
-    description: 'A synthwave escape. Concept in development.',
+    status: 'CONCEPT',
+    description: 'A synthwave-aesthetic retreat concept. Retrowave meets architecture.',
     year: '2026–',
     tags: ['Concept', 'Brand'],
   },
