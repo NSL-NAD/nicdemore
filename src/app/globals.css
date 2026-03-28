@@ -553,25 +553,42 @@ img {
 }
 
 /* ===================================================
-   INTERACTIVE GRID — mouse-follow architectural grid
+   FROSTED GLASS CARD — hero subhead + buttons
    =================================================== */
-.interactive-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(28, 25, 23, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28, 25, 23, 0.045) 1px, transparent 1px);
-  background-size: 40px 40px;
-  -webkit-mask-image: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), black 20%, transparent 80%);
-  mask-image: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), black 20%, transparent 80%);
+.frosted-card {
+  background: color-mix(in srgb, var(--color-base) 60%, transparent);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-[data-theme="retro"] .interactive-grid {
-  background-image:
-    linear-gradient(rgba(0, 229, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 229, 255, 0.08) 1px, transparent 1px);
+.frosted-card:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  box-shadow: 0 0 30px rgba(244, 99, 30, 0.06), 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="retro"] .frosted-card {
+  background: rgba(10, 10, 20, 0.55);
+  border-color: rgba(0, 229, 255, 0.15);
+}
+
+[data-theme="retro"] .frosted-card:hover {
+  border-color: rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.1), 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* ===================================================
+   HERO BUTTON — "Get in touch" outline hover fix
+   =================================================== */
+.hero-btn-outline {
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease !important;
+}
+
+.hero-btn-outline:hover {
+  color: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  background: color-mix(in srgb, var(--color-accent) 6%, transparent);
 }
 
 /* ===================================================
