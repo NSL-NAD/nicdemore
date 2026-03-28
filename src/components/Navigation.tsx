@@ -89,7 +89,7 @@ export function Navigation() {
           borderColor: 'var(--color-border)',
         } : undefined}
       >
-        <nav className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+        <nav className="mx-auto max-w-7xl px-1.5 h-16 flex items-center justify-between">
           {/* Logo + Location */}
           <div className="flex items-center gap-3">
             <Link
@@ -126,13 +126,13 @@ export function Navigation() {
                   key={section.id}
                   href={href}
                   onClick={(e) => handleNavClick(e, section.id)}
-                  className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase transition-colors ${
+                  className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
                     isActive
-                      ? "text-primary"
-                      : "text-muted hover:text-primary"
+                      ? "text-primary font-bold"
+                      : "text-muted font-medium"
                   }`}
                   style={{
-                    color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                    color: isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                     fontFamily: 'var(--font-jetbrains)',
                     fontSize: '11px',
                     letterSpacing: '0.08em',
@@ -154,11 +154,11 @@ export function Navigation() {
             {/* About page link */}
             <Link
               href="/about"
-              className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase transition-colors ${
-                pathname === '/about' ? 'text-primary' : 'text-muted hover:text-primary'
+              className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
+                pathname === '/about' ? 'text-primary font-bold' : 'text-muted font-medium'
               }`}
               style={{
-                color: pathname === '/about' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                color: pathname === '/about' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                 fontFamily: 'var(--font-jetbrains)',
                 fontSize: '11px',
                 letterSpacing: '0.08em',

@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { EASING_PREMIUM } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { HeroGrid } from "@/components/HeroGrid";
 
 const words = ["Builder.", "Engineer.", "Founder."];
 
@@ -176,10 +177,12 @@ export function Hero() {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ background: 'var(--color-base)' }}
     >
+      {/* Interactive dot grid background */}
+      <HeroGrid />
 
       <motion.div
         style={{ opacity: heroOpacity, y: heroY }}
-        className="relative w-full mx-auto max-w-7xl px-6 pt-28 pb-16 md:pt-32 md:pb-20"
+        className="relative w-full mx-auto max-w-7xl px-1.5 pt-28 pb-16 md:pt-32 md:pb-20"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6">
@@ -220,11 +223,12 @@ export function Hero() {
                 <motion.div
                   key={word}
                   variants={wordVariants}
-                  className="font-display font-bold leading-tight"
+                  className="font-display font-black"
                   style={{
                     fontSize: 'clamp(28px, 8vw, 48px)',
+                    lineHeight: '0.9',
                     color: i === 0 ? 'var(--color-accent)' : 'var(--color-text-primary)',
-                    letterSpacing: '-0.01em',
+                    letterSpacing: '-0.02em',
                   }}
                 >
                   {word}
@@ -311,7 +315,7 @@ export function Hero() {
                 color: 'var(--color-text-primary)',
                 letterSpacing: '-0.035em',
                 y: h1Y,
-                zIndex: 1,
+                zIndex: 2,
                 position: 'relative',
                 textShadow: '0 2px 20px rgba(0,0,0,0.3), 0 0 40px rgba(244,99,30,0.08)',
               }}
@@ -323,18 +327,19 @@ export function Hero() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="mb-4 space-y-0"
+              className="mb-4"
               style={{ y: h2Y }}
             >
               {words.map((word, i) => (
                 <motion.div
                   key={word}
                   variants={wordVariants}
-                  className="font-display font-bold leading-tight"
+                  className="font-display font-black"
                   style={{
                     fontSize: 'clamp(36px, 4vw, 56px)',
+                    lineHeight: '0.9',
                     color: i === 0 ? 'var(--color-accent)' : 'var(--color-text-primary)',
-                    letterSpacing: '-0.01em',
+                    letterSpacing: '-0.02em',
                   }}
                 >
                   {word}
@@ -344,9 +349,9 @@ export function Hero() {
           </motion.div>
 
           {/* Two columns: left = body + CTAs, right = video */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-10 md:items-start lg:items-stretch">
+          <div className="grid md:grid-cols-[1fr_1.4fr] gap-6 lg:gap-8 md:items-start">
             {/* Left: body copy + CTA buttons */}
-            <motion.div style={{ x: textX }}>
+            <motion.div style={{ x: textX }} className="pt-2">
               <motion.p
                 variants={fadeUp}
                 custom={1.0}
@@ -382,7 +387,7 @@ export function Hero() {
                 </a>
                 <a
                   href="#contact"
-                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-colors duration-200 hover:bg-[var(--color-text-primary)] hover:text-[var(--color-base)]"
+                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all duration-200 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
                   style={{
                     color: 'var(--color-text-primary)',
                     border: '1px solid var(--color-border)',
@@ -395,15 +400,16 @@ export function Hero() {
               </motion.div>
             </motion.div>
 
-            {/* Right: Hero Video — large, prominent */}
+            {/* Right: Hero Video — much larger, overlapped by H1 */}
             <motion.div
-              style={{ x: videoX, y: videoY, marginTop: '-80px', zIndex: 0, position: 'relative', height: '100%' }}
+              style={{ x: videoX, y: videoY, marginTop: '-140px', zIndex: 0, position: 'relative' }}
               className="relative"
             >
               <motion.div
                 initial={{ opacity: 0, scale: 0.96, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.9, delay: 0.25, ease: EASING_PREMIUM }}
+                style={{ minHeight: '400px', height: '100%' }}
               >
                 <HeroVideoPlayer />
               </motion.div>

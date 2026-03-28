@@ -536,6 +536,14 @@ img {
 }
 
 /* ===================================================
+   NAV LINK HOVER — orange accent on hover
+   =================================================== */
+.nav-link-hover:hover {
+  color: var(--color-accent) !important;
+  font-weight: 700;
+}
+
+/* ===================================================
    PING KEYFRAME — availability indicator pulse
    =================================================== */
 @keyframes ping {
