@@ -322,7 +322,7 @@ export function Hero() {
               </a>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all underline-reveal"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-colors duration-200"
                 style={{
                   color: 'var(--color-text-primary)',
                   border: '1px solid var(--color-border)',
@@ -437,7 +437,7 @@ export function Hero() {
                 </a>
                 <a
                   href="#contact"
-                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all underline-reveal hover:bg-[var(--color-text-primary)] hover:text-[var(--color-base)]"
+                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-colors duration-200 hover:bg-[var(--color-text-primary)] hover:text-[var(--color-base)]"
                   style={{
                     color: 'var(--color-text-primary)',
                     border: '1px solid var(--color-border)',

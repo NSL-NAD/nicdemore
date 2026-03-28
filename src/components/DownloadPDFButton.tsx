@@ -14,7 +14,7 @@ export function DownloadPDFButton({ label = "Download as PDF", filename = "nic-d
       setTimeout(() => {
         document.title = originalTitle;
       }, 500);
-    }, 100);
+    }, 300);
   };
 
   return (

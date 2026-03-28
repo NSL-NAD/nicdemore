@@ -107,8 +107,8 @@ function TimelineCard({
         isLeft ? '' : ''
       }`}
     >
-      {/* LEFT COLUMN */}
-      <div className={`${isLeft ? 'md:pr-8' : 'md:col-start-3 md:pl-8'} ${!isLeft ? 'hidden md:block' : ''}`}>
+      {/* LEFT COLUMN — desktop only */}
+      <div className={`hidden md:block ${isLeft ? 'md:pr-8' : 'md:col-start-3 md:pl-8'}`}>
         {isLeft && (
           <div className="md:text-right">
             <CardContent item={item} lineWidth={lineWidth} align="right" />
@@ -124,10 +124,9 @@ function TimelineCard({
       {/* CENTER SPINE — desktop only */}
       <div className="hidden md:flex flex-col items-center">
         <div
-          className="w-3 h-3 rounded-full border-2 z-10 shrink-0 mt-1"
+          className="w-3 h-3 rounded-full z-10 shrink-0 mt-1"
           style={{
-            background: item.accent ? 'var(--color-accent)' : 'var(--color-base)',
-            borderColor: item.accent ? 'var(--color-accent)' : 'var(--color-border)',
+            background: 'var(--color-accent)',
           }}
         />
       </div>
@@ -139,10 +138,9 @@ function TimelineCard({
       <div className="md:hidden pl-8 relative">
         {/* Timeline dot — mobile */}
         <div
-          className="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 z-10"
+          className="absolute left-0 top-1.5 w-3 h-3 rounded-full z-10"
           style={{
-            background: item.accent ? 'var(--color-accent)' : 'var(--color-base)',
-            borderColor: item.accent ? 'var(--color-accent)' : 'var(--color-border)',
+            background: 'var(--color-accent)',
           }}
         />
         <CardContent item={item} lineWidth={lineWidth} align="left" />

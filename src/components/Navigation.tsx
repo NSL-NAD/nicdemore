@@ -111,7 +111,7 @@ export function Navigation() {
                   key={section.id}
                   href={href}
                   onClick={(e) => handleNavClick(e, section.id)}
-                  className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase underline-reveal transition-colors ${
+                  className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase transition-colors ${
                     isActive
                       ? "text-primary"
                       : "text-muted hover:text-primary"
@@ -139,7 +139,7 @@ export function Navigation() {
             {/* About page link */}
             <Link
               href="/about"
-              className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase underline-reveal transition-colors ${
+              className={`relative px-3 py-2 text-xs font-medium tracking-widest uppercase transition-colors ${
                 pathname === '/about' ? 'text-primary' : 'text-muted hover:text-primary'
               }`}
               style={{
