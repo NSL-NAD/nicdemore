@@ -18,8 +18,22 @@ const sections = [
 
 // Cinematic entrance — nav drops in last, after hero elements
 const Z_DROP_EASE = [0.16, 1, 0.3, 1] as const;
-const NAV_ENTER_DELAY = 5.0; // doubled — nav drops last after hero builds
-const NAV_STAGGER = 0.08;
+
+// Randomized nav timing — elements land alongside hero elements
+// Logo lands with h2 (~1.2s), links scatter across 1.5-3.5s window
+// Durations vary so landings feel organic
+const NAV_TIMINGS = [
+  { delay: 1.2, dur: 1.4 },  // 0: Logo + coords — lands with h2
+  { delay: 1.8, dur: 1.0 },  // 1: Overview link
+  { delay: 2.3, dur: 0.8 },  // 2: My Skillset — fast
+  { delay: 1.9, dur: 1.2 },  // 3: Ventures
+  { delay: 2.6, dur: 0.9 },  // 4: Architecture — lands with buttons
+  { delay: 2.1, dur: 1.1 },  // 5: Contact
+  { delay: 2.4, dur: 1.0 },  // 6: About
+  { delay: 1.6, dur: 1.5 },  // 7: Available indicator — slow, lands with card
+  { delay: 2.0, dur: 1.3 },  // 8: Retro toggle — lands with card
+  { delay: 2.5, dur: 0.9 },  // 9: Mobile hamburger
+];
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -80,21 +94,24 @@ export function Navigation() {
     [isHome]
   );
 
-  const navItemDrop = (index: number) => ({
-    initial: { opacity: 0, scale: 1.1, filter: 'blur(3px)' },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      filter: 'blur(0px)',
-      transition: {
-        duration: 1.0,
-        ease: Z_DROP_EASE,
-        delay: NAV_ENTER_DELAY + index * NAV_STAGGER,
-        opacity: { duration: 0.5, delay: NAV_ENTER_DELAY + index * NAV_STAGGER },
-        filter: { duration: 0.6, delay: NAV_ENTER_DELAY + index * NAV_STAGGER },
+  const navItemDrop = (index: number) => {
+    const t = NAV_TIMINGS[Math.min(index, NAV_TIMINGS.length - 1)];
+    return {
+      initial: { opacity: 0, scale: 1.12, filter: 'blur(3px)' },
+      animate: {
+        opacity: 1,
+        scale: 1,
+        filter: 'blur(0px)',
+        transition: {
+          duration: t.dur,
+          ease: Z_DROP_EASE,
+          delay: t.delay,
+          opacity: { duration: t.dur * 0.5, delay: t.delay },
+          filter: { duration: t.dur * 0.6, delay: t.delay },
+        },
       },
-    },
-  });
+    };
+  };
 
   return (
     <>
@@ -110,7 +127,7 @@ export function Navigation() {
           borderColor: 'var(--color-border)',
         } : undefined}
       >
-        <nav className="mx-auto px-6 h-16 flex items-center justify-between">
+        <nav className="mx-auto px-12 h-16 flex items-center justify-between">
           {/* Logo + Coordinates */}
           <motion.div
             {...navItemDrop(0)}
