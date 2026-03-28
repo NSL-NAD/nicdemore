@@ -54,19 +54,20 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.97 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 80 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, ease: EASING_PREMIUM, delay: index * 0.07 }}
-      whileHover={{ y: -2 }}
+      transition={{ duration: 0.55, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
+      whileHover={{
+        y: -6,
+        boxShadow: '0 20px 40px rgba(0,0,0,0.12), 0 0 0 1px var(--color-accent)',
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative overflow-hidden cursor-default flex flex-col h-full"
       style={{
         border: '1px solid var(--color-border)',
-        background: hovered ? 'var(--color-forest)' : 'var(--color-base)',
-        boxShadow: hovered ? '0 0 0 1px var(--color-accent), var(--shadow-md)' : 'none',
-        transition: 'background 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease',
+        background: 'var(--color-base)',
       }}
     >
       {/* Accent top line — reveals on hover */}
@@ -81,8 +82,8 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
       <div className="p-6 sm:p-8 flex flex-col flex-1">
         <div className="flex items-start justify-between gap-4 mb-4">
           <h3
-            className="font-display font-bold text-xl leading-tight transition-colors duration-300"
-            style={{ color: hovered ? '#FAF9F6' : 'var(--color-text-primary)' }}
+            className="font-display font-bold text-xl leading-tight"
+            style={{ color: 'var(--color-text-primary)' }}
           >
             {venture.name}
           </h3>
@@ -90,8 +91,8 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
         </div>
 
         <p
-          className="text-sm leading-relaxed mb-5 transition-colors duration-300 flex-1"
-          style={{ color: hovered ? 'rgba(242, 237, 229, 0.75)' : 'var(--color-text-secondary)' }}
+          className="text-sm leading-relaxed mb-5 flex-1"
+          style={{ color: 'var(--color-text-secondary)' }}
         >
           {venture.description}
         </p>
@@ -102,14 +103,14 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
             {venture.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs px-2 py-0.5 rounded-sm transition-colors duration-300"
+                className="text-xs px-2 py-0.5 rounded-sm"
                 style={{
                   fontFamily: 'var(--font-jetbrains)',
                   fontSize: '10px',
                   letterSpacing: '0.06em',
-                  background: hovered ? 'rgba(255,255,255,0.08)' : 'var(--color-surface)',
-                  color: hovered ? 'rgba(242, 237, 229, 0.6)' : 'var(--color-text-secondary)',
-                  border: `1px solid ${hovered ? 'rgba(255,255,255,0.12)' : 'var(--color-border)'}`,
+                  background: 'var(--color-surface)',
+                  color: 'var(--color-text-secondary)',
+                  border: '1px solid var(--color-border)',
                 }}
               >
                 {tag}
@@ -124,14 +125,14 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
             {venture.stack.map((tech) => (
               <span
                 key={tech}
-                className="text-xs px-2 py-0.5 rounded-sm transition-colors duration-300"
+                className="text-xs px-2 py-0.5 rounded-sm"
                 style={{
                   fontFamily: 'var(--font-jetbrains)',
                   fontSize: '10px',
                   letterSpacing: '0.06em',
-                  color: hovered ? 'var(--color-accent)' : 'var(--color-accent)',
-                  background: hovered ? 'rgba(244, 99, 30, 0.15)' : 'transparent',
-                  border: `1px solid ${hovered ? 'rgba(244, 99, 30, 0.3)' : 'rgba(244, 99, 30, 0.25)'}`,
+                  color: 'var(--color-accent)',
+                  background: 'transparent',
+                  border: '1px solid rgba(244, 99, 30, 0.25)',
                 }}
               >
                 {tech}
@@ -147,7 +148,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
             style={{
               fontFamily: 'var(--font-jetbrains)',
               fontSize: '10px',
-              color: hovered ? 'rgba(242,237,229,0.4)' : 'var(--color-text-light)',
+              color: 'var(--color-text-light)',
             }}
           >
             {venture.year}
@@ -157,21 +158,21 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
               href={venture.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium transition-colors duration-300"
+              className="inline-flex items-center gap-1.5 text-xs font-medium transition-colors duration-200 hover:text-[var(--color-accent)]"
               style={{
-                color: hovered ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                color: 'var(--color-text-secondary)',
                 fontFamily: 'var(--font-syne)',
                 fontSize: '12px',
               }}
             >
               Visit
-              <span className="transition-transform group-hover:translate-x-1">→</span>
+              <span>→</span>
             </a>
           ) : (
             <span
               className="text-xs italic"
               style={{
-                color: hovered ? 'rgba(242,237,229,0.35)' : 'var(--color-text-light)',
+                color: 'var(--color-text-light)',
                 fontFamily: 'var(--font-dm-serif)',
                 fontSize: '12px',
               }}
@@ -212,11 +213,12 @@ export function Ventures() {
             viewport={viewportOnce}
             transition={{ duration: 0.55, ease: EASING_SMOOTH }}
             data-neon-header="pink"
-            className="font-display font-bold mb-4"
+            className="font-display font-extrabold mb-4"
             style={{
-              fontSize: 'clamp(36px, 5vw, 56px)',
+              fontSize: 'clamp(36px, 4vw, 60px)',
               color: 'var(--color-text-primary)',
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.03em',
+              marginLeft: '-12px',
             }}
           >
             What I&apos;m Building

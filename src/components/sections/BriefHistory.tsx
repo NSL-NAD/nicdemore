@@ -68,18 +68,6 @@ const timeline: TimelineEntry[] = [
   },
 ];
 
-const skillGroups = [
-  { label: "Engineering", skills: ["Systems Architecture", "Mechanical Engineering", "Infrastructure Design", "Technical Operations", "Process Engineering", "Tolerance Analysis"] },
-  { label: "Digital Marketing", skills: ["Paid Search (SEM)", "Paid Social", "Organic Social", "Omnichannel Strategy", "Performance Marketing", "Media Planning", "Campaign Management", "Attribution Modeling"] },
-  { label: "Operations", skills: ["Business Operations", "Process Development", "Systems Design", "Workflow Automation", "Utilization Reporting", "Capacity Planning", "Vendor Management", "IT Management"] },
-  { label: "Finance & Accounting", skills: ["P&L Management", "Financial Forecasting", "Budgeting", "AR/AP", "Cashflow Management", "Margin Reporting", "Invoicing", "Cost Analysis", "Revenue Modeling"] },
-  { label: "Client & Account Management", skills: ["Account Management", "Client Strategy", "Client Reporting", "Relationship Management", "QBRs", "Retention Strategy", "Upsell Strategy", "Stakeholder Communication"] },
-  { label: "Business Strategy", skills: ["Business Strategy", "Market Analysis", "Competitive Research", "Revenue Strategy", "Business Forecasting", "OKR Frameworks", "Go-to-Market", "Pricing Strategy"] },
-  { label: "People & Leadership", skills: ["Direct Reports", "Leadership Team Development", "Performance Management", "HR Management", "Hiring & Onboarding", "Culture Building", "Team Structure", "Compensation Planning"] },
-  { label: "AI + Automation", skills: ["LLM Integration", "Agent Systems", "Prompt Engineering", "Autonomous Workflows", "AI Infrastructure", "MCP Protocols", "Agentic Ops"] },
-  { label: "Product + Ventures", skills: ["Product Management", "Venture Building", "MVP Development", "Growth Strategy", "Launch Strategy", "Marketplace Design", "SaaS Architecture"] },
-  { label: "Design + Architecture", skills: ["Home Design Education", "Spatial Design", "Materiality", "UI/UX Design", "Brand Development", "Visual Identity", "Architectural Principles"] },
-];
 
 function TimelineCard({
   item,
@@ -281,11 +269,12 @@ export function BriefHistory() {
             viewport={viewportOnce}
             transition={{ duration: 0.55, ease: EASING_SMOOTH }}
             data-neon-header="pink"
-            className="font-display font-bold mb-4"
+            className="font-display font-extrabold mb-4"
             style={{
-              fontSize: 'clamp(36px, 5vw, 56px)',
+              fontSize: 'clamp(36px, 4vw, 60px)',
               color: 'var(--color-text-primary)',
-              letterSpacing: '-0.02em',
+              letterSpacing: '-0.03em',
+              marginLeft: '-12px',
             }}
           >
             How I Got Here
@@ -329,69 +318,6 @@ export function BriefHistory() {
           </div>
         </div>
 
-        {/* Skills grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, ease: EASING_PREMIUM }}
-        >
-          <div className="flex items-center gap-4 mb-8">
-            <h3
-              className="font-display font-semibold text-lg"
-              style={{ color: 'var(--color-text-primary)' }}
-            >
-              Skill Areas
-            </h3>
-            <div className="flex-1 h-px" style={{ background: 'var(--color-border)' }} />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {skillGroups.map((group, i) => (
-              <motion.div
-                key={group.label}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={viewportOnce}
-                transition={{ duration: 0.45, ease: EASING_PREMIUM, delay: i * 0.05 }}
-                className="p-5 rounded-sm"
-                style={{
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border-subtle)',
-                }}
-              >
-                <div
-                  className="text-xs font-medium tracking-widest uppercase mb-3"
-                  style={{
-                    color: 'var(--color-accent)',
-                    fontFamily: 'var(--font-jetbrains)',
-                    fontSize: '10px',
-                    letterSpacing: '0.1em',
-                  }}
-                >
-                  {group.label}
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {group.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="text-xs px-2 py-1 rounded-sm"
-                      style={{
-                        background: 'var(--color-base)',
-                        color: 'var(--color-text-secondary)',
-                        fontFamily: 'var(--font-jetbrains)',
-                        fontSize: '11px',
-                        border: '1px solid var(--color-border)',
-                      }}
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   );

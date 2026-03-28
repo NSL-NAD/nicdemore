@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { EASING_PREMIUM } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
@@ -61,13 +61,14 @@ function HeroVideoPlayer() {
 
   return (
     <div
-      className="relative w-full group"
+      className="relative w-full group film-grain"
       style={{
         background: 'var(--color-surface)',
-        aspectRatio: '16/9',
         boxShadow: '0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)',
         borderRadius: '2px',
         overflow: 'hidden',
+        height: '100%',
+        minHeight: '280px',
       }}
     >
       <video
@@ -142,62 +143,10 @@ function HeroVideoPlayer() {
         NIC DEMORE — INTRO
       </div>
 
-      {/* Milwaukee, WI location tag — overlapping bottom-left of video */}
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        className="absolute bottom-4 left-4 rounded-lg px-3 py-2"
-        style={{
-          background: 'rgba(0,0,0,0.6)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          backdropFilter: 'blur(8px)',
-        }}
-      >
-        <p
-          className="text-xs font-bold mb-0.5"
-          style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '9px', letterSpacing: '0.08em' }}
-        >
-          BASED IN
-        </p>
-        <p
-          className="font-display font-semibold text-sm"
-          style={{ color: '#FAF9F6' }}
-        >
-          Milwaukee, WI
-        </p>
-      </motion.div>
     </div>
   );
 }
 
-function SpotlightGlow() {
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const hero = document.getElementById('overview');
-      if (!hero) return;
-      const rect = hero.getBoundingClientRect();
-      setMousePos({
-        x: (e.clientX - rect.left) / rect.width,
-        y: (e.clientY - rect.top) / rect.height,
-      });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  return (
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        background: `radial-gradient(600px circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, rgba(244, 99, 30, 0.04), transparent 70%)`,
-        transition: 'background 0.15s ease-out',
-      }}
-    />
-  );
-}
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -219,8 +168,6 @@ export function Hero() {
   // Parallax depth: h1 and h2 move at slightly different scroll rates
   const h1Y = useTransform(scrollYProgress, [0, 1], [0, 30]);
   const h2Y = useTransform(scrollYProgress, [0, 1], [0, 50]);
-  // Grid background moves slightly slower than scroll (parallax depth)
-  const gridY = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
   return (
     <section
@@ -229,11 +176,6 @@ export function Hero() {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ background: 'var(--color-base)' }}
     >
-      {/* Subtle grid lines background — slow parallax scroll */}
-      <motion.div className="absolute inset-0 grid-lines opacity-70" aria-hidden="true" style={{ y: gridY }} />
-
-      {/* Spotlight glow that follows mouse */}
-      <SpotlightGlow />
 
       <motion.div
         style={{ opacity: heroOpacity, y: heroY }}
@@ -369,6 +311,9 @@ export function Hero() {
                 color: 'var(--color-text-primary)',
                 letterSpacing: '-0.035em',
                 y: h1Y,
+                zIndex: 1,
+                position: 'relative',
+                textShadow: '0 2px 20px rgba(0,0,0,0.3), 0 0 40px rgba(244,99,30,0.08)',
               }}
             >
               Nic DeMore
@@ -399,7 +344,7 @@ export function Hero() {
           </motion.div>
 
           {/* Two columns: left = body + CTAs, right = video */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-10 md:items-start lg:items-center">
+          <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-10 md:items-start lg:items-stretch">
             {/* Left: body copy + CTA buttons */}
             <motion.div style={{ x: textX }}>
               <motion.p
@@ -452,7 +397,7 @@ export function Hero() {
 
             {/* Right: Hero Video — large, prominent */}
             <motion.div
-              style={{ x: videoX, y: videoY }}
+              style={{ x: videoX, y: videoY, marginTop: '-80px', zIndex: 0, position: 'relative', height: '100%' }}
               className="relative"
             >
               <motion.div
@@ -465,17 +410,22 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Cross-column accent — architectural detail, desktop only */}
-          <div className="hidden lg:flex items-center gap-3 mt-6" style={{
-            fontFamily: 'var(--font-jetbrains)',
-            fontSize: '9px',
-            letterSpacing: '0.18em',
-            color: 'var(--color-text-secondary)',
-            opacity: 0.5,
-          }}>
-            <div style={{ width: '32px', height: '1px', background: 'var(--color-accent)' }} />
-            <span>NIC DEMORE · GOOD AT SCALE STUDIO · MILWAUKEE WI</span>
-            <div style={{ flex: 1, height: '1px', background: 'var(--color-text-secondary)', opacity: 0.3 }} />
+          {/* Cross-column accent — architectural annotation, desktop only */}
+          <div className="hidden lg:flex items-center gap-2 mt-6">
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-accent)', opacity: 0.5, flexShrink: 0 }} />
+            <div style={{ width: '40px', height: '1px', background: 'var(--color-accent)', opacity: 0.4, flexShrink: 0 }} />
+            <span style={{
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '9px',
+              letterSpacing: '0.18em',
+              color: 'var(--color-text-secondary)',
+              opacity: 0.5,
+              textTransform: 'uppercase',
+            }}>
+              NIC DEMORE · GOOD AT SCALE STUDIO · MKE, WI · EST. 2017
+            </span>
+            <div style={{ width: '40px', height: '1px', background: 'var(--color-text-secondary)', opacity: 0.3, flexShrink: 0 }} />
+            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-text-secondary)', opacity: 0.3, flexShrink: 0 }} />
           </div>
         </div>
       </motion.div>

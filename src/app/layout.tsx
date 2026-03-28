@@ -7,6 +7,7 @@ import { Analytics } from "@/components/Analytics";
 import { RetroProvider } from "@/contexts/RetroContext";
 import { PersonSchema } from "@/components/PersonSchema";
 import { VentureOSWrapper } from "@/components/venture-os/VentureOSWrapper";
+import { InteractiveGrid } from "@/components/InteractiveGrid";
 import "./globals.css";
 
 const syne = Syne({
@@ -95,6 +96,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col antialiased overflow-x-hidden" style={{ background: 'var(--color-base)', color: 'var(--color-text-primary)' }}>
         <div className="grain-overlay" aria-hidden="true" />
+        <InteractiveGrid />
         <RetroProvider>
           <Navigation />
           <main className="flex-1">{children}</main>

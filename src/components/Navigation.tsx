@@ -90,15 +90,30 @@ export function Navigation() {
         } : undefined}
       >
         <nav className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="font-display font-bold text-base tracking-tight transition-colors"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            <span className="text-accent">N</span>
-            <span>ic DeMore</span>
-          </Link>
+          {/* Logo + Location */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="font-display font-bold text-base tracking-tight transition-colors"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              <span className="text-accent">N</span>
+              <span>ic DeMore</span>
+            </Link>
+            <div
+              className="hidden md:flex items-center gap-1"
+              style={{
+                fontFamily: 'var(--font-jetbrains)',
+                fontSize: '9px',
+                letterSpacing: '0.08em',
+                color: 'var(--color-text-secondary)',
+                opacity: 0.55,
+              }}
+            >
+              <span>📍</span>
+              <span>MKE, WI</span>
+            </div>
+          </div>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
@@ -160,9 +175,34 @@ export function Navigation() {
               )}
             </Link>
 
+            {/* Available for ventures indicator */}
+            <div className="hidden md:flex items-center gap-2 mr-3">
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: 'rgb(34,197,94)',
+                  flexShrink: 0,
+                  animation: 'ping 2s cubic-bezier(0,0,0.2,1) infinite',
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: 'var(--font-jetbrains)',
+                  fontSize: '10px',
+                  letterSpacing: '0.06em',
+                  color: 'var(--color-text-secondary)',
+                }}
+              >
+                Available for ventures
+              </span>
+            </div>
+
             {/* Retro toggle — excluded from resume pages */}
             {!isResumePage && (
-              <div className="ml-3">
+              <div className="ml-1">
                 <RetroToggle />
               </div>
             )}

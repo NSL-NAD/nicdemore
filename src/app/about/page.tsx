@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { EASING_PREMIUM } from "@/lib/motion";
 import { useRetro } from "@/contexts/RetroContext";
+import { CountUpStat } from "@/components/CountUpStat";
 
 const cards = [
   {
@@ -130,9 +131,33 @@ export default function AboutPage() {
   return (
     <div
       className="min-h-screen pt-24 pb-16"
-      style={{ background: 'var(--color-base)' }}
+      style={{ background: 'var(--color-base)', position: 'relative' }}
     >
-      <div className="mx-auto max-w-7xl px-6">
+      {/* Ghost / watermark text */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: '60px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          whiteSpace: 'nowrap',
+          fontFamily: 'var(--font-syne)',
+          fontWeight: 800,
+          fontSize: 'clamp(80px, 18vw, 220px)',
+          letterSpacing: '-0.04em',
+          color: 'var(--color-text-primary)',
+          opacity: 0.025,
+          pointerEvents: 'none',
+          userSelect: 'none',
+          zIndex: 0,
+          lineHeight: 1,
+        }}
+      >
+        NIC DEMORE
+      </div>
+
+      <div className="mx-auto max-w-7xl px-6" style={{ position: 'relative', zIndex: 1 }}>
         {/* Back link */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -178,6 +203,14 @@ export default function AboutPage() {
             </h1>
           </motion.div>
         </section>
+
+        {/* Stats row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 px-2 border-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+          <CountUpStat end={9} suffix="+" label="Years Operating" />
+          <CountUpStat end={12} label="Ventures in 2025" />
+          <CountUpStat end={50} suffix="+" label="Team Members Led" />
+          <CountUpStat end={8} label="Skill Domains" />
+        </div>
 
         {/* DESKTOP: floating cards around photo */}
         <div className="hidden lg:block relative" style={{ minHeight: '900px' }}>
@@ -270,6 +303,29 @@ export default function AboutPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+
+        {/* Full-bleed portrait section */}
+        <div
+          className="relative mt-16 -mx-6"
+          style={{
+            height: 'clamp(400px, 60vh, 700px)',
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            src="/nicdemore.jpg"
+            alt="Nic DeMore"
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'top center' }}
+            sizes="100vw"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(to bottom, transparent 40%, var(--color-base) 100%)',
+            }}
+          />
         </div>
 
         {/* Narrative section — below the floating cards area */}
