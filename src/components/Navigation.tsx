@@ -16,6 +16,11 @@ const sections = [
   { id: "contact", label: "Contact" },
 ];
 
+// Cinematic entrance — nav drops in last, after hero elements
+const GRAVITY_EASE = [0.16, 1, 0.3, 1] as const;
+const NAV_ENTER_DELAY = 2.8; // seconds from page load
+const NAV_STAGGER = 0.06;
+
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("overview");
@@ -75,6 +80,19 @@ export function Navigation() {
     [isHome]
   );
 
+  const navItemDrop = (index: number) => ({
+    initial: { opacity: 0, y: -30 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: GRAVITY_EASE,
+        delay: NAV_ENTER_DELAY + index * NAV_STAGGER,
+      },
+    },
+  });
+
   return (
     <>
       <NeonScrollHandler />
@@ -89,9 +107,12 @@ export function Navigation() {
           borderColor: 'var(--color-border)',
         } : undefined}
       >
-        <nav className="mx-auto max-w-7xl px-1.5 h-16 flex items-center justify-between">
-          {/* Logo + Location */}
-          <div className="flex items-center gap-3">
+        <nav className="mx-auto px-3 h-16 flex items-center justify-between">
+          {/* Logo + Coordinates */}
+          <motion.div
+            {...navItemDrop(0)}
+            className="flex items-center gap-3"
+          >
             <Link
               href="/"
               className="font-display font-bold text-base tracking-tight transition-colors"
@@ -111,19 +132,20 @@ export function Navigation() {
               }}
             >
               <span>📍</span>
-              <span>MKE, WI</span>
+              <span>43.0389° N, 87.9065° W</span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
-            {sections.map((section) => {
+            {sections.map((section, i) => {
               const isActive = isHome && activeSection === section.id;
               const href = isHome ? `#${section.id}` : `/#${section.id}`;
 
               return (
-                <a
+                <motion.a
                   key={section.id}
+                  {...navItemDrop(i + 1)}
                   href={href}
                   onClick={(e) => handleNavClick(e, section.id)}
                   className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
@@ -147,36 +169,41 @@ export function Navigation() {
                       transition={{ type: "spring", stiffness: 500, damping: 35 }}
                     />
                   )}
-                </a>
+                </motion.a>
               );
             })}
 
             {/* About page link */}
-            <Link
-              href="/about"
-              className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
-                pathname === '/about' ? 'text-primary font-bold' : 'text-muted font-medium'
-              }`}
-              style={{
-                color: pathname === '/about' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                fontFamily: 'var(--font-jetbrains)',
-                fontSize: '11px',
-                letterSpacing: '0.08em',
-              }}
-            >
-              About
-              {pathname === '/about' && (
-                <motion.div
-                  layoutId="nav-indicator"
-                  className="absolute bottom-0 left-3 right-3 h-px"
-                  style={{ background: 'var(--color-accent)' }}
-                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                />
-              )}
-            </Link>
+            <motion.div {...navItemDrop(sections.length + 1)}>
+              <Link
+                href="/about"
+                className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
+                  pathname === '/about' ? 'text-primary font-bold' : 'text-muted font-medium'
+                }`}
+                style={{
+                  color: pathname === '/about' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  fontFamily: 'var(--font-jetbrains)',
+                  fontSize: '11px',
+                  letterSpacing: '0.08em',
+                }}
+              >
+                About
+                {pathname === '/about' && (
+                  <motion.div
+                    layoutId="nav-indicator"
+                    className="absolute bottom-0 left-3 right-3 h-px"
+                    style={{ background: 'var(--color-accent)' }}
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+              </Link>
+            </motion.div>
 
             {/* Available for ventures indicator */}
-            <div className="hidden md:flex items-center gap-2 mr-3">
+            <motion.div
+              {...navItemDrop(sections.length + 2)}
+              className="hidden md:flex items-center gap-2 mr-3"
+            >
               <span
                 style={{
                   display: 'inline-block',
@@ -198,18 +225,21 @@ export function Navigation() {
               >
                 Available for ventures
               </span>
-            </div>
+            </motion.div>
 
             {/* Retro toggle — excluded from resume pages */}
             {!isResumePage && (
-              <div className="ml-1">
+              <motion.div {...navItemDrop(sections.length + 3)} className="ml-1">
                 <RetroToggle />
-              </div>
+              </motion.div>
             )}
           </div>
 
           {/* Mobile: RetroToggle + Hamburger */}
-          <div className="md:hidden flex items-center gap-3">
+          <motion.div
+            {...navItemDrop(0)}
+            className="md:hidden flex items-center gap-3"
+          >
             {!isResumePage && <RetroToggle />}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -233,7 +263,7 @@ export function Navigation() {
                 style={{ background: 'var(--color-text-primary)' }}
               />
             </button>
-          </div>
+          </motion.div>
         </nav>
 
         {/* Mobile overlay */}
