@@ -211,7 +211,9 @@ export function Hero() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
   // H1 parallax: MUCH more dramatic — follows scroll far, eventually goes behind nav
   const h1Y = useTransform(scrollYProgress, [0, 1], [0, 350]);
-  const h2Y = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  // H2 chases scroll at same pace as H1 — they move as a unit,
+  // H2 slides behind the frosted card which stays in place
+  const h2Y = useTransform(scrollYProgress, [0, 1], [0, 350]);
 
   return (
     <section
