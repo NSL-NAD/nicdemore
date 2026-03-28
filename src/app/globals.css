@@ -158,8 +158,7 @@ body {
   text-shadow: 0 0 7px rgba(0,229,255,0.9), 0 0 20px rgba(0,229,255,0.6), 0 0 40px rgba(0,229,255,0.3);
 }
 
-/* h2 and display: Press Start 2P for that retro CRT feel */
-[data-theme="retro"] .font-display,
+/* h2 only: Press Start 2P for that retro CRT feel — h1 stays Syne, .font-display inherits */
 [data-theme="retro"] h2 {
   font-family: var(--font-press-start), monospace;
   letter-spacing: 0.04em;
@@ -449,10 +448,7 @@ img {
   transform: translateY(-4px);
 }
 
-/* Retro mode — text */
-[data-theme="retro"] .font-display {
-  font-family: var(--font-press-start), monospace;
-}
+/* Retro mode — .font-display intentionally NOT overridden here: h1 uses !important Syne rule above */
 
 /* Retro text-accent */
 [data-theme="retro"] .text-accent,
