@@ -16,23 +16,23 @@ const sections = [
   { id: "contact", label: "Contact" },
 ];
 
-// Cinematic entrance — nav drops in last, after hero elements
-const Z_DROP_EASE = [0.16, 1, 0.3, 1] as const;
+// 3D perspective entrance — elements fly in from outside viewport
+const LAND_EASE = [0.12, 0.9, 0.25, 1] as const;
 
-// Randomized nav timing — elements land alongside hero elements
-// Logo lands with h2 (~1.2s), links scatter across 1.5-3.5s window
-// Durations vary so landings feel organic
-const NAV_TIMINGS = [
-  { delay: 1.2, dur: 1.4 },  // 0: Logo + coords — lands with h2
-  { delay: 1.8, dur: 1.0 },  // 1: Overview link
-  { delay: 2.3, dur: 0.8 },  // 2: My Skillset — fast
-  { delay: 1.9, dur: 1.2 },  // 3: Ventures
-  { delay: 2.6, dur: 0.9 },  // 4: Architecture — lands with buttons
-  { delay: 2.1, dur: 1.1 },  // 5: Contact
-  { delay: 2.4, dur: 1.0 },  // 6: About
-  { delay: 1.6, dur: 1.5 },  // 7: Available indicator — slow, lands with card
-  { delay: 2.0, dur: 1.3 },  // 8: Retro toggle — lands with card
-  { delay: 2.5, dur: 0.9 },  // 9: Mobile hamburger
+// Each nav element has unique entry direction + timing
+// Logo from NW, center links from N (scattered), right items from NE
+// Varied durations for organic feel. Overlaps with hero build.
+const NAV_ENTRIES: Array<{ delay: number; dur: number; x: number; y: number; z: number; blur: number }> = [
+  { delay: 1.4, dur: 2.2, x: -200, y: -120, z: 500, blur: 6 },   // 0: Logo — from NW
+  { delay: 2.0, dur: 1.6, x: -40,  y: -100, z: 400, blur: 4 },   // 1: Overview
+  { delay: 2.5, dur: 1.3, x: 0,    y: -80,  z: 350, blur: 3 },   // 2: My Skillset
+  { delay: 2.1, dur: 1.8, x: 20,   y: -100, z: 380, blur: 4 },   // 3: Ventures
+  { delay: 2.8, dur: 1.4, x: 40,   y: -90,  z: 360, blur: 3 },   // 4: Architecture
+  { delay: 2.3, dur: 1.5, x: 60,   y: -80,  z: 340, blur: 3 },   // 5: Contact
+  { delay: 2.6, dur: 1.6, x: 80,   y: -100, z: 380, blur: 4 },   // 6: About
+  { delay: 1.8, dur: 2.0, x: 150,  y: -90,  z: 420, blur: 5 },   // 7: Available indicator
+  { delay: 2.2, dur: 1.8, x: 200,  y: -110, z: 450, blur: 5 },   // 8: Retro toggle — from NE
+  { delay: 2.7, dur: 1.3, x: 100,  y: -80,  z: 350, blur: 4 },   // 9: Mobile hamburger
 ];
 
 export function Navigation() {
@@ -94,20 +94,25 @@ export function Navigation() {
     [isHome]
   );
 
-  const navItemDrop = (index: number) => {
-    const t = NAV_TIMINGS[Math.min(index, NAV_TIMINGS.length - 1)];
+  const navDrop3D = (index: number) => {
+    const e = NAV_ENTRIES[Math.min(index, NAV_ENTRIES.length - 1)];
     return {
-      initial: { opacity: 0, scale: 1.12, filter: 'blur(3px)' },
+      initial: {
+        x: e.x,
+        y: e.y,
+        z: e.z,
+        filter: `blur(${e.blur}px)`,
+      },
       animate: {
-        opacity: 1,
-        scale: 1,
+        x: 0,
+        y: 0,
+        z: 0,
         filter: 'blur(0px)',
         transition: {
-          duration: t.dur,
-          ease: Z_DROP_EASE,
-          delay: t.delay,
-          opacity: { duration: t.dur * 0.5, delay: t.delay },
-          filter: { duration: t.dur * 0.6, delay: t.delay },
+          duration: e.dur,
+          ease: LAND_EASE,
+          delay: e.delay,
+          filter: { duration: e.dur * 0.7, delay: e.delay + e.dur * 0.1 },
         },
       },
     };
@@ -122,16 +127,23 @@ export function Navigation() {
             ? "backdrop-blur-md border-b"
             : "bg-transparent"
         }`}
-        style={scrolled ? {
-          background: 'color-mix(in srgb, var(--color-base) 85%, transparent)',
-          borderColor: 'var(--color-border)',
-        } : undefined}
+        style={{
+          ...(scrolled ? {
+            background: 'color-mix(in srgb, var(--color-base) 85%, transparent)',
+            borderColor: 'var(--color-border)',
+          } : undefined),
+          perspective: '1200px',
+        }}
       >
-        <nav className="mx-auto px-12 h-16 flex items-center justify-between">
+        <nav
+          className="mx-auto px-12 h-16 flex items-center justify-between"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
           {/* Logo + Coordinates */}
           <motion.div
-            {...navItemDrop(0)}
+            {...navDrop3D(0)}
             className="flex items-center gap-3"
+            style={{ transformStyle: 'preserve-3d' }}
           >
             <Link
               href="/"
@@ -157,7 +169,7 @@ export function Navigation() {
           </motion.div>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1" style={{ transformStyle: 'preserve-3d' }}>
             {sections.map((section, i) => {
               const isActive = isHome && activeSection === section.id;
               const href = isHome ? `#${section.id}` : `/#${section.id}`;
@@ -165,7 +177,7 @@ export function Navigation() {
               return (
                 <motion.a
                   key={section.id}
-                  {...navItemDrop(i + 1)}
+                  {...navDrop3D(i + 1)}
                   href={href}
                   onClick={(e) => handleNavClick(e, section.id)}
                   className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
@@ -178,6 +190,7 @@ export function Navigation() {
                     fontFamily: 'var(--font-jetbrains)',
                     fontSize: '11px',
                     letterSpacing: '0.08em',
+                    transformStyle: 'preserve-3d',
                   }}
                 >
                   {section.label}
@@ -194,7 +207,7 @@ export function Navigation() {
             })}
 
             {/* About page link */}
-            <motion.div {...navItemDrop(sections.length + 1)}>
+            <motion.div {...navDrop3D(sections.length + 1)} style={{ transformStyle: 'preserve-3d' }}>
               <Link
                 href="/about"
                 className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
@@ -221,8 +234,9 @@ export function Navigation() {
 
             {/* Available for ventures indicator */}
             <motion.div
-              {...navItemDrop(sections.length + 2)}
+              {...navDrop3D(sections.length + 2)}
               className="hidden md:flex items-center gap-2 mr-3"
+              style={{ transformStyle: 'preserve-3d' }}
             >
               <span
                 style={{
@@ -247,9 +261,9 @@ export function Navigation() {
               </span>
             </motion.div>
 
-            {/* Retro toggle — excluded from resume pages */}
+            {/* Retro toggle */}
             {!isResumePage && (
-              <motion.div {...navItemDrop(sections.length + 3)} className="ml-1">
+              <motion.div {...navDrop3D(sections.length + 3)} className="ml-1" style={{ transformStyle: 'preserve-3d' }}>
                 <RetroToggle />
               </motion.div>
             )}
@@ -257,8 +271,9 @@ export function Navigation() {
 
           {/* Mobile: RetroToggle + Hamburger */}
           <motion.div
-            {...navItemDrop(0)}
+            {...navDrop3D(9)}
             className="md:hidden flex items-center gap-3"
+            style={{ transformStyle: 'preserve-3d' }}
           >
             {!isResumePage && <RetroToggle />}
             <button
