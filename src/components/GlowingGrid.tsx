@@ -2,15 +2,15 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-// Grid configuration — matches retro grid sizing (22px squares)
+// Grid configuration — 22px squares matching retro grid
 const GRID_SIZE = 22;
 const LINE_WIDTH = 1;
-const BASE_LINE_OPACITY = 0.045; // subtle always-visible grid
-const MAX_LINE_OPACITY = 0.55;
-const GLOW_RADIUS = 280;
-const FOLLOW_SPEED = 0.12; // smooth follow (0 = instant, higher = slower)
+const BASE_LINE_OPACITY = 0.09; // visible always — like faint graph paper
+const MAX_LINE_OPACITY = 0.65;
+const GLOW_RADIUS = 320;
+const FOLLOW_SPEED = 0.1; // smooth follow
 const ACCENT = { r: 244, g: 99, b: 30 }; // --color-accent #F4631E
-const BASE_COLOR = { r: 28, g: 25, b: 23 }; // neutral dark
+const BASE_COLOR = { r: 180, g: 170, b: 160 }; // warm gray, visible on #FAF9F6
 
 export function GlowingGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,13 +47,12 @@ export function GlowingGrid() {
     const mx = sm.x;
     const my = sm.y;
 
-    // Draw horizontal lines
     const rows = Math.ceil(h / GRID_SIZE) + 1;
     const cols = Math.ceil(w / GRID_SIZE) + 1;
 
+    // Draw all horizontal lines
     for (let row = 0; row <= rows; row++) {
       const y = row * GRID_SIZE;
-
       for (let col = 0; col < cols; col++) {
         const x1 = col * GRID_SIZE;
         const x2 = x1 + GRID_SIZE;
@@ -62,7 +61,7 @@ export function GlowingGrid() {
         const dy = y - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const t = Math.max(0, 1 - dist / GLOW_RADIUS);
-        const eased = t * t * (3 - 2 * t); // smoothstep
+        const eased = t * t * (3 - 2 * t);
 
         const opacity = BASE_LINE_OPACITY + (MAX_LINE_OPACITY - BASE_LINE_OPACITY) * eased;
 
@@ -71,11 +70,12 @@ export function GlowingGrid() {
           const g = Math.round(BASE_COLOR.g + (ACCENT.g - BASE_COLOR.g) * eased);
           const b = Math.round(BASE_COLOR.b + (ACCENT.b - BASE_COLOR.b) * eased);
           ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
+          ctx.lineWidth = LINE_WIDTH + eased * 0.5; // slightly thicker near cursor
         } else {
           ctx.strokeStyle = `rgba(${BASE_COLOR.r},${BASE_COLOR.g},${BASE_COLOR.b},${opacity})`;
+          ctx.lineWidth = LINE_WIDTH;
         }
 
-        ctx.lineWidth = LINE_WIDTH;
         ctx.beginPath();
         ctx.moveTo(x1, y);
         ctx.lineTo(x2, y);
@@ -83,10 +83,9 @@ export function GlowingGrid() {
       }
     }
 
-    // Draw vertical lines
+    // Draw all vertical lines
     for (let col = 0; col <= cols; col++) {
       const x = col * GRID_SIZE;
-
       for (let row = 0; row < rows; row++) {
         const y1 = row * GRID_SIZE;
         const y2 = y1 + GRID_SIZE;
@@ -95,7 +94,7 @@ export function GlowingGrid() {
         const dy = segMidY - my;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const t = Math.max(0, 1 - dist / GLOW_RADIUS);
-        const eased = t * t * (3 - 2 * t); // smoothstep
+        const eased = t * t * (3 - 2 * t);
 
         const opacity = BASE_LINE_OPACITY + (MAX_LINE_OPACITY - BASE_LINE_OPACITY) * eased;
 
@@ -104,11 +103,12 @@ export function GlowingGrid() {
           const g = Math.round(BASE_COLOR.g + (ACCENT.g - BASE_COLOR.g) * eased);
           const b = Math.round(BASE_COLOR.b + (ACCENT.b - BASE_COLOR.b) * eased);
           ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
+          ctx.lineWidth = LINE_WIDTH + eased * 0.5;
         } else {
           ctx.strokeStyle = `rgba(${BASE_COLOR.r},${BASE_COLOR.g},${BASE_COLOR.b},${opacity})`;
+          ctx.lineWidth = LINE_WIDTH;
         }
 
-        ctx.lineWidth = LINE_WIDTH;
         ctx.beginPath();
         ctx.moveTo(x, y1);
         ctx.lineTo(x, y2);

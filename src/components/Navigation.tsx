@@ -17,9 +17,9 @@ const sections = [
 ];
 
 // Cinematic entrance — nav drops in last, after hero elements
-const GRAVITY_EASE = [0.16, 1, 0.3, 1] as const;
-const NAV_ENTER_DELAY = 2.8; // seconds from page load
-const NAV_STAGGER = 0.06;
+const Z_DROP_EASE = [0.16, 1, 0.3, 1] as const;
+const NAV_ENTER_DELAY = 5.0; // doubled — nav drops last after hero builds
+const NAV_STAGGER = 0.08;
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -81,14 +81,17 @@ export function Navigation() {
   );
 
   const navItemDrop = (index: number) => ({
-    initial: { opacity: 0, y: -30 },
+    initial: { opacity: 0, scale: 1.1, filter: 'blur(3px)' },
     animate: {
       opacity: 1,
-      y: 0,
+      scale: 1,
+      filter: 'blur(0px)',
       transition: {
-        duration: 0.7,
-        ease: GRAVITY_EASE,
+        duration: 1.0,
+        ease: Z_DROP_EASE,
         delay: NAV_ENTER_DELAY + index * NAV_STAGGER,
+        opacity: { duration: 0.5, delay: NAV_ENTER_DELAY + index * NAV_STAGGER },
+        filter: { duration: 0.6, delay: NAV_ENTER_DELAY + index * NAV_STAGGER },
       },
     },
   });
@@ -107,7 +110,7 @@ export function Navigation() {
           borderColor: 'var(--color-border)',
         } : undefined}
       >
-        <nav className="mx-auto px-3 h-16 flex items-center justify-between">
+        <nav className="mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo + Coordinates */}
           <motion.div
             {...navItemDrop(0)}
