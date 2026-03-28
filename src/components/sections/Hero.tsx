@@ -8,29 +8,69 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const words = ["Builder.", "Engineer.", "Founder."];
 
-// Cinematic "gravity drop" easing — smooth deceleration, no bounce
-const GRAVITY_EASE = [0.16, 1, 0.3, 1] as const;
+// Z-axis "drop onto table" easing — smooth deceleration, no bounce
+const Z_DROP_EASE = [0.16, 1, 0.3, 1] as const;
 
-// Cinematic stagger timings (seconds from page load)
-const TIMING = {
-  grid: 0,        // already visible
-  video: 0.2,     // first element to drop
-  name: 0.6,      // H1 lands on top of video
-  overview: 0.9,  // "// Overview" label
-  h2Start: 1.1,   // first word
-  h2Stagger: 0.15, // between words
-  card: 1.8,      // frosted glass card
-  subhead: 2.0,   // subhead text inside card
-  btnLeft: 2.3,   // "See my work"
-  btnRight: 2.5,  // "Get in touch"
+// Cinematic timing — doubled, ~7s total, elements drop simultaneously
+// Elements start dropping at overlapping times (simultaneous build feel)
+const T = {
+  video:     { delay: 0.3,  dur: 1.8 },  // first piece placed
+  name:      { delay: 0.8,  dur: 1.6 },  // lands ON TOP of video
+  overview:  { delay: 1.2,  dur: 1.2 },  // label fades in
+  h2_0:      { delay: 1.6,  dur: 1.4 },  // Builder.
+  h2_1:      { delay: 1.9,  dur: 1.4 },  // Engineer.
+  h2_2:      { delay: 2.2,  dur: 1.4 },  // Founder.
+  card:      { delay: 2.6,  dur: 1.6 },  // frosted card
+  subhead:   { delay: 3.0,  dur: 1.4 },  // text inside card
+  btnLeft:   { delay: 3.5,  dur: 1.2 },  // See my work
+  btnRight:  { delay: 3.8,  dur: 1.2 },  // Get in touch
 };
 
-const dropIn = (delay: number, distance = 80) => ({
-  initial: { opacity: 0, y: -distance },
+// Z-axis drop: starts scaled up (closer to viewer) + transparent,
+// lands at scale(1) + full opacity with shadow growing as it "lands"
+const zDrop = (delay: number, dur: number, shadow: string) => ({
+  initial: {
+    opacity: 0,
+    scale: 1.15,
+    filter: 'blur(4px)',
+  },
   animate: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.9, ease: GRAVITY_EASE, delay },
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: dur,
+      ease: Z_DROP_EASE,
+      delay,
+      opacity: { duration: dur * 0.5, delay },
+      filter: { duration: dur * 0.6, delay },
+    },
+  },
+  style: {
+    willChange: 'transform, opacity, filter' as const,
+  },
+  // Shadow is applied via className/inline — grows with the element
+  whileInView: undefined,
+});
+
+// Larger Z-drop for hero video and frosted card (more dramatic)
+const zDropHeavy = (delay: number, dur: number) => ({
+  initial: {
+    opacity: 0,
+    scale: 1.25,
+    filter: 'blur(8px)',
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: dur,
+      ease: Z_DROP_EASE,
+      delay,
+      opacity: { duration: dur * 0.4, delay },
+      filter: { duration: dur * 0.7, delay },
+    },
   },
 });
 
@@ -64,8 +104,8 @@ function HeroVideoPlayer() {
       className="relative w-full group film-grain"
       style={{
         background: 'var(--color-surface)',
-        boxShadow: '0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)',
-        borderRadius: '2px',
+        boxShadow: '0 0 0 1px var(--color-accent), 0 30px 80px rgba(0,0,0,0.25), 0 10px 30px rgba(0,0,0,0.15)',
+        borderRadius: '3px',
         overflow: 'hidden',
         height: '100%',
         minHeight: '420px',
@@ -172,17 +212,17 @@ export function Hero() {
       ref={sectionRef}
       id="overview"
       className="relative min-h-screen flex items-center overflow-hidden"
-      style={{ background: 'var(--color-base)' }}
+      /* TRANSPARENT background so the GlowingGrid shows through */
     >
       <motion.div
         style={{ opacity: heroOpacity, y: heroY }}
-        className="relative w-full mx-auto px-3 pt-28 pb-16 md:pt-32 md:pb-20"
+        className="relative w-full mx-auto px-6 pt-28 pb-16 md:pt-32 md:pb-20"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6">
           <div>
             <motion.p
-              {...dropIn(TIMING.overview)}
+              {...zDrop(T.overview.delay, T.overview.dur, 'none')}
               className="font-mono text-xs tracking-widest uppercase mb-3"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
             >
@@ -190,13 +230,14 @@ export function Hero() {
             </motion.p>
 
             <motion.h1
-              {...dropIn(TIMING.name)}
+              {...zDrop(T.name.delay, T.name.dur, 'text')}
               data-neon-header="pink"
               className="font-display font-extrabold leading-none mb-1"
               style={{
                 fontSize: 'clamp(52px, 14vw, 80px)',
                 color: 'var(--color-text-primary)',
                 letterSpacing: '-0.035em',
+                textShadow: '0 4px 12px rgba(0,0,0,0.12)',
               }}
             >
               Nic DeMore
@@ -206,13 +247,18 @@ export function Hero() {
               {words.map((word, i) => (
                 <motion.div
                   key={word}
-                  {...dropIn(TIMING.h2Start + i * TIMING.h2Stagger, 60)}
+                  {...zDrop(
+                    T.h2_0.delay + i * 0.3,
+                    T.h2_0.dur,
+                    'text'
+                  )}
                   className="font-display font-black"
                   style={{
                     fontSize: 'clamp(28px, 8vw, 48px)',
                     lineHeight: '0.9',
                     color: i === 0 ? 'var(--color-accent)' : 'var(--color-text-primary)',
                     letterSpacing: '-0.02em',
+                    textShadow: '0 3px 8px rgba(0,0,0,0.08)',
                   }}
                 >
                   {word}
@@ -222,11 +268,14 @@ export function Hero() {
 
             {/* Frosted glass card — mobile */}
             <motion.div
-              {...dropIn(TIMING.card, 50)}
-              className="frosted-card rounded-lg p-5 mb-5"
+              {...zDropHeavy(T.card.delay, T.card.dur)}
+              className="frosted-card rounded-xl p-5 mb-5"
+              style={{
+                boxShadow: '0 20px 60px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08)',
+              }}
             >
               <motion.p
-                {...dropIn(TIMING.subhead, 30)}
+                {...zDrop(T.subhead.delay, T.subhead.dur, 'none')}
                 className="text-base leading-relaxed max-w-sm mb-5"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
@@ -236,19 +285,20 @@ export function Hero() {
 
               <div className="flex flex-wrap gap-4">
                 <motion.a
-                  {...dropIn(TIMING.btnLeft, 25)}
+                  {...zDrop(T.btnLeft.delay, T.btnLeft.dur, 'none')}
                   href="#work"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all"
                   style={{
                     background: 'var(--color-accent)',
                     color: '#fff',
                     fontFamily: 'var(--font-syne)',
+                    boxShadow: '0 4px 16px rgba(244, 99, 30, 0.25)',
                   }}
                 >
-                  See my work
+                  See my work ↓
                 </motion.a>
                 <motion.a
-                  {...dropIn(TIMING.btnRight, 25)}
+                  {...zDrop(T.btnRight.delay, T.btnRight.dur, 'none')}
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
                   style={{
@@ -257,34 +307,34 @@ export function Hero() {
                     fontFamily: 'var(--font-syne)',
                   }}
                 >
-                  Get in touch
+                  Get in touch →
                 </motion.a>
               </div>
             </motion.div>
           </div>
 
           {/* Video — full width on mobile */}
-          <motion.div {...dropIn(TIMING.video, 100)}>
+          <motion.div {...zDropHeavy(T.video.delay, T.video.dur)}>
             <HeroVideoPlayer />
           </motion.div>
         </div>
 
         {/* DESKTOP LAYOUT */}
         <div className="hidden md:block">
-          {/* Video — drops in first, large and prominent */}
           <div className="grid md:grid-cols-[1fr_1.6fr] gap-6 lg:gap-8 md:items-start">
             {/* Left column: name + h2 + frosted card */}
-            <motion.div style={{ x: textX }} className="relative z-[2]">
+            <motion.div style={{ x: textX }} className="relative z-[3]">
               <motion.p
-                {...dropIn(TIMING.overview)}
+                {...zDrop(T.overview.delay, T.overview.dur, 'none')}
                 className="text-xs tracking-widest uppercase mb-4"
                 style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
               >
                 // Overview
               </motion.p>
 
+              {/* H1 — single line, overlaps video top-left corner */}
               <motion.h1
-                {...dropIn(TIMING.name, 100)}
+                {...zDrop(T.name.delay, T.name.dur, 'text')}
                 data-neon-header="pink"
                 className="font-display font-extrabold leading-none mb-2"
                 style={{
@@ -294,7 +344,8 @@ export function Hero() {
                   y: h1Y,
                   zIndex: 3,
                   position: 'relative',
-                  textShadow: '0 2px 20px rgba(0,0,0,0.3), 0 0 40px rgba(244,99,30,0.08)',
+                  whiteSpace: 'nowrap',
+                  textShadow: '0 6px 20px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.1)',
                 }}
               >
                 Nic DeMore
@@ -304,30 +355,38 @@ export function Hero() {
                 className="mb-6"
                 style={{ y: h2Y }}
               >
-                {words.map((word, i) => (
-                  <motion.div
-                    key={word}
-                    {...dropIn(TIMING.h2Start + i * TIMING.h2Stagger, 60)}
-                    className="font-display font-black"
-                    style={{
-                      fontSize: 'clamp(36px, 4vw, 56px)',
-                      lineHeight: '0.9',
-                      color: i === 0 ? 'var(--color-accent)' : 'var(--color-text-primary)',
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {word}
-                  </motion.div>
-                ))}
+                {words.map((word, i) => {
+                  const key = `h2_${i}` as keyof typeof T;
+                  const timing = T[key] || { delay: T.h2_0.delay + i * 0.3, dur: T.h2_0.dur };
+                  return (
+                    <motion.div
+                      key={word}
+                      {...zDrop(timing.delay, timing.dur, 'text')}
+                      className="font-display font-black"
+                      style={{
+                        fontSize: 'clamp(36px, 4vw, 56px)',
+                        lineHeight: '0.9',
+                        color: i === 0 ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                        letterSpacing: '-0.02em',
+                        textShadow: '0 3px 10px rgba(0,0,0,0.08)',
+                      }}
+                    >
+                      {word}
+                    </motion.div>
+                  );
+                })}
               </motion.div>
 
               {/* Frosted glass card — subhead + buttons */}
               <motion.div
-                {...dropIn(TIMING.card, 50)}
-                className="frosted-card rounded-lg p-6"
+                {...zDropHeavy(T.card.delay, T.card.dur)}
+                className="frosted-card rounded-xl p-6"
+                style={{
+                  boxShadow: '0 25px 70px rgba(0,0,0,0.14), 0 10px 30px rgba(0,0,0,0.1)',
+                }}
               >
                 <motion.p
-                  {...dropIn(TIMING.subhead, 30)}
+                  {...zDrop(T.subhead.delay, T.subhead.dur, 'none')}
                   className="text-lg leading-relaxed max-w-md mb-6"
                   style={{ color: 'var(--color-text-secondary)' }}
                 >
@@ -338,21 +397,21 @@ export function Hero() {
 
                 <div className="flex items-center gap-4">
                   <motion.a
-                    {...dropIn(TIMING.btnLeft, 25)}
+                    {...zDrop(T.btnLeft.delay, T.btnLeft.dur, 'none')}
                     href="#work"
                     className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                     style={{
                       background: 'var(--color-accent)',
                       color: '#fff',
                       fontFamily: 'var(--font-syne)',
-                      boxShadow: 'var(--shadow-md)',
+                      boxShadow: '0 6px 20px rgba(244, 99, 30, 0.3)',
                     }}
                   >
                     See my work
                     <span className="transition-transform duration-200 group-hover:translate-x-1">↓</span>
                   </motion.a>
                   <motion.a
-                    {...dropIn(TIMING.btnRight, 25)}
+                    {...zDrop(T.btnRight.delay, T.btnRight.dur, 'none')}
                     href="#contact"
                     className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
                     style={{
@@ -368,13 +427,13 @@ export function Hero() {
               </motion.div>
             </motion.div>
 
-            {/* Right column: Hero Video — large, prominent, H1 overlaps top edge */}
+            {/* Right column: Hero Video — large, H1 overlaps its top edge */}
             <motion.div
-              style={{ x: videoX, y: videoY, marginTop: '-60px', zIndex: 1, position: 'relative' }}
+              style={{ x: videoX, y: videoY, marginTop: '-40px', zIndex: 1, position: 'relative' }}
               className="relative"
             >
               <motion.div
-                {...dropIn(TIMING.video, 120)}
+                {...zDropHeavy(T.video.delay, T.video.dur)}
                 style={{ minHeight: '520px', height: '100%' }}
               >
                 <HeroVideoPlayer />
