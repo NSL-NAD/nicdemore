@@ -8,49 +8,28 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const words = ["Builder.", "Engineer.", "Founder."];
 
-// =====================================================
-// 3D PERSPECTIVE CINEMATIC SYSTEM
-//
-// Elements enter from OUTSIDE the viewport, flying in from
-// the direction matching their final position on screen.
-// They start at high Z (close to camera), blurry, and
-// decelerate smoothly as they land at z:0 on the grid.
-//
-// perspective(1200px) on parent = camera distance
-// translateZ(800px) = element is 800px closer to viewer
-// translateX/Y offsets = element is off-screen in that direction
-// =====================================================
-
 // Smooth deceleration — fast start, very slow landing
-const LAND_EASE = [0.12, 0.9, 0.25, 1] as const;
+// Tuned to avoid snap at end (the previous [0.12, 0.9, 0.25, 1] caused a snap)
+const LAND_EASE = [0.22, 0.85, 0.32, 1] as const;
 
-// Cinematic timing — ~8s total, slowed down for drama
-// Multiple elements in flight simultaneously
+// =====================================================
+// CINEMATIC TIMING — 5s total, more simultaneous starts
+// Everything begins within 0-1.5s, lands over 2-5s
+// =====================================================
 const T = {
-  // Wave 1: Hero anchors
-  video:     { delay: 0.3,  dur: 3.0 },   // SE corner, first piece — slow & dramatic
-  name:      { delay: 0.7,  dur: 2.8 },   // lands on top of video
+  // Wave 1: Big pieces start immediately, overlapping
+  video:     { delay: 0.2,  dur: 2.6 },
+  name:      { delay: 0.4,  dur: 2.4 },
+  overview:  { delay: 0.6,  dur: 1.4 },
+  h2Group:   { delay: 0.7,  dur: 2.0 },
 
-  // Wave 2: Overlapping scatter
-  overview:  { delay: 1.4,  dur: 1.6 },   // quick label from W
-  h2Group:   { delay: 1.6,  dur: 2.4 },   // all 3 words drop as ONE unit from W
-  card:      { delay: 2.0,  dur: 2.8 },   // frosted card — slow, heavy, from SW
-
-  // Wave 3: Card contents land inside card
-  subhead:   { delay: 2.8,  dur: 2.0 },   // text from W
-  btnLeft:   { delay: 3.4,  dur: 1.6 },   // from SW
-  btnRight:  { delay: 3.6,  dur: 1.4 },   // from S
+  // Wave 2: Card + contents start while wave 1 still landing
+  card:      { delay: 1.0,  dur: 2.2 },
+  subhead:   { delay: 1.3,  dur: 1.6 },
+  btnLeft:   { delay: 1.5,  dur: 1.4 },
+  btnRight:  { delay: 1.6,  dur: 1.3 },
 };
 
-// =====================================================
-// 3D DROP ANIMATION
-// Each element has:
-//   - startX, startY: off-screen position (px offset from final)
-//   - startZ: depth (closer to camera)
-//   - blur: clears as it lands
-//   - NO opacity change — fully visible in flight
-//   - shadow grows as element approaches the grid
-// =====================================================
 const drop3D = (
   delay: number,
   dur: number,
@@ -64,7 +43,6 @@ const drop3D = (
     y: startY,
     z: startZ,
     filter: `blur(${startBlur}px)`,
-    // No opacity: 0 — element is visible from the start
   },
   animate: {
     x: 0,
@@ -80,7 +58,6 @@ const drop3D = (
   },
 });
 
-// Heavy variant — more dramatic Z depth and blur
 const drop3DHeavy = (
   delay: number,
   dur: number,
@@ -158,7 +135,6 @@ function HeroVideoPlayer() {
         <source src="/hero-video.mp4" type="video/mp4" />
       </video>
 
-      {/* Play/Pause overlay */}
       <button
         onClick={handlePlayPause}
         className="absolute inset-0 flex items-center justify-center transition-opacity"
@@ -180,7 +156,6 @@ function HeroVideoPlayer() {
         )}
       </button>
 
-      {/* Controls bar */}
       <div
         className={`absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 py-2 transition-opacity ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}
         style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)' }}
@@ -189,7 +164,6 @@ function HeroVideoPlayer() {
           onClick={handlePlayPause}
           className="text-white text-xs font-medium px-2 py-1 rounded"
           style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', letterSpacing: '0.06em' }}
-          aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? "⏸ PAUSE" : "▶ PLAY"}
         </button>
@@ -197,13 +171,11 @@ function HeroVideoPlayer() {
           onClick={handleMuteToggle}
           className="text-white text-xs font-medium px-2 py-1 rounded"
           style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', letterSpacing: '0.06em' }}
-          aria-label={isMuted ? "Unmute" : "Mute"}
         >
           {isMuted ? "🔇 UNMUTE" : "🔊 MUTE"}
         </button>
       </div>
 
-      {/* Video caption */}
       <div
         className="absolute top-3 left-3 px-2 py-1 rounded"
         style={{
@@ -227,29 +199,28 @@ export function Hero() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { normX, normY } = useMousePosition();
 
-  // Parallax springs — only on desktop
   const videoX = useSpring(isMobile ? 0 : normX * 6, { stiffness: 50, damping: 20 });
   const videoY = useSpring(isMobile ? 0 : normY * 4, { stiffness: 50, damping: 20 });
   const textX = useSpring(isMobile ? 0 : normX * -4, { stiffness: 50, damping: 20 });
 
-  // Scroll parallax — increased H1 movement
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-  const h1Y = useTransform(scrollYProgress, [0, 1], [0, 60]);   // increased from 30
+  // H1 parallax: MUCH more dramatic — follows scroll far, eventually goes behind nav
+  const h1Y = useTransform(scrollYProgress, [0, 1], [0, 350]);
   const h2Y = useTransform(scrollYProgress, [0, 1], [0, 50]);
 
   return (
     <section
       ref={sectionRef}
       id="overview"
-      className="relative min-h-screen flex items-center overflow-visible"
-      /* TRANSPARENT — grid shows through. overflow-visible so 3D elements can fly in from outside */
+      className="relative flex items-center overflow-visible"
+      /* Shorter hero — 90vh instead of min-h-screen so next section peeks */
+      style={{ minHeight: '88vh' }}
     >
-      {/* 3D PERSPECTIVE CONTAINER — camera at 1200px distance */}
       <motion.div
         style={{
           opacity: heroOpacity,
@@ -257,14 +228,14 @@ export function Hero() {
           perspective: 1200,
           perspectiveOrigin: '50% 40%',
         }}
-        className="relative w-full mx-auto px-12 pt-28 pb-16 md:pt-32 md:pb-20"
+        className="relative w-full mx-auto px-12 pt-24 pb-8 md:pt-28 md:pb-8"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6" style={{ transformStyle: 'preserve-3d' }}>
           <div>
             <motion.p
               {...drop3D(T.overview.delay, T.overview.dur, -200, -60, 400, 6)}
-              className="font-mono text-xs tracking-widest uppercase mb-3"
+              className="font-mono text-xs tracking-widest uppercase mb-2"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px', transformStyle: 'preserve-3d' }}
             >
               // Overview
@@ -273,22 +244,22 @@ export function Hero() {
             <motion.h1
               {...drop3D(T.name.delay, T.name.dur, -300, -150, 600, 8)}
               data-neon-header="pink"
-              className="font-display font-extrabold leading-none mb-0"
+              className="font-display font-extrabold leading-none"
               style={{
                 fontSize: 'clamp(52px, 14vw, 80px)',
                 color: 'var(--color-text-primary)',
                 letterSpacing: '-0.035em',
                 textShadow: '0 5px 15px rgba(0,0,0,0.15)',
                 transformStyle: 'preserve-3d',
+                marginBottom: '-4px',
               }}
             >
               Nic DeMore
             </motion.h1>
 
-            {/* H2 words — grouped as one unit */}
             <motion.div
               {...drop3D(T.h2Group.delay, T.h2Group.dur, -250, -80, 500, 6)}
-              className="mb-5"
+              className="mb-4"
               style={{ transformStyle: 'preserve-3d' }}
             >
               {words.map((word, i) => (
@@ -308,14 +279,10 @@ export function Hero() {
               ))}
             </motion.div>
 
-            {/* Frosted glass card — mobile */}
             <motion.div
               {...drop3DHeavy(T.card.delay, T.card.dur, -180, 200, 700)}
               className="frosted-card rounded-xl p-5 mb-5 inline-block"
-              style={{
-                boxShadow: '0 25px 75px rgba(0,0,0,0.15), 0 10px 30px rgba(0,0,0,0.1)',
-                transformStyle: 'preserve-3d',
-              }}
+              style={{ boxShadow: '0 25px 75px rgba(0,0,0,0.15), 0 10px 30px rgba(0,0,0,0.1)', transformStyle: 'preserve-3d' }}
             >
               <motion.p
                 {...drop3D(T.subhead.delay, T.subhead.dur, -120, 0, 300, 4)}
@@ -325,32 +292,20 @@ export function Hero() {
                 Milwaukee native. Mechanical engineer turned entrepreneur.
                 Building AI-native ventures and tools for the builders.
               </motion.p>
-
               <div className="flex flex-wrap gap-4">
                 <motion.a
-                  {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 80, 350, 4)}
+                  {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -80, 40, 250, 3)}
                   href="#work"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all"
-                  style={{
-                    background: 'var(--color-accent)',
-                    color: '#fff',
-                    fontFamily: 'var(--font-syne)',
-                    boxShadow: '0 5px 20px rgba(244, 99, 30, 0.32)',
-                    transformStyle: 'preserve-3d',
-                  }}
+                  style={{ background: 'var(--color-accent)', color: '#fff', fontFamily: 'var(--font-syne)', boxShadow: '0 5px 20px rgba(244, 99, 30, 0.32)', transformStyle: 'preserve-3d' }}
                 >
                   See my work ↓
                 </motion.a>
                 <motion.a
-                  {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 100, 300, 3)}
+                  {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 200, 2)}
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
-                  style={{
-                    color: 'var(--color-text-primary)',
-                    border: '1px solid var(--color-border)',
-                    fontFamily: 'var(--font-syne)',
-                    transformStyle: 'preserve-3d',
-                  }}
+                  style={{ color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', fontFamily: 'var(--font-syne)', transformStyle: 'preserve-3d' }}
                 >
                   Get in touch →
                 </motion.a>
@@ -358,7 +313,6 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Video — mobile */}
           <motion.div
             {...drop3DHeavy(T.video.delay, T.video.dur, 200, 300, 800)}
             style={{ transformStyle: 'preserve-3d' }}
@@ -367,27 +321,19 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* =====================================================
-            DESKTOP LAYOUT — 3D PERSPECTIVE
-            Elements fly in from directions matching their position:
-            - Video: from SE (bottom-right, outside viewport)
-            - H1: from NW-ish (above-left)
-            - H2 group: from W (left side)
-            - Card: from SW (below-left)
-            - Nav: from N (above)
-            ===================================================== */}
+        {/* DESKTOP LAYOUT */}
         <div className="hidden md:block" style={{ transformStyle: 'preserve-3d' }}>
-          {/* // Overview label — from W */}
+          {/* // Overview label */}
           <motion.p
             {...drop3D(T.overview.delay, T.overview.dur, -300, -40, 400, 5)}
-            className="text-xs tracking-widest uppercase mb-4"
+            className="text-xs tracking-widest uppercase mb-2"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px', transformStyle: 'preserve-3d' }}
           >
             // Overview
           </motion.p>
 
           <div className="relative" style={{ transformStyle: 'preserve-3d' }}>
-            {/* H1 — flies in from NW, above & left of viewport */}
+            {/* H1 — flies from NW. Dramatic parallax on scroll. */}
             <motion.div style={{ x: textX, transformStyle: 'preserve-3d' }} className="relative z-[3]">
               <motion.h1
                 {...drop3D(T.name.delay, T.name.dur, -500, -250, 800, 10)}
@@ -403,23 +349,24 @@ export function Hero() {
                   whiteSpace: 'nowrap',
                   textShadow: '0 8px 25px rgba(0,0,0,0.19), 0 3px 8px rgba(0,0,0,0.13)',
                   transformStyle: 'preserve-3d',
+                  marginBottom: '-6px',
                 }}
               >
                 Nic DeMore
               </motion.h1>
             </motion.div>
 
-            {/* Grid: left column + right video */}
+            {/* 2-col grid: left = h2 + card (TOP aligned), right = video */}
             <div
-              className="grid md:grid-cols-[1fr_1.5fr] gap-6 lg:gap-10 md:items-end"
-              style={{ marginTop: '-8px', transformStyle: 'preserve-3d' }}
+              className="grid md:grid-cols-[1fr_1.5fr] gap-6 lg:gap-10 md:items-start"
+              style={{ transformStyle: 'preserve-3d' }}
             >
-              {/* Left column: h2 words + frosted card */}
+              {/* Left column: h2 + card — top-aligned, tight under H1 */}
               <motion.div style={{ x: textX, transformStyle: 'preserve-3d' }} className="relative z-[2]">
-                {/* H2 words — grouped, fly in from W (left) */}
+                {/* H2 words — grouped, from W */}
                 <motion.div
                   {...drop3D(T.h2Group.delay, T.h2Group.dur, -400, -60, 600, 7)}
-                  className="mb-6"
+                  className="mb-4"
                   style={{ y: h2Y, transformStyle: 'preserve-3d' }}
                 >
                   {words.map((word, i) => (
@@ -439,9 +386,9 @@ export function Hero() {
                   ))}
                 </motion.div>
 
-                {/* Frosted glass card — flies in from SW */}
+                {/* Frosted card — from SW, reduced Y offset to avoid snap */}
                 <motion.div
-                  {...drop3DHeavy(T.card.delay, T.card.dur, -350, 300, 800)}
+                  {...drop3DHeavy(T.card.delay, T.card.dur, -300, 150, 700)}
                   className="frosted-card rounded-xl p-6 inline-block"
                   style={{
                     boxShadow: '0 32px 88px rgba(0,0,0,0.18), 0 13px 38px rgba(0,0,0,0.13)',
@@ -450,7 +397,7 @@ export function Hero() {
                   }}
                 >
                   <motion.p
-                    {...drop3D(T.subhead.delay, T.subhead.dur, -200, 0, 400, 5)}
+                    {...drop3D(T.subhead.delay, T.subhead.dur, -150, 0, 300, 4)}
                     className="text-lg leading-relaxed mb-6"
                     style={{ color: 'var(--color-text-secondary)', transformStyle: 'preserve-3d' }}
                   >
@@ -460,8 +407,9 @@ export function Hero() {
                   </motion.p>
 
                   <div className="flex items-center gap-4" style={{ transformStyle: 'preserve-3d' }}>
+                    {/* Buttons — reduced Y offsets to fix snap */}
                     <motion.a
-                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -150, 120, 400, 4)}
+                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 40, 300, 3)}
                       href="#work"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                       style={{
@@ -476,7 +424,7 @@ export function Hero() {
                       <span className="transition-transform duration-200 group-hover:translate-x-1">↓</span>
                     </motion.a>
                     <motion.a
-                      {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 150, 350, 3)}
+                      {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 250, 2)}
                       href="#contact"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
                       style={{
@@ -493,21 +441,20 @@ export function Hero() {
                 </motion.div>
               </motion.div>
 
-              {/* Right column: Video — flies in from SE (bottom-right, outside viewport) */}
+              {/* Right column: Video — from SE */}
               <motion.div
                 style={{
                   x: videoX,
                   y: videoY,
                   zIndex: 1,
                   position: 'relative',
-                  alignSelf: 'stretch',
                   transformStyle: 'preserve-3d',
                 }}
                 className="relative"
               >
                 <motion.div
                   {...drop3DHeavy(T.video.delay, T.video.dur, 600, 400, 900)}
-                  style={{ minHeight: '580px', height: '100%', transformStyle: 'preserve-3d' }}
+                  style={{ minHeight: '500px', height: 'auto', transformStyle: 'preserve-3d' }}
                 >
                   <HeroVideoPlayer />
                 </motion.div>

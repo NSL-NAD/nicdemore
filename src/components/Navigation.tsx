@@ -22,17 +22,18 @@ const LAND_EASE = [0.12, 0.9, 0.25, 1] as const;
 // Each nav element has unique entry direction + timing
 // Logo from NW, center links from N (scattered), right items from NE
 // Varied durations for organic feel. Overlaps with hero build.
+// Compressed to 5s total — nav starts earlier, overlapping with hero build
 const NAV_ENTRIES: Array<{ delay: number; dur: number; x: number; y: number; z: number; blur: number }> = [
-  { delay: 1.4, dur: 2.2, x: -200, y: -120, z: 500, blur: 6 },   // 0: Logo — from NW
-  { delay: 2.0, dur: 1.6, x: -40,  y: -100, z: 400, blur: 4 },   // 1: Overview
-  { delay: 2.5, dur: 1.3, x: 0,    y: -80,  z: 350, blur: 3 },   // 2: My Skillset
-  { delay: 2.1, dur: 1.8, x: 20,   y: -100, z: 380, blur: 4 },   // 3: Ventures
-  { delay: 2.8, dur: 1.4, x: 40,   y: -90,  z: 360, blur: 3 },   // 4: Architecture
-  { delay: 2.3, dur: 1.5, x: 60,   y: -80,  z: 340, blur: 3 },   // 5: Contact
-  { delay: 2.6, dur: 1.6, x: 80,   y: -100, z: 380, blur: 4 },   // 6: About
-  { delay: 1.8, dur: 2.0, x: 150,  y: -90,  z: 420, blur: 5 },   // 7: Available indicator
-  { delay: 2.2, dur: 1.8, x: 200,  y: -110, z: 450, blur: 5 },   // 8: Retro toggle — from NE
-  { delay: 2.7, dur: 1.3, x: 100,  y: -80,  z: 350, blur: 4 },   // 9: Mobile hamburger
+  { delay: 0.5, dur: 2.0, x: -200, y: -120, z: 500, blur: 6 },   // 0: Logo — from NW, starts with h1
+  { delay: 0.9, dur: 1.4, x: -40,  y: -100, z: 400, blur: 4 },   // 1: Overview
+  { delay: 1.3, dur: 1.1, x: 0,    y: -80,  z: 350, blur: 3 },   // 2: My Skillset
+  { delay: 1.0, dur: 1.5, x: 20,   y: -100, z: 380, blur: 4 },   // 3: Ventures
+  { delay: 1.5, dur: 1.2, x: 40,   y: -90,  z: 360, blur: 3 },   // 4: Architecture
+  { delay: 1.1, dur: 1.3, x: 60,   y: -80,  z: 340, blur: 3 },   // 5: Contact
+  { delay: 1.4, dur: 1.4, x: 80,   y: -100, z: 380, blur: 4 },   // 6: About
+  { delay: 0.8, dur: 1.8, x: 150,  y: -90,  z: 420, blur: 5 },   // 7: Available indicator
+  { delay: 1.2, dur: 1.6, x: 200,  y: -110, z: 450, blur: 5 },   // 8: Retro toggle — from NE
+  { delay: 1.4, dur: 1.1, x: 100,  y: -80,  z: 350, blur: 4 },   // 9: Mobile hamburger
 ];
 
 export function Navigation() {
