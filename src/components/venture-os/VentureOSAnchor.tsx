@@ -21,7 +21,7 @@ export function VentureOSAnchor({ state, onMouseEnter, onMouseLeave, onClick }: 
       onClick={onClick}
       aria-label="Open Venture OS"
       aria-expanded={isOpen}
-      className="flex items-center gap-2 px-3 py-2 rounded-sm transition-all duration-300"
+      className="flex items-center gap-2 px-3 py-2 rounded-sm transition-all duration-300 pulse-load"
       style={{
         minWidth: '44px',
         minHeight: '44px',

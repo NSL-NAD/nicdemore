@@ -58,13 +58,15 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, ease: EASING_PREMIUM, delay: index * 0.07 }}
+      whileHover={{ y: -2 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className="relative overflow-hidden cursor-default flex flex-col h-full"
       style={{
         border: '1px solid var(--color-border)',
         background: hovered ? 'var(--color-forest)' : 'var(--color-base)',
-        transition: 'background 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+        boxShadow: hovered ? '0 0 0 1px var(--color-accent), var(--shadow-md)' : 'none',
+        transition: 'background 0.4s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease',
       }}
     >
       {/* Accent top line — reveals on hover */}
@@ -187,8 +189,8 @@ export function Ventures() {
   return (
     <section
       id="work"
-      className="py-24 sm:py-32 lg:py-40"
-      style={{ background: 'var(--color-surface)' }}
+      className="py-24 sm:py-32 lg:py-40 section-glow"
+      style={{ background: 'var(--color-surface)', position: 'relative' }}
     >
       <div className="mx-auto max-w-7xl px-6">
         {/* Header */}

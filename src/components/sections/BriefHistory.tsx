@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
+import { useRetro } from "@/contexts/RetroContext";
 
 interface TimelineEntry {
   year: string;
@@ -19,14 +20,14 @@ const timeline: TimelineEntry[] = [
     role: "Learning About Life",
     org: "Milwaukee, WI",
     description: "Raised in Milwaukee with deep roots and a curious mind. Grew up watching my grandfather fish McKinley Pier. Learned early that hard work, integrity, and showing up for people is the foundation everything else is built on.",
-    skills: ["Curiosity", "Work Ethic", "Integrity", "Family"],
+    skills: ["Curiosity", "Resilience", "Creative Thinking", "Problem Solving"],
   },
   {
     year: "2012",
     role: "First Business Launch — Age 18",
     org: "Direct Sales",
     description: "Started my first business straight out of high school. Surrounded myself with mentors, absorbed everything I could, and learned the basics of what it means to build something from nothing — sales, communication, and the discipline it takes to actually execute.",
-    skills: ["Sales", "Mentorship", "Entrepreneurship", "Communication"],
+    skills: ["Sales", "Business Fundamentals", "Mentorship", "Hustle"],
   },
   {
     year: "2012–2016",
@@ -40,8 +41,8 @@ const timeline: TimelineEntry[] = [
     year: "2017",
     role: "Co-Founded Margle Media",
     org: "Digital Marketing Agency",
-    description: "Built from zero — no clients, no playbook. Scaled to seven figures and served brands like Johnsonville, Frito-Lay, Cousins Subs, Instant Pot, and Stella & Chewy's. The real-world MBA you can't buy.",
-    skills: ["Agency Operations", "Business Development", "Client Strategy", "Leadership"],
+    description: "Co-founded Margle Media and scaled it to a full-service agency serving national brands. Touched every dimension of the business: paid strategy for Cousins Subs, Johnsonville, Frito-Lay, Florsheim, Instant Pot; built and managed ops, AR/AP, cashflow, and utilization reporting; hired and led the team through direct reports, reviews, and org structure; handled IT, legal, and creative production; owned client relationships end-to-end. The real-world MBA.",
+    skills: ["Operations", "Digital Marketing", "Finance & Accounting", "Client Management", "Leadership", "Business Strategy"],
   },
   {
     year: "2017–2025",
@@ -160,12 +161,15 @@ function CardContent({
   align: "left" | "right";
 }) {
   const [hovered, setHovered] = useState(false);
+  const { isRetro } = useRetro();
+  const hoverBorderColor = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
+  const hoverShadow = isRetro ? '0 8px 30px rgba(0,229,255,0.15)' : '0 8px 30px rgba(244,99,30,0.12)';
   return (
     <motion.div
       className="pb-10 p-4 rounded-sm transition-colors duration-300"
       style={{
-        border: `1px solid ${hovered ? 'var(--color-accent)' : 'transparent'}`,
-        boxShadow: hovered ? '0 8px 30px rgba(244,99,30,0.12)' : 'none',
+        border: `1px solid ${hovered ? hoverBorderColor : 'transparent'}`,
+        boxShadow: hovered ? hoverShadow : 'none',
       }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}

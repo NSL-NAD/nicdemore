@@ -84,8 +84,11 @@ export function Contact() {
     <section
       id="contact"
       className="py-24 sm:py-32 lg:py-40 section-glow"
-      style={{ background: 'var(--color-base)' }}
+      style={{ background: 'var(--color-base)', position: 'relative' }}
     >
+      {/* Grid markers — architectural detail */}
+      <span className="grid-marker" style={{ top: '24px', left: '16px' }}>+</span>
+      <span className="grid-marker" style={{ top: '24px', right: '16px' }}>+</span>
       <div className="mx-auto max-w-4xl px-6">
         <div className="text-center mb-12">
           <motion.span

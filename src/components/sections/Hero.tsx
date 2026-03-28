@@ -60,7 +60,16 @@ function HeroVideoPlayer() {
   };
 
   return (
-    <div className="relative w-full rounded-lg overflow-hidden group" style={{ background: 'var(--color-surface)', aspectRatio: '16/9' }}>
+    <div
+      className="relative w-full group"
+      style={{
+        background: 'var(--color-surface)',
+        aspectRatio: '16/9',
+        boxShadow: '0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)',
+        borderRadius: '2px',
+        overflow: 'hidden',
+      }}
+    >
       <video
         ref={videoRef}
         className="w-full h-full object-cover"
@@ -390,7 +399,7 @@ export function Hero() {
           </motion.div>
 
           {/* Two columns: left = body + CTAs, right = video */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_520px] gap-12 lg:gap-16 items-start">
+          <div className="grid md:grid-cols-2 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-10 md:items-start lg:items-center">
             {/* Left: body copy + CTA buttons */}
             <motion.div style={{ x: textX }}>
               <motion.p
@@ -454,6 +463,19 @@ export function Hero() {
                 <HeroVideoPlayer />
               </motion.div>
             </motion.div>
+          </div>
+
+          {/* Cross-column accent — architectural detail, desktop only */}
+          <div className="hidden lg:flex items-center gap-3 mt-6" style={{
+            fontFamily: 'var(--font-jetbrains)',
+            fontSize: '9px',
+            letterSpacing: '0.18em',
+            color: 'var(--color-text-secondary)',
+            opacity: 0.5,
+          }}>
+            <div style={{ width: '32px', height: '1px', background: 'var(--color-accent)' }} />
+            <span>NIC DEMORE · GOOD AT SCALE STUDIO · MILWAUKEE WI</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--color-text-secondary)', opacity: 0.3 }} />
           </div>
         </div>
       </motion.div>

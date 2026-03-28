@@ -154,6 +154,7 @@ body {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 0.95;
+  text-shadow: var(--glow-text);
 }
 
 /* h2 and display: Press Start 2P for that retro CRT feel */
@@ -178,7 +179,6 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   [data-theme="retro"] h1 {
     animation: neon-flicker 4s infinite;
-    text-shadow: var(--glow-text);
   }
   /* neon-lit overrides with the on-flicker for initial render */
   [data-theme="retro"] [data-neon-header].neon-lit {
@@ -363,6 +363,21 @@ body {
 
 .pulse-dot {
   animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* VentureOS anchor — 3-cycle pulse on page load then stops */
+@keyframes pulse-load {
+  0%, 100% { transform: scale(1); box-shadow: none; }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 4px rgba(244,99,30,0.2); }
+}
+
+.pulse-load {
+  animation: pulse-load 0.8s ease-in-out 3;
+  animation-fill-mode: forwards;
+}
+
+[data-theme="retro"] .pulse-load {
+  animation: pulse-load 0.8s ease-in-out 3;
 }
 
 /* No-print class for PDF */

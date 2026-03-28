@@ -99,9 +99,11 @@ function FloatingCard({
       }
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="absolute w-[280px] p-5 rounded-sm cursor-default transition-shadow duration-300"
+      className="absolute p-5 rounded-sm cursor-default transition-shadow duration-300"
       style={{
         ...pos,
+        minWidth: '220px',
+        maxWidth: '260px',
         transform: index === 6 ? 'translateX(-50%)' : undefined,
         background: 'var(--color-surface)',
         border: `1px solid ${hovered ? hoverBorder : 'var(--color-border)'}`,
@@ -116,8 +118,7 @@ function FloatingCard({
         {card.title}
       </h3>
       <p
-        className="text-xs leading-relaxed"
-        style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-syne)' }}
+        style={{ fontSize: '13px', lineHeight: '1.6', color: 'var(--color-text-secondary)', fontFamily: 'var(--font-syne)' }}
       >
         {card.body}
       </p>
@@ -149,30 +150,34 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Page title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASING_PREMIUM }}
-          className="text-center mb-16"
-        >
-          <span
-            className="block text-xs tracking-widest uppercase mb-4"
-            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+        <section className="pt-4 pb-12 text-center" style={{ background: 'var(--color-base)' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASING_PREMIUM }}
+            className="mb-16"
           >
-            // About
-          </span>
-          <h1
-            data-neon-header="pink"
-            className="font-display font-bold"
-            style={{
-              fontSize: 'clamp(36px, 5vw, 64px)',
-              color: 'var(--color-text-primary)',
-              letterSpacing: '-0.025em',
-            }}
-          >
-            The Full Picture
-          </h1>
-        </motion.div>
+            <p
+              className="font-mono text-xs tracking-widest uppercase mb-6"
+              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)' }}
+            >
+              // About
+            </p>
+            <h1
+              data-neon-header="pink"
+              className="font-display font-extrabold leading-none mb-6 mx-auto"
+              style={{
+                fontSize: 'clamp(48px, 6vw, 84px)',
+                color: 'var(--color-text-primary)',
+                letterSpacing: '-0.035em',
+                maxWidth: '800px',
+              }}
+            >
+              Builder. Engineer.<br />
+              <span style={{ color: 'var(--color-accent)' }}>Founder.</span>
+            </h1>
+          </motion.div>
+        </section>
 
         {/* DESKTOP: floating cards around photo */}
         <div className="hidden lg:block relative" style={{ minHeight: '900px' }}>
@@ -181,23 +186,23 @@ export default function AboutPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-            className="absolute left-1/2 top-[15%] -translate-x-1/2 w-[300px] z-[15]"
+            className="absolute left-1/2 top-[15%] -translate-x-1/2 w-[380px] z-[15]"
           >
-            <div
-              className="relative rounded-lg overflow-hidden"
-              style={{
-                aspectRatio: '3/4',
-                boxShadow: '0 0 30px rgba(244, 99, 30, 0.1), var(--shadow-lg)',
-                border: '2px solid var(--color-accent)',
-              }}
-            >
+            <div className="relative overflow-hidden" style={{ height: '440px' }}>
               <Image
                 src="/nicdemore.jpg"
                 alt="Nic DeMore"
-                fill
+                width={440}
+                height={440}
                 priority
-                className="object-cover object-top"
-                sizes="300px"
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                  width: '100%',
+                  height: '440px',
+                  borderRadius: '2px',
+                  boxShadow: '0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)',
+                }}
               />
             </div>
           </motion.div>
