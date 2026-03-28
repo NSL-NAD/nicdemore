@@ -543,6 +543,21 @@ img {
   font-weight: 700;
 }
 
+/* Nav header — frosted glass on hover so text is readable over grid */
+.nav-header-frost {
+  transition: background 0.3s ease, backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease;
+}
+
+.nav-header-frost:hover {
+  background: color-mix(in srgb, var(--color-base) 78%, transparent) !important;
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+
+[data-theme="retro"] .nav-header-frost:hover {
+  background: rgba(10, 10, 20, 0.75) !important;
+}
+
 /* ===================================================
    PING KEYFRAME — availability indicator pulse
    =================================================== */
