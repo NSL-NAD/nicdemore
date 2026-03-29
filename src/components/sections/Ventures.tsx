@@ -220,7 +220,7 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
                 fontFamily: 'var(--font-syne)',
                 fontSize: '12px',
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => { if (isActive) e.stopPropagation(); }}
             >
               Visit
               <span>→</span>
@@ -278,10 +278,10 @@ export function Ventures() {
       {/* Section background overlay — lets GlowingGrid show through */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'rgba(245, 241, 235, 0.50)', zIndex: 0 }}
+        style={{ background: 'rgba(245, 241, 235, 0.50)', zIndex: 1, pointerEvents: 'none' }}
       />
 
-      <div className="relative" style={{ zIndex: 1 }}>
+      <div className="relative" style={{ zIndex: 2 }}>
         <div className="mx-auto max-w-7xl px-6">
 
           {/* ── Header ──────────────────────────────────────────── */}
@@ -341,7 +341,7 @@ export function Ventures() {
               <div
                 className="relative mx-auto"
                 style={{
-                  perspective: '1200px',
+                  perspective: '800px',
                   perspectiveOrigin: '50% 50%',
                   transformStyle: 'preserve-3d',
                   width: isMobile ? '100%' : `${CARD_WIDTH}px`,
@@ -384,6 +384,9 @@ export function Ventures() {
                         zIndex: t.zIndex,
                         display: t.display,
                         pointerEvents: t.pointerEvents,
+                        boxShadow: index === activeIndex
+                          ? '0 25px 50px -12px rgba(0,0,0,0.28), 0 0 40px 5px rgba(244,99,30,0.15)'
+                          : '0 4px 12px rgba(0,0,0,0.06)',
                       }}
                     >
                       <VentureCard venture={venture} isActive={index === activeIndex} />
