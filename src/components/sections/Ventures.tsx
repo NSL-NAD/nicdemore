@@ -117,7 +117,7 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
         borderRadius: '4px',
         overflow: 'hidden',
         boxShadow: isActive
-          ? '0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(244,99,30,0.2)'
+          ? '0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(244,99,30,0.3), 0 0 40px rgba(244,99,30,0.12)'
           : '0 4px 16px rgba(0,0,0,0.06)',
         transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
@@ -247,7 +247,7 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
 
 export function Ventures() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [dragStart, setDragStart] = useState(0);
+  const [dragStart, setDragStart] = useState<number | null>(null);
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   const CARD_WIDTH = 320;
@@ -255,15 +255,18 @@ export function Ventures() {
 
   function handlePointerDown(e: React.PointerEvent) {
     setDragStart(e.clientX);
+    e.currentTarget.setPointerCapture(e.pointerId);
   }
 
   function handlePointerUp(e: React.PointerEvent) {
+    if (dragStart === null) return;
     const delta = e.clientX - dragStart;
     if (delta < -50 && activeIndex < ventures.length - 1) {
       setActiveIndex((i) => i + 1);
     } else if (delta > 50 && activeIndex > 0) {
       setActiveIndex((i) => i - 1);
     }
+    setDragStart(null);
   }
 
   return (
@@ -275,7 +278,7 @@ export function Ventures() {
       {/* Section background overlay — lets GlowingGrid show through */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'rgba(245, 241, 235, 0.78)', zIndex: 0 }}
+        style={{ background: 'rgba(245, 241, 235, 0.50)', zIndex: 0 }}
       />
 
       <div className="relative" style={{ zIndex: 1 }}>
@@ -365,8 +368,9 @@ export function Ventures() {
                       }}
                       transition={{
                         type: 'spring',
-                        stiffness: 280,
-                        damping: 30,
+                        stiffness: 260,
+                        damping: 22,
+                        mass: 0.8,
                       }}
                       style={{
                         position: 'absolute',
