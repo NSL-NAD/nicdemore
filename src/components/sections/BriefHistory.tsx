@@ -152,7 +152,7 @@ function CardContent({
   const hoverShadow = isRetro ? '0 8px 30px rgba(0,229,255,0.15)' : '0 8px 30px rgba(244,99,30,0.12)';
   return (
     <motion.div
-      className="pb-10 p-4 rounded-sm transition-colors duration-300"
+      className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)] rounded-sm transition-colors duration-300"
       style={{
         border: `1px solid ${hovered ? hoverBorderColor : 'transparent'}`,
         boxShadow: hovered ? hoverShadow : 'none',
@@ -303,12 +303,12 @@ export function BriefHistory() {
           {/* Vertical spine — desktop (center) */}
           <div
             className="hidden md:block absolute left-1/2 -translate-x-px top-0 bottom-0 w-0.5"
-            style={{ background: 'rgba(180, 160, 140, 0.45)' }}
+            style={{ background: 'rgba(180, 160, 140, 0.65)' }}
           />
           {/* Vertical spine — mobile (left) */}
           <div
             className="md:hidden absolute left-1.5 top-0 bottom-0 w-0.5"
-            style={{ background: 'rgba(180, 160, 140, 0.45)' }}
+            style={{ background: 'rgba(180, 160, 140, 0.65)' }}
           />
 
           <div className="space-y-0">
