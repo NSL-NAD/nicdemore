@@ -241,6 +241,40 @@ export function Ventures() {
           {ventures.map((v, i) => (
             <VentureCard key={v.id} venture={v} index={i} />
           ))}
+          {/* Placeholder — fills grid gap when venture count leaves an empty slot */}
+          <motion.div
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.55, delay: ventures.length * 0.1, ease: [0.23, 1, 0.32, 1] }}
+            className="relative flex flex-col items-center justify-center h-full"
+            style={{
+              border: '1px dashed var(--color-border)',
+              background: 'transparent',
+              minHeight: '200px',
+            }}
+          >
+            <p
+              className="text-center"
+              style={{
+                color: 'var(--color-text-light)',
+                fontFamily: 'var(--font-jetbrains)',
+                fontSize: '11px',
+              }}
+            >
+              More ventures in progress
+            </p>
+            <span
+              className="mt-2"
+              style={{
+                color: 'var(--color-accent)',
+                fontFamily: 'var(--font-jetbrains)',
+                fontSize: '10px',
+              }}
+            >
+              12×12 →
+            </span>
+          </motion.div>
         </div>
 
         {/* Bottom flourish */}

@@ -110,7 +110,7 @@ function TimelineCard({
       </div>
 
       {/* CENTER SPINE — desktop only */}
-      <div className="hidden md:flex flex-col items-center">
+      <div className="hidden md:flex flex-col items-center md:col-start-2">
         <div
           className="w-3 h-3 rounded-full z-10 shrink-0 mt-1"
           style={{
@@ -209,14 +209,14 @@ function CardContent({
       </div>
 
       <p
-        className="text-sm leading-relaxed mb-4"
+        className="text-sm leading-relaxed mb-4 text-left"
         style={{ color: 'var(--color-text-secondary)' }}
       >
         {item.description}
       </p>
 
-      {/* Skills tags */}
-      <div className={`flex flex-wrap gap-1.5 ${align === 'right' ? 'md:justify-end' : ''}`}>
+      {/* Skills tags — always left-aligned for readability */}
+      <div className="flex flex-wrap gap-1.5">
         {item.skills.map((skill) => (
           <span
             key={skill}
@@ -302,13 +302,13 @@ export function BriefHistory() {
         <div className="relative mb-24">
           {/* Vertical spine — desktop (center) */}
           <div
-            className="hidden md:block absolute left-1/2 -translate-x-px top-0 bottom-0 w-px"
-            style={{ background: 'var(--color-border)' }}
+            className="hidden md:block absolute left-1/2 -translate-x-px top-0 bottom-0 w-0.5"
+            style={{ background: 'rgba(180, 160, 140, 0.45)' }}
           />
           {/* Vertical spine — mobile (left) */}
           <div
-            className="md:hidden absolute left-1.5 top-0 bottom-0 w-px"
-            style={{ background: 'var(--color-border)' }}
+            className="md:hidden absolute left-1.5 top-0 bottom-0 w-0.5"
+            style={{ background: 'rgba(180, 160, 140, 0.45)' }}
           />
 
           <div className="space-y-0">
