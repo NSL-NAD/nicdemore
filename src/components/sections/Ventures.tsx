@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
-import { ventures, type VentureStatus } from "@/data/ventures";
+import { ventures, type VentureStatus, type Venture } from "@/data/ventures";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+
+// ─── Status helpers ────────────────────────────────────────────────────────────
 
 function StatusDot({ status }: { status: VentureStatus }) {
   const colors: Record<VentureStatus, string> = {
@@ -16,7 +19,7 @@ function StatusDot({ status }: { status: VentureStatus }) {
   };
   return (
     <span
-      className="inline-block w-2 h-2 rounded-full"
+      className="inline-block w-2 h-2 rounded-full flex-shrink-0"
       style={{ background: colors[status] }}
     />
   );
@@ -33,7 +36,7 @@ function StatusBadge({ status }: { status: VentureStatus }) {
   };
   return (
     <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium flex-shrink-0"
       style={{
         fontFamily: 'var(--font-jetbrains)',
         fontSize: '10px',
@@ -41,6 +44,7 @@ function StatusBadge({ status }: { status: VentureStatus }) {
         color: status === 'LIVE' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
         background: 'var(--color-surface-alt)',
         border: '1px solid var(--color-border)',
+        whiteSpace: 'nowrap',
       }}
     >
       <StatusDot status={status} />
@@ -49,38 +53,89 @@ function StatusBadge({ status }: { status: VentureStatus }) {
   );
 }
 
-function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: number }) {
-  const [hovered, setHovered] = useState(false);
+// ─── Card transform calculator ─────────────────────────────────────────────────
 
+interface CardTransform {
+  x: number;
+  z: number;
+  rotateY: number;
+  scale: number;
+  opacity: number;
+  zIndex: number;
+  pointerEvents: 'auto' | 'none';
+  display: 'block' | 'none';
+}
+
+function getCardTransform(
+  index: number,
+  activeIndex: number,
+  isMobile: boolean
+): CardTransform {
+  const offset = index - activeIndex;
+  const absOffset = Math.abs(offset);
+  const sign = Math.sign(offset);
+
+  if (isMobile) {
+    // Mobile: simple slide, no 3D
+    return {
+      x: sign * absOffset * 380,
+      z: 0,
+      rotateY: 0,
+      scale: 1,
+      opacity: absOffset === 0 ? 1 : 0,
+      zIndex: ventures.length - absOffset,
+      pointerEvents: absOffset === 0 ? 'auto' : 'none',
+      display: absOffset > 1 ? 'none' : 'block',
+    };
+  }
+
+  // Desktop: full DepthDeck 3D coverflow
+  // rotateY: negative sign so left cards angle right (toward center), right cards angle left (toward center)
+  const rawX = offset === 0 ? 0 : sign * Math.min(200 + (absOffset - 1) * 140, 440);
+
+  return {
+    x: rawX,
+    z: -absOffset * 80,
+    rotateY: offset === 0 ? 0 : -sign * Math.min(absOffset * 18, 45),
+    scale: Math.max(0.65, 1 - absOffset * 0.12),
+    opacity: Math.max(0.45, 1 - absOffset * 0.18),
+    zIndex: ventures.length - absOffset,
+    pointerEvents: absOffset > 3 ? 'none' : 'auto',
+    display: absOffset > 4 ? 'none' : 'block',
+  };
+}
+
+// ─── VentureCard ───────────────────────────────────────────────────────────────
+
+function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolean }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 80 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, delay: index * 0.1, ease: [0.23, 1, 0.32, 1] }}
-      whileHover={{
-        y: -6,
-        boxShadow: '0 20px 40px rgba(0,0,0,0.12), 0 0 0 1px var(--color-accent)',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="relative overflow-hidden cursor-default flex flex-col h-full"
+    <div
+      className="flex flex-col h-full"
       style={{
-        border: '1px solid var(--color-border)',
         background: 'var(--color-base)',
+        border: `1px solid ${isActive ? 'rgba(244,99,30,0.55)' : 'var(--color-border)'}`,
+        borderRadius: '4px',
+        overflow: 'hidden',
+        boxShadow: isActive
+          ? '0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(244,99,30,0.2)'
+          : '0 4px 16px rgba(0,0,0,0.06)',
+        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
       }}
     >
-      {/* Accent top line — reveals on hover */}
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-0.5"
-        animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
-        initial={{ scaleX: 0, opacity: 0 }}
-        transition={{ duration: 0.35, ease: EASING_PREMIUM }}
-        style={{ background: 'var(--color-accent)', transformOrigin: 'left' }}
+      {/* Active accent top bar */}
+      <div
+        style={{
+          height: '2px',
+          background: 'var(--color-accent)',
+          transformOrigin: 'left',
+          transform: isActive ? 'scaleX(1)' : 'scaleX(0)',
+          transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+        }}
       />
 
-      <div className="p-6 sm:p-8 flex flex-col flex-1">
-        <div className="flex items-start justify-between gap-4 mb-4">
+      <div className="p-6 flex flex-col flex-1">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 mb-4">
           <h3
             className="font-display font-bold text-xl leading-tight"
             style={{ color: 'var(--color-text-primary)' }}
@@ -90,6 +145,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
           <StatusBadge status={venture.status} />
         </div>
 
+        {/* Description */}
         <p
           className="text-sm leading-relaxed mb-5 flex-1"
           style={{ color: 'var(--color-text-secondary)' }}
@@ -142,7 +198,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
         )}
 
         {/* CTA */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-auto pt-2">
           <span
             className="text-xs tracking-widest"
             style={{
@@ -164,6 +220,7 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
                 fontFamily: 'var(--font-syne)',
                 fontSize: '12px',
               }}
+              onClick={(e) => e.stopPropagation()}
             >
               Visit
               <span>→</span>
@@ -182,120 +239,223 @@ function VentureCard({ venture, index }: { venture: typeof ventures[0]; index: n
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
+// ─── Main Ventures Section ─────────────────────────────────────────────────────
+
 export function Ventures() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [dragStart, setDragStart] = useState(0);
+  const isMobile = useMediaQuery('(max-width: 767px)');
+
+  const CARD_WIDTH = 320;
+  const CONTAINER_HEIGHT = isMobile ? 480 : 460;
+
+  function handlePointerDown(e: React.PointerEvent) {
+    setDragStart(e.clientX);
+  }
+
+  function handlePointerUp(e: React.PointerEvent) {
+    const delta = e.clientX - dragStart;
+    if (delta < -50 && activeIndex < ventures.length - 1) {
+      setActiveIndex((i) => i + 1);
+    } else if (delta > 50 && activeIndex > 0) {
+      setActiveIndex((i) => i - 1);
+    }
+  }
+
   return (
     <section
       id="work"
-      className="py-24 sm:py-32 lg:py-40 section-glow"
-      style={{ background: 'var(--color-surface)', position: 'relative' }}
+      className="py-24 sm:py-32 lg:py-40"
+      style={{ background: 'transparent', position: 'relative', overflow: 'hidden' }}
     >
-      <div className="mx-auto max-w-7xl px-6">
-        {/* Header */}
-        <div className="mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.5, ease: EASING_SMOOTH }}
-            className="block text-xs tracking-widest uppercase mb-4"
-            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
-          >
-            // Ventures
-          </motion.span>
+      {/* Section background overlay — lets GlowingGrid show through */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'rgba(245, 241, 235, 0.78)', zIndex: 0 }}
+      />
 
-          <motion.h2
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.55, ease: EASING_SMOOTH }}
-            data-neon-header="pink"
-            className="font-display font-extrabold mb-4"
-            style={{
-              fontSize: 'clamp(36px, 4vw, 60px)',
-              color: 'var(--color-text-primary)',
-              letterSpacing: '-0.03em',
-              marginLeft: '-12px',
-            }}
-          >
-            What I&apos;m Building
-          </motion.h2>
+      <div className="relative" style={{ zIndex: 1 }}>
+        <div className="mx-auto max-w-7xl px-6">
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.55, ease: EASING_PREMIUM, delay: 0.1 }}
-            className="max-w-2xl text-lg leading-relaxed"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            From education platforms to AI infrastructure — each venture is a bet on building something that matters.
-          </motion.p>
-        </div>
+          {/* ── Header ──────────────────────────────────────────── */}
+          <div className="mb-16">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.5, ease: EASING_SMOOTH }}
+              className="block text-xs tracking-widest uppercase mb-4"
+              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+            >
+              // Ventures
+            </motion.span>
 
-        {/* Venture grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-          {ventures.map((v, i) => (
-            <VentureCard key={v.id} venture={v} index={i} />
-          ))}
-          {/* Placeholder — fills grid gap when venture count leaves an empty slot */}
+            <motion.h2
+              initial={{ opacity: 0, x: -16 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.55, ease: EASING_SMOOTH }}
+              className="font-display font-extrabold mb-4"
+              style={{
+                fontSize: 'clamp(36px, 4vw, 60px)',
+                color: 'var(--color-text-primary)',
+                letterSpacing: '-0.03em',
+                marginLeft: '-12px',
+              }}
+            >
+              What I&apos;m Building
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.55, ease: EASING_PREMIUM, delay: 0.1 }}
+              className="max-w-2xl text-lg leading-relaxed"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              From education platforms to AI infrastructure — each venture is a bet on building something that matters.
+            </motion.p>
+          </div>
+
+          {/* ── DepthDeck Carousel ──────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 80 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.55, delay: ventures.length * 0.1, ease: [0.23, 1, 0.32, 1] }}
-            className="relative flex flex-col items-center justify-center h-full"
-            style={{
-              border: '1px dashed var(--color-border)',
-              background: 'transparent',
-              minHeight: '200px',
-            }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.6 }}
           >
-            <p
-              className="text-center"
-              style={{
-                color: 'var(--color-text-light)',
-                fontFamily: 'var(--font-jetbrains)',
-                fontSize: '11px',
-              }}
+            {/* Outer clip wrapper */}
+            <div
+              className="relative w-full select-none"
+              style={{ overflow: 'hidden', paddingTop: '8px', paddingBottom: '8px' }}
             >
-              More ventures in progress
-            </p>
-            <span
-              className="mt-2"
-              style={{
-                color: 'var(--color-accent)',
-                fontFamily: 'var(--font-jetbrains)',
-                fontSize: '10px',
-              }}
-            >
-              12×12 →
-            </span>
-          </motion.div>
-        </div>
+              {/* Perspective container */}
+              <div
+                className="relative mx-auto"
+                style={{
+                  perspective: '1200px',
+                  perspectiveOrigin: '50% 50%',
+                  transformStyle: 'preserve-3d',
+                  width: isMobile ? '100%' : `${CARD_WIDTH}px`,
+                  height: `${CONTAINER_HEIGHT}px`,
+                  cursor: 'grab',
+                }}
+                onPointerDown={handlePointerDown}
+                onPointerUp={handlePointerUp}
+              >
+                {ventures.map((venture, index) => {
+                  const t = getCardTransform(index, activeIndex, isMobile);
+                  return (
+                    <motion.div
+                      key={venture.id}
+                      onClick={() => {
+                        if (index !== activeIndex) setActiveIndex(index);
+                      }}
+                      animate={{
+                        x: t.x,
+                        z: t.z,
+                        rotateY: t.rotateY,
+                        scale: t.scale,
+                        opacity: t.opacity,
+                      }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 280,
+                        damping: 30,
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: isMobile ? '0' : `calc(50% - ${CARD_WIDTH / 2}px)`,
+                        width: isMobile ? '100%' : `${CARD_WIDTH}px`,
+                        height: `${CONTAINER_HEIGHT}px`,
+                        transformStyle: 'preserve-3d',
+                        backfaceVisibility: 'hidden',
+                        cursor: index !== activeIndex ? 'pointer' : 'default',
+                        zIndex: t.zIndex,
+                        display: t.display,
+                        pointerEvents: t.pointerEvents,
+                      }}
+                    >
+                      <VentureCard venture={venture} isActive={index === activeIndex} />
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
 
-        {/* Bottom flourish */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-12 flex items-center gap-4"
-        >
-          <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />
-          <span
-            className="text-xs tracking-widest"
-            style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
+            {/* ── Navigation Dots ─────────────────────────────────── */}
+            <div className="flex items-center justify-center gap-2 mt-8">
+              {ventures.map((_, i) => (
+                <motion.button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  animate={{
+                    scale: i === activeIndex ? 1 : 0.7,
+                    opacity: i === activeIndex ? 1 : 0.4,
+                  }}
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: i === activeIndex ? 'var(--color-accent)' : 'var(--color-border)',
+                    cursor: 'pointer',
+                    padding: 0,
+                    outline: 'none',
+                  }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  aria-label={`Go to venture ${i + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* ── Venture name hint ───────────────────────────────── */}
+            <div className="flex items-center justify-center mt-4">
+              <motion.span
+                key={activeIndex}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.25, ease: EASING_SMOOTH }}
+                style={{
+                  fontFamily: 'var(--font-jetbrains)',
+                  fontSize: '11px',
+                  letterSpacing: '0.06em',
+                  color: 'var(--color-text-light)',
+                }}
+              >
+                {activeIndex + 1} / {ventures.length}
+              </motion.span>
+            </div>
+          </motion.div>
+
+          {/* ── Bottom flourish ─────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-12 flex items-center gap-4"
           >
-            {ventures.filter(v => v.status === 'LIVE').length} Live ·{' '}
-            {ventures.filter(v => v.status === 'BUILD' || v.status === 'TEST').length} Building ·{' '}
-            {new Date().getFullYear()}
-          </span>
-          <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />
-        </motion.div>
+            <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />
+            <span
+              className="text-xs tracking-widest"
+              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
+            >
+              {ventures.filter((v) => v.status === 'LIVE').length} Live ·{' '}
+              {ventures.filter((v) => v.status === 'BUILD' || v.status === 'TEST').length} Building ·{' '}
+              {new Date().getFullYear()} · 12×12 →
+            </span>
+            <div className="h-px flex-1" style={{ background: 'var(--color-border)' }} />
+          </motion.div>
+
+        </div>
       </div>
     </section>
   );
