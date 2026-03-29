@@ -16,13 +16,13 @@ const skillGroups = [
   { label: "Product + Ventures", skills: ["Product Management", "Venture Building", "MVP Development", "Growth Strategy"] },
 ];
 
+// Fix 4: Separate mount-stagger transition from hover transition using inline variant transitions
 function SkillTag({ skill, index }: { skill: string; index: number }) {
   return (
     <motion.span
-      initial={{ opacity: 0, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.3 }}
-      whileHover={{ y: -2, scale: 1.04 }}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0, transition: { delay: index * 0.05, duration: 0.25 } }}
+      whileHover={{ y: -2, transition: { duration: 0.15, delay: 0 } }}
       style={{
         fontFamily: "var(--font-jetbrains)",
         fontSize: "10px",
@@ -43,7 +43,6 @@ function SkillTag({ skill, index }: { skill: string; index: number }) {
 
 function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: number }) {
   const [flipped, setFlipped] = useState(false);
-  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
@@ -52,23 +51,26 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.55, delay: index * 0.06, ease: [0.23, 1, 0.32, 1] }}
       onClick={() => setFlipped(!flipped)}
-      onMouseEnter={() => { setHovered(true); setFlipped(true); }}
-      onMouseLeave={() => { setHovered(false); setFlipped(false); }}
-      whileHover={{ scale: 1.03 }}
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
+      // Fix 2: boxShadow in whileHover (not filter); only fire when not flipped
+      whileHover={!flipped ? {
+        scale: 1.03,
+        boxShadow: "0 0 24px rgba(244, 99, 30, 0.35), 0 8px 32px rgba(0,0,0,0.1)",
+      } : {}}
       className="cursor-pointer"
       style={{
         perspective: "1000px",
-        minHeight: "220px",
+        // Fix 1: portrait on desktop — 300px min-height vs ~240px column width
+        minHeight: "300px",
         height: "auto",
-        filter: hovered ? "drop-shadow(0 8px 24px rgba(244, 99, 30, 0.2))" : "none",
-        transition: "filter 0.2s ease",
       }}
     >
       <div
         style={{
           position: "relative",
           width: "100%",
-          minHeight: "220px",
+          minHeight: "300px",
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
           transition: "transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
@@ -155,8 +157,11 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
             {group.label}
           </span>
 
-          {/* Skill tags — orange boxed */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+          {/* Fix 3: key on container forces remount on flip → stagger re-fires */}
+          <div
+            key={flipped ? "flipped" : "unflipped"}
+            style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
+          >
             {group.skills.map((skill, i) => (
               <SkillTag key={skill} skill={skill} index={i} />
             ))}
