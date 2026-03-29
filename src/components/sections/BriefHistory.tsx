@@ -241,7 +241,7 @@ export function BriefHistory() {
   return (
     <section
       id="skillset"
-      className="py-24 sm:py-32 lg:py-40 section-glow"
+      className="py-24 sm:py-32 lg:py-40 section-glow overflow-x-hidden"
       style={{ background: 'var(--color-base)', position: 'relative' }}
     >
       {/* Grid markers — architectural detail */}
