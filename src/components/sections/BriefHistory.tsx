@@ -178,9 +178,9 @@ function TimelineCard({
             whileInView={{
               scale: [1, 1.8, 1],
               boxShadow: [
-                '0 0 0px 0px rgba(244,99,30,0)',
-                '0 0 14px 5px rgba(244,99,30,0.5)',
-                '0 0 0px 0px rgba(244,99,30,0)',
+                '0 0 0 0 rgba(244,99,30,0)',
+                '0 0 0 8px rgba(244,99,30,0.4)',
+                '0 0 0 0 rgba(244,99,30,0)',
               ],
             }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
@@ -201,9 +201,9 @@ function TimelineCard({
             whileInView={{
               scale: [1, 1.8, 1],
               boxShadow: [
-                '0 0 0px 0px rgba(244,99,30,0)',
-                '0 0 14px 5px rgba(244,99,30,0.5)',
-                '0 0 0px 0px rgba(244,99,30,0)',
+                '0 0 0 0 rgba(244,99,30,0)',
+                '0 0 0 8px rgba(244,99,30,0.4)',
+                '0 0 0 0 rgba(244,99,30,0)',
               ],
             }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
