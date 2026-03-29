@@ -120,7 +120,9 @@ function TimelineCard({
   const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   // Dot pulse — fires once when card is fully settled in view
+  // Includes glow ring: scale [1→1.8→1] + box-shadow pulse
   const dotScale = useMotionValue(1);
+  const dotBoxShadow = useMotionValue("0 0 0px 0px rgba(244,99,30,0)");
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (latest >= 0.95 && !hasPulsed.current) {
       hasPulsed.current = true;
@@ -128,6 +130,15 @@ function TimelineCard({
         duration: 0.5,
         ease: [0.22, 1, 0.36, 1],
       });
+      animate(
+        dotBoxShadow,
+        [
+          "0 0 0px 0px rgba(244,99,30,0)",
+          "0 0 12px 4px rgba(244,99,30,0.4)",
+          "0 0 0px 0px rgba(244,99,30,0)",
+        ],
+        { duration: 0.5 }
+      );
     }
   });
 
@@ -193,6 +204,7 @@ function TimelineCard({
             style={{
               background: "var(--color-accent)",
               scale: dotScale,
+              boxShadow: dotBoxShadow,
             }}
           />
         </div>
@@ -208,6 +220,7 @@ function TimelineCard({
             style={{
               background: "var(--color-accent)",
               scale: dotScale,
+              boxShadow: dotBoxShadow,
             }}
           />
           <CardContent item={item} lineWidth={lineWidth} align="left" />
@@ -241,7 +254,7 @@ function CardContent({
         // Always show a subtle border; elevate on hover with solid + glow
         border: `1px solid ${hovered ? hoverBorderColor : "var(--color-border)"}`,
         boxShadow: hovered
-          ? `0 12px 40px rgba(0,0,0,0.1), 0 0 0 1px ${hoverBorderColor}`
+          ? "0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06)"
           : "0 2px 8px rgba(0,0,0,0.04)",
         // Frosted glass — adapts to retro vs. light mode
         background: hovered
@@ -252,6 +265,7 @@ function CardContent({
           ? "rgba(0, 20, 30, 0.6)"
           : "rgba(250, 249, 246, 0.6)",
         backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
         borderRadius: "4px",
       }}
       whileHover={{ y: -4 }}
@@ -357,13 +371,13 @@ export function BriefHistory() {
   // Scrim adapts to retro dark mode vs. light mode
   const scrimBackground = isRetro
     ? "rgba(3, 8, 12, 0.72)"
-    : "rgba(250, 249, 246, 0.72)";
+    : "rgba(250, 249, 246, 0.58)";
 
   return (
     <section
       ref={sectionRef}
       id="skillset"
-      className="py-24 sm:py-32 lg:py-40 section-glow overflow-x-hidden"
+      className="py-24 sm:py-32 lg:py-40 section-glow"
       style={{
         // Transparent so GlowingGrid shows through from fixed canvas in layout.tsx
         background: "transparent",
@@ -403,7 +417,7 @@ export function BriefHistory() {
       </span>
 
       {/* All content above the scrim */}
-      <div className="relative" style={{ zIndex: 1 }}>
+      <div className="relative overflow-x-hidden" style={{ zIndex: 1 }}>
         <div className="mx-auto max-w-6xl px-6">
           {/* Section header */}
           <div className="mb-16">
@@ -477,8 +491,8 @@ export function BriefHistory() {
 
             {/* Mobile spine — left edge, scroll-driven orange fill */}
             <div
-              className="md:hidden absolute left-1.5 top-0 bottom-0 w-px"
-              style={{ background: "var(--color-border)" }}
+              className="md:hidden absolute left-1.5 top-0 bottom-0"
+              style={{ background: "var(--color-border)", width: "2px" }}
             >
               <motion.div
                 style={{
