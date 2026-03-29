@@ -5,9 +5,6 @@ import {
   motion,
   useScroll,
   useTransform,
-  useMotionValue,
-  useMotionValueEvent,
-  animate,
   type MotionValue,
 } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, LAND_EASE, viewportOnce } from "@/lib/motion";
@@ -109,38 +106,13 @@ function TimelineCard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isLeft = index % 2 === 0;
-  const hasPulsed = useRef(false);
 
-  // Scroll progress used for both the animated line inside the card
-  // and the dot pulse trigger
+  // Scroll progress used for the animated line inside the card
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.85", "start 0.4"],
   });
   const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  // Dot pulse — fires once when card is fully settled in view
-  // Includes glow ring: scale [1→1.8→1] + box-shadow pulse
-  const dotScale = useMotionValue(1);
-  const dotBoxShadow = useMotionValue("0 0 0px 0px rgba(244,99,30,0)");
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (latest >= 0.95 && !hasPulsed.current) {
-      hasPulsed.current = true;
-      animate(dotScale, [1, 1.8, 1], {
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1],
-      });
-      animate(
-        dotBoxShadow,
-        [
-          "0 0 0px 0px rgba(244,99,30,0)",
-          "0 0 12px 4px rgba(244,99,30,0.4)",
-          "0 0 0px 0px rgba(244,99,30,0)",
-        ],
-        { duration: 0.5 }
-      );
-    }
-  });
 
   return (
     // Perspective container — required for translateZ to create real depth
@@ -201,11 +173,18 @@ function TimelineCard({
         <div className="hidden md:flex flex-col items-center md:col-start-2">
           <motion.div
             className="w-3 h-3 rounded-full z-10 shrink-0 mt-1"
-            style={{
-              background: "var(--color-accent)",
-              scale: dotScale,
-              boxShadow: dotBoxShadow,
+            style={{ background: "var(--color-accent)" }}
+            initial={{ scale: 1, boxShadow: '0 0 0px 0px rgba(244,99,30,0)' }}
+            whileInView={{
+              scale: [1, 1.8, 1],
+              boxShadow: [
+                '0 0 0px 0px rgba(244,99,30,0)',
+                '0 0 14px 5px rgba(244,99,30,0.5)',
+                '0 0 0px 0px rgba(244,99,30,0)',
+              ],
             }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.9 }}
           />
         </div>
 
@@ -217,11 +196,18 @@ function TimelineCard({
           {/* Dot — mobile */}
           <motion.div
             className="absolute left-0 top-1.5 w-3 h-3 rounded-full z-10"
-            style={{
-              background: "var(--color-accent)",
-              scale: dotScale,
-              boxShadow: dotBoxShadow,
+            style={{ background: "var(--color-accent)" }}
+            initial={{ scale: 1, boxShadow: '0 0 0px 0px rgba(244,99,30,0)' }}
+            whileInView={{
+              scale: [1, 1.8, 1],
+              boxShadow: [
+                '0 0 0px 0px rgba(244,99,30,0)',
+                '0 0 14px 5px rgba(244,99,30,0.5)',
+                '0 0 0px 0px rgba(244,99,30,0)',
+              ],
             }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.9 }}
           />
           <CardContent item={item} lineWidth={lineWidth} align="left" />
         </div>
@@ -253,22 +239,20 @@ function CardContent({
       style={{
         // Always show a subtle border; elevate on hover with solid + glow
         border: `1px solid ${hovered ? hoverBorderColor : "var(--color-border)"}`,
-        boxShadow: hovered
-          ? "0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06)"
-          : "0 2px 8px rgba(0,0,0,0.04)",
-        // Frosted glass — adapts to retro vs. light mode
+        // Frosted glass — inline to bypass any CSS class conflicts
+        backdropFilter: 'blur(12px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(12px) saturate(1.4)',
         background: hovered
           ? isRetro
             ? "rgba(0, 20, 30, 0.85)"
             : "rgba(250, 249, 246, 0.85)"
           : isRetro
           ? "rgba(0, 20, 30, 0.6)"
-          : "rgba(250, 249, 246, 0.6)",
-        backdropFilter: "blur(8px)",
-        WebkitBackdropFilter: "blur(8px)",
+          : "rgba(250, 249, 246, 0.75)",
         borderRadius: "4px",
       }}
-      whileHover={{ y: -4 }}
+      animate={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
+      whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06)' }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
