@@ -5,6 +5,10 @@ export const EASING_PREMIUM = [0.23, 1, 0.32, 1] as const
 export const EASING_SMOOTH = [0.4, 0, 0.2, 1] as const
 export const EASING_SNAPPY = [0.77, 0, 0.175, 1] as const
 
+// Cinematic landing ease — fast initial movement, gravity-like deceleration tail
+// Use for all 3D entrance animations (drop3D pattern from Hero architecture)
+export const LAND_EASE = [0.22, 0.85, 0.32, 1] as const
+
 export const fadeInUp = {
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
