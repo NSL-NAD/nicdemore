@@ -8,9 +8,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const words = ["Builder.", "Engineer.", "Founder."];
 
-// Smooth deceleration — fast start, very slow landing
-// Tuned to avoid snap at end (the previous [0.12, 0.9, 0.25, 1] caused a snap)
-const LAND_EASE = [0.22, 0.85, 0.32, 1] as const;
+// Smooth expo-out — fast start, genuinely smooth landing, no snap
+const LAND_EASE = [0.16, 1, 0.3, 1] as const;
 
 // =====================================================
 // CINEMATIC TIMING — 5s total, more simultaneous starts
@@ -411,7 +410,7 @@ export function Hero() {
                   <div className="flex items-center gap-4" style={{ transformStyle: 'preserve-3d' }}>
                     {/* Buttons — reduced Y offsets to fix snap */}
                     <motion.a
-                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 40, 300, 3)}
+                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 40, 0, 3)}
                       href="#work"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                       style={{
@@ -426,7 +425,7 @@ export function Hero() {
                       <span className="transition-transform duration-200 group-hover:translate-x-1">↓</span>
                     </motion.a>
                     <motion.a
-                      {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 250, 2)}
+                      {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 0, 2)}
                       href="#contact"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
                       style={{
