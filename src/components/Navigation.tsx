@@ -123,16 +123,10 @@ export function Navigation() {
     <>
       <NeonScrollHandler />
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 nav-header-frost ${
-          scrolled
-            ? "backdrop-blur-md border-b"
-            : ""
-        }`}
+        className="fixed top-0 left-0 right-0 z-40 transition-all duration-300 nav-header-frost backdrop-blur-md border-b"
         style={{
-          ...(scrolled ? {
-            background: 'color-mix(in srgb, var(--color-base) 85%, transparent)',
-            borderColor: 'var(--color-border)',
-          } : undefined),
+          background: 'color-mix(in srgb, var(--color-base) 85%, transparent)',
+          borderColor: 'var(--color-border)',
           perspective: '1200px',
         }}
       >
