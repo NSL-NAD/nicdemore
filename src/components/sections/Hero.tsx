@@ -210,10 +210,9 @@ export function Hero() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
   // H1 parallax: MUCH more dramatic — follows scroll far, eventually goes behind nav
-  const h1Y = useTransform(scrollYProgress, [0, 1], [0, 350]);
-  // H2 chases scroll at same pace as H1 — they move as a unit,
-  // H2 slides behind the frosted card which stays in place
-  const h2Y = useTransform(scrollYProgress, [0, 1], [0, 350]);
+  const h1Y = useTransform(scrollYProgress, [0, 1], [0, 262]);
+  // H2 + card chase scroll at same pace as H1 — all move as a unit
+  const h2Y = useTransform(scrollYProgress, [0, 1], [0, 262]);
 
   return (
     <section
@@ -351,7 +350,7 @@ export function Hero() {
                   whiteSpace: 'nowrap',
                   textShadow: '0 8px 25px rgba(0,0,0,0.19), 0 3px 8px rgba(0,0,0,0.13)',
                   transformStyle: 'preserve-3d',
-                  marginBottom: '-6px',
+                  marginBottom: '20px',
                 }}
               >
                 Nic DeMore
@@ -396,6 +395,7 @@ export function Hero() {
                     boxShadow: '0 32px 88px rgba(0,0,0,0.18), 0 13px 38px rgba(0,0,0,0.13)',
                     maxWidth: '440px',
                     transformStyle: 'preserve-3d',
+                    y: h2Y,
                   }}
                 >
                   <motion.p
