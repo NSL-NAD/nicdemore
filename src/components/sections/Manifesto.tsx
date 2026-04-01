@@ -13,7 +13,8 @@ export function Manifesto() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-        className="w-full text-center py-16 px-12"
+        className="w-full text-center px-12 flex items-center justify-center"
+        style={{ minHeight: '360px' }}
         style={{
           background: 'var(--color-forest)',
           borderRadius: '24px',

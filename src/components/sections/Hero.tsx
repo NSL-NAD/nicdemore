@@ -410,7 +410,7 @@ export function Hero() {
                   <div className="flex items-center gap-4" style={{ transformStyle: 'preserve-3d' }}>
                     {/* Buttons — reduced Y offsets to fix snap */}
                     <motion.a
-                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 40, 0, 3)}
+                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 40, 0, 0)}
                       href="#work"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                       style={{
@@ -425,7 +425,7 @@ export function Hero() {
                       <span className="transition-transform duration-200 group-hover:translate-x-1">↓</span>
                     </motion.a>
                     <motion.a
-                      {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 0, 2)}
+                      {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 0, 0)}
                       href="#contact"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
                       style={{
