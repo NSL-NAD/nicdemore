@@ -294,7 +294,7 @@ export function Hero() {
               </motion.p>
               <div className="flex flex-wrap gap-4">
                 <motion.a
-                  {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -80, 40, 250, 3)}
+                  {...drop3D(T.btnLeft.delay, T.btnLeft.dur, 0, 50, 0, 0)}
                   href="#work"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all"
                   style={{ background: 'var(--color-accent)', color: '#fff', fontFamily: 'var(--font-syne)', boxShadow: '0 5px 20px rgba(244, 99, 30, 0.32)', transformStyle: 'preserve-3d' }}
@@ -302,7 +302,7 @@ export function Hero() {
                   See my work ↓
                 </motion.a>
                 <motion.a
-                  {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 200, 2)}
+                  {...drop3D(T.btnRight.delay, T.btnRight.dur, 0, 50, 0, 0)}
                   href="#contact"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-sm font-medium text-sm transition-all duration-200 hero-btn-outline"
                   style={{ color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', fontFamily: 'var(--font-syne)', transformStyle: 'preserve-3d' }}
@@ -410,7 +410,7 @@ export function Hero() {
                   <div className="flex items-center gap-4" style={{ transformStyle: 'preserve-3d' }}>
                     {/* Buttons — reduced Y offsets to fix snap */}
                     <motion.a
-                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, -100, 40, 0, 0)}
+                      {...drop3D(T.btnLeft.delay, T.btnLeft.dur, 0, 50, 0, 0)}
                       href="#work"
                       className="group inline-flex items-center gap-2 px-5 py-3 rounded-sm font-semibold text-sm transition-all hover:scale-[1.02]"
                       style={{

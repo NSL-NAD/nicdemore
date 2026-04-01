@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export function Manifesto() {
   return (
     <section
-      className="py-4 relative"
+      className="pt-4 pb-0 relative"
       style={{ background: 'transparent' }}
     >
       <motion.div
