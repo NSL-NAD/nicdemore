@@ -259,7 +259,7 @@ export function Hero() {
 
             <motion.div
               {...drop3D(T.h2Group.delay, T.h2Group.dur, -250, -80, 500, 6)}
-              className="mb-4"
+              className="mb-8"
               style={{ transformStyle: 'preserve-3d' }}
             >
               {words.map((word, i) => (
@@ -366,7 +366,7 @@ export function Hero() {
                 {/* H2 words — grouped, from W */}
                 <motion.div
                   {...drop3D(T.h2Group.delay, T.h2Group.dur, -400, -60, 600, 7)}
-                  className="mb-4"
+                  className="mb-8"
                   style={{ y: h2Y, transformStyle: 'preserve-3d' }}
                 >
                   {words.map((word, i) => (
