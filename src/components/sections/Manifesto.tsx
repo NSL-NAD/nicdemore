@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export function Manifesto() {
   return (
     <section
-      className="py-4 px-6 relative"
+      className="py-4 relative"
       style={{ background: 'transparent' }}
     >
       <motion.div
@@ -13,9 +13,8 @@ export function Manifesto() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-        className="mx-auto text-center py-16 px-10"
+        className="w-full text-center py-16 px-12"
         style={{
-          maxWidth: '860px',
           background: 'var(--color-forest)',
           borderRadius: '24px',
           boxShadow: '0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)',
