@@ -2,10 +2,7 @@
 import { useRetro } from "@/contexts/RetroContext";
 
 function FloppyDiskIcon({ active }: { active: boolean }) {
-  const color = active ? "var(--retro-cyan, #00E5FF)" : "currentColor";
-  const glow = active
-    ? "drop-shadow(0 0 6px var(--retro-cyan, #00E5FF))"
-    : "none";
+  const glow = active ? "drop-shadow(0 0 6px var(--retro-cyan, #00E5FF))" : "none";
 
   return (
     <svg
@@ -17,8 +14,15 @@ function FloppyDiskIcon({ active }: { active: boolean }) {
       style={{ filter: glow, transition: "filter 0.3s ease" }}
       aria-hidden="true"
     >
+      <defs>
+        <linearGradient id="retro-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#F4631E" />
+          <stop offset="50%" stopColor="#C026D3" />
+          <stop offset="100%" stopColor="#00E5FF" />
+        </linearGradient>
+      </defs>
       {/* Floppy disk body */}
-      <rect x="1" y="1" width="16" height="16" rx="1" fill={color} opacity="0.9" />
+      <rect x="1" y="1" width="16" height="16" rx="1" fill={active ? "var(--retro-cyan, #00E5FF)" : "url(#retro-grad)"} opacity="0.9" />
       {/* Label area */}
       <rect x="3" y="1" width="10" height="6" rx="0" fill={active ? "var(--color-surface, #12122A)" : "var(--color-base, #FAF9F6)"} />
       {/* Metal slide */}
@@ -39,30 +43,32 @@ export function RetroToggle() {
       onClick={toggleRetro}
       aria-label={isRetro ? "Exit retro mode" : "Enter retro mode"}
       title={isRetro ? "[EXIT RETRO]" : "[RETRO]"}
-      className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all duration-300 ${!isRetro ? "retro-toggle-pulse" : ""}`}
+      className="flex items-center gap-1.5 px-2 py-1.5 rounded transition-all duration-300"
       style={{
         minWidth: "44px",
         minHeight: "44px",
-        color: isRetro ? "var(--retro-cyan, #00E5FF)" : "#fff",
-        opacity: isRetro ? 1 : 1,
+        background: "transparent",
         border: isRetro ? "1px solid var(--retro-cyan, #00E5FF)" : "1px solid transparent",
-        background: isRetro
-          ? "transparent"
-          : "linear-gradient(135deg, #F4631E 0%, #C026D3 50%, #00E5FF 100%)",
-        backgroundSize: "200% 200%",
-        boxShadow: isRetro
-          ? undefined
-          : "0 0 12px rgba(244,99,30,0.4), 0 0 24px rgba(192,38,211,0.25)",
       }}
     >
       <FloppyDiskIcon active={isRetro} />
       <span
+        className={!isRetro ? "retro-toggle-pulse" : ""}
         style={{
           fontFamily: "var(--font-jetbrains, monospace)",
           fontSize: "9px",
           letterSpacing: "0.12em",
           textTransform: "uppercase",
           whiteSpace: "nowrap",
+          ...(isRetro
+            ? { color: "var(--retro-cyan, #00E5FF)" }
+            : {
+                background: "linear-gradient(135deg, #F4631E 0%, #C026D3 50%, #00E5FF 100%)",
+                backgroundSize: "200% 200%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }),
         }}
       >
         {isRetro ? "[EXIT]" : "[RETRO]"}
