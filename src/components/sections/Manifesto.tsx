@@ -14,8 +14,8 @@ export function Manifesto() {
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="w-full text-center px-12 flex items-center justify-center"
-        style={{ minHeight: '360px' }}
         style={{
+          minHeight: '360px',
           background: 'var(--color-forest)',
           borderRadius: '24px',
           boxShadow: '0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)',
