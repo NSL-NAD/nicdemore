@@ -39,13 +39,20 @@ export function RetroToggle() {
       onClick={toggleRetro}
       aria-label={isRetro ? "Exit retro mode" : "Enter retro mode"}
       title={isRetro ? "[EXIT RETRO]" : "[RETRO]"}
-      className="flex items-center gap-1.5 px-2 py-1.5 rounded transition-all duration-300"
+      className={`flex items-center gap-1.5 px-2 py-1.5 rounded transition-all duration-300 ${!isRetro ? "retro-toggle-pulse" : ""}`}
       style={{
         minWidth: "44px",
         minHeight: "44px",
-        color: isRetro ? "var(--retro-cyan, #00E5FF)" : "var(--color-text-secondary)",
-        opacity: isRetro ? 1 : 0.6,
+        color: isRetro ? "var(--retro-cyan, #00E5FF)" : "#fff",
+        opacity: isRetro ? 1 : 1,
         border: isRetro ? "1px solid var(--retro-cyan, #00E5FF)" : "1px solid transparent",
+        background: isRetro
+          ? "transparent"
+          : "linear-gradient(135deg, #F4631E 0%, #C026D3 50%, #00E5FF 100%)",
+        backgroundSize: "200% 200%",
+        boxShadow: isRetro
+          ? undefined
+          : "0 0 12px rgba(244,99,30,0.4), 0 0 24px rgba(192,38,211,0.25)",
       }}
     >
       <FloppyDiskIcon active={isRetro} />

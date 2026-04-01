@@ -704,3 +704,15 @@ img {
     max-width: 100% !important;
   }
 }
+
+/* ── Retro Toggle — glowing gradient pulse ── */
+@keyframes retro-gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.retro-toggle-pulse {
+  background-size: 200% 200% !important;
+  animation: retro-gradient-shift 3s ease-in-out infinite;
+}
