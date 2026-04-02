@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -94,38 +94,64 @@ const timeline: TimelineEntry[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TimelineCard — cinematic 3D entrance + dot pulse
+// TimelineCard — cinematic 3D entrance from off-screen + per-card spine segments
 // ─────────────────────────────────────────────────────────────────────────────
 
 function TimelineCard({
   item,
   index,
+  isFirst,
+  isLast,
+  dotRef,
 }: {
   item: TimelineEntry;
   index: number;
+  isFirst: boolean;
+  isLast: boolean;
+  dotRef?: React.RefObject<HTMLDivElement>;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isLeft = index % 2 === 0;
 
-  // Scroll progress used for the animated line inside the card
+  // Scroll progress for the animated accent line inside the card
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start 0.85", "start 0.4"],
   });
   const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
+  // Dot shared between desktop center column and mobile
+  const dotEl = (ref?: React.RefObject<HTMLDivElement>) => (
+    <motion.div
+      ref={ref}
+      className="w-3 h-3 rounded-full shrink-0"
+      style={{ background: "var(--color-accent)", zIndex: 10, position: "relative" }}
+      initial={{ scale: 1, boxShadow: "0 0 0 0 rgba(244,99,30,0)" }}
+      whileInView={{
+        scale: 1,
+        boxShadow: [
+          "0 0 0 0 rgba(244,99,30,0)",
+          "0 0 0 8px rgba(244,99,30,0.45)",
+          "0 0 0 0 rgba(244,99,30,0)",
+        ],
+      }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, amount: 0.9 }}
+    />
+  );
+
   return (
-    // Perspective container — required for translateZ to create real depth
+    // Perspective wrapper — required for translateZ depth
     <div style={{ perspective: "1000px", perspectiveOrigin: "50% 50%" }}>
       <motion.div
         ref={ref}
         initial={{
           opacity: 0,
-          x: isLeft ? -240 : 240,
-          y: 24,
-          z: 600,
-          rotateY: isLeft ? -20 : 20,
-          filter: "blur(8px)",
+          x: isLeft ? -560 : 560,
+          y: 40,
+          z: -60,
+          rotateY: isLeft ? -18 : 18,
+          filter: "blur(12px)",
         }}
         whileInView={{
           opacity: 1,
@@ -135,75 +161,79 @@ function TimelineCard({
           rotateY: 0,
           filter: "blur(0px)",
         }}
-        viewport={{ once: true, margin: "-60px" }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{
-          duration: 1.0,
+          duration: 1.1,
           ease: [0.16, 1, 0.3, 1],
           delay: 0.05,
           filter: { duration: 1.0, delay: 0.05 },
         }}
-        // REQUIRED: preserve-3d must be on every element in the chain
-        // between the perspective container and animated child.
-        // Without this, Z-axis silently falls back to flat 2D.
         style={{ transformStyle: "preserve-3d" }}
         className="relative md:grid md:grid-cols-[1fr_40px_1fr] md:gap-0"
       >
-        {/* LEFT COLUMN — desktop only */}
+        {/* LEFT COLUMN — card content or empty */}
         <div
           className={`hidden md:block ${
             isLeft ? "md:pr-8" : "md:col-start-3 md:pl-8"
           }`}
         >
           {isLeft && (
-            <div className="md:text-right">
-              <CardContent item={item} lineWidth={lineWidth} align="right" />
-            </div>
+            <CardContent item={item} lineWidth={lineWidth} align="right" />
           )}
           {!isLeft && (
-            <div>
-              <CardContent item={item} lineWidth={lineWidth} align="left" />
-            </div>
+            <CardContent item={item} lineWidth={lineWidth} align="left" />
           )}
         </div>
 
-        {/* CENTER SPINE DOT — desktop only */}
+        {/* CENTER SPINE — dot + gray connectors above/below */}
+        {/*
+          Structure: [top connector 4px] [dot 12px] [bottom connector flex-1]
+          Top connector: transparent for first card, gray for all others
+          Bottom connector: transparent for last card, gray for all others
+          This ensures the gray track starts exactly at the first dot
+          and ends exactly at the last dot — no overflow above or below.
+        */}
         <div className="hidden md:flex flex-col items-center md:col-start-2">
-          <motion.div
-            className="w-3 h-3 rounded-full z-10 shrink-0 mt-1"
-            style={{ background: "var(--color-accent)", outline: '3px solid var(--color-base)' }}
-            initial={{ scale: 1, boxShadow: '0 0 0 0 rgba(244,99,30,0)' }}
-            whileInView={{
-              scale: 1,
-              boxShadow: [
-                '0 0 0 0 rgba(244,99,30,0)',
-                '0 0 0 10px rgba(244,99,30,0.5)',
-                '0 0 0 0 rgba(244,99,30,0)',
-              ],
+          {/* Top 4px connector (matches the mt-1 spacing the dot previously used) */}
+          <div
+            className="w-[6px] shrink-0"
+            style={{
+              height: "4px",
+              background: isFirst ? "transparent" : "var(--color-border)",
             }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true, amount: 0.9 }}
+          />
+
+          {/* Dot */}
+          {dotEl(dotRef)}
+
+          {/* Bottom connector fills the rest of the row height */}
+          <div
+            className="w-[6px] flex-1"
+            style={{
+              background: isLast ? "transparent" : "var(--color-border)",
+              minHeight: 0,
+            }}
           />
         </div>
 
-        {/* RIGHT COLUMN — empty placeholder for left-side cards */}
+        {/* Right-column spacer for left-side cards */}
         {isLeft && <div className="hidden md:block" />}
 
         {/* MOBILE LAYOUT */}
         <div className="md:hidden pl-8 relative">
-          {/* Dot — mobile */}
           <motion.div
-            className="absolute left-0 top-1.5 w-3 h-3 rounded-full z-10"
-            style={{ background: "var(--color-accent)", outline: '3px solid var(--color-base)' }}
-            initial={{ scale: 1, boxShadow: '0 0 0 0 rgba(244,99,30,0)' }}
+            className="absolute left-0 top-1.5 w-3 h-3 rounded-full"
+            style={{ background: "var(--color-accent)", zIndex: 10 }}
+            initial={{ scale: 1, boxShadow: "0 0 0 0 rgba(244,99,30,0)" }}
             whileInView={{
               scale: 1,
               boxShadow: [
-                '0 0 0 0 rgba(244,99,30,0)',
-                '0 0 0 10px rgba(244,99,30,0.5)',
-                '0 0 0 0 rgba(244,99,30,0)',
+                "0 0 0 0 rgba(244,99,30,0)",
+                "0 0 0 8px rgba(244,99,30,0.45)",
+                "0 0 0 0 rgba(244,99,30,0)",
               ],
             }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             viewport={{ once: true, amount: 0.9 }}
           />
           <CardContent item={item} lineWidth={lineWidth} align="left" />
@@ -214,7 +244,7 @@ function TimelineCard({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CardContent — frosted glass + premium hover treatment
+// CardContent — deep forest green + orange year tag
 // ─────────────────────────────────────────────────────────────────────────────
 
 function CardContent({
@@ -232,38 +262,41 @@ function CardContent({
     <motion.div
       className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)]"
       style={{
-        background: 'var(--color-forest)',
-        backdropFilter: 'none',
-        WebkitBackdropFilter: 'none',
-        border: `1px solid ${hovered ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)'}`,
+        background: "var(--color-forest)",
+        backdropFilter: "none",
+        WebkitBackdropFilter: "none",
+        border: `1px solid ${hovered ? "var(--color-accent)" : "rgba(255,255,255,0.1)"}`,
         borderRadius: "4px",
       }}
-      animate={{ boxShadow: '0 2px 12px rgba(0,0,0,0.15)' }}
-      whileHover={{ y: -4, boxShadow: '0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)' }}
+      animate={{ boxShadow: "0 2px 12px rgba(0,0,0,0.15)" }}
+      whileHover={{
+        y: -4,
+        boxShadow: "0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)",
+      }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Year badge */}
-      <span
-        className={`inline-block font-mono text-xs tracking-wide px-2 py-0.5 rounded-sm mb-2 ${
-          align === "right" ? "md:ml-auto" : ""
-        }`}
-        style={{
-          background: 'rgba(244,99,30,0.15)',
-          color: 'var(--color-accent)',
-          border: '1px solid rgba(244,99,30,0.3)',
-          fontFamily: 'var(--font-jetbrains)',
-          fontSize: '10px',
-          display: "inline-block",
-        }}
-      >
-        {item.year}
-      </span>
+      {/* Year badge — solid orange pill */}
+      <div className={`mb-2 flex ${align === "right" ? "justify-end" : "justify-start"}`}>
+        <span
+          className="inline-block font-mono tracking-wide px-2 py-0.5 rounded-sm"
+          style={{
+            background: "var(--color-accent)",
+            color: "#fff",
+            fontFamily: "var(--font-jetbrains)",
+            fontSize: "10px",
+            fontWeight: 600,
+            letterSpacing: "0.04em",
+          }}
+        >
+          {item.year}
+        </span>
+      </div>
 
       <h3
         className="font-display font-bold text-xl mb-0.5"
-        style={{ color: 'rgba(255,255,255,0.95)' }}
+        style={{ color: "rgba(255,255,255,0.95)" }}
       >
         {item.role}
       </h3>
@@ -297,21 +330,21 @@ function CardContent({
       {/* Description — always left-aligned for readability */}
       <p
         className="text-sm leading-relaxed mb-4 text-left"
-        style={{ color: 'rgba(255,255,255,0.70)' }}
+        style={{ color: "rgba(255,255,255,0.70)" }}
       >
         {item.description}
       </p>
 
-      {/* Skills tags — always left-aligned */}
+      {/* Skills tags */}
       <div className="flex flex-wrap gap-1.5">
         {item.skills.map((skill) => (
           <span
             key={skill}
             className="text-xs px-2 py-0.5 rounded-sm"
             style={{
-              background: 'rgba(255,255,255,0.08)',
-              color: 'rgba(255,255,255,0.65)',
-              border: '1px solid rgba(255,255,255,0.12)',
+              background: "rgba(255,255,255,0.08)",
+              color: "rgba(255,255,255,0.65)",
+              border: "1px solid rgba(255,255,255,0.12)",
               fontFamily: "var(--font-jetbrains)",
               fontSize: "10px",
             }}
@@ -325,21 +358,45 @@ function CardContent({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BriefHistory — section wrapper with transparent background + scroll spine
+// BriefHistory — section wrapper with scroll spine + orange fill overlay
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function BriefHistory() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const firstDotRef = useRef<HTMLDivElement>(null);
+  const lastDotRef = useRef<HTMLDivElement>(null);
   const { isRetro } = useRetro();
 
-  // Section-level scroll progress for the spine fill
+  // Orange fill grows as the section scrolls
   const { scrollYProgress: sectionProgress } = useScroll({
     target: sectionRef,
-    offset: ["start 0.9", "end 0.1"],
+    offset: ["start 0.85", "end 0.15"],
   });
   const spineHeight = useTransform(sectionProgress, [0, 1], ["0%", "100%"]);
 
-  // Scrim adapts to retro dark mode vs. light mode
+  // Measure first/last dot positions to bound the orange fill overlay exactly
+  const [spineRange, setSpineRange] = useState({ top: 0, bottom: 0 });
+
+  useEffect(() => {
+    const measure = () => {
+      if (!timelineRef.current || !firstDotRef.current || !lastDotRef.current) return;
+      const wrapperRect = timelineRef.current.getBoundingClientRect();
+      const firstRect = firstDotRef.current.getBoundingClientRect();
+      const lastRect = lastDotRef.current.getBoundingClientRect();
+      const r = firstRect.height / 2; // dot radius
+      setSpineRange({
+        top: firstRect.top - wrapperRect.top + r,
+        bottom: wrapperRect.bottom - lastRect.bottom + r,
+      });
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (timelineRef.current) ro.observe(timelineRef.current);
+    return () => ro.disconnect();
+  }, []);
+
   const scrimBackground = isRetro
     ? "rgba(3, 8, 12, 0.72)"
     : "rgba(250, 249, 246, 0.58)";
@@ -349,106 +406,91 @@ export function BriefHistory() {
       ref={sectionRef}
       id="skillset"
       className="py-24 sm:py-32 lg:py-40 section-glow"
-      style={{
-        // Transparent so GlowingGrid shows through from fixed canvas in layout.tsx
-        background: "transparent",
-        position: "relative",
-      }}
+      style={{ background: "transparent", position: "relative" }}
     >
-      {/* Scrim — semi-transparent overlay for readability over the grid */}
+      {/* Scrim */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: scrimBackground, zIndex: 0 }}
       />
 
-      {/* Grid corner markers — above scrim */}
-      <span
-        className="grid-marker"
-        style={{ top: "24px", left: "16px", position: "absolute", zIndex: 1 }}
-      >
-        +
-      </span>
-      <span
-        className="grid-marker"
-        style={{ top: "24px", right: "16px", position: "absolute", zIndex: 1 }}
-      >
-        +
-      </span>
-      <span
-        className="grid-marker"
-        style={{ bottom: "24px", left: "16px", position: "absolute", zIndex: 1 }}
-      >
-        +
-      </span>
-      <span
-        className="grid-marker"
-        style={{ bottom: "24px", right: "16px", position: "absolute", zIndex: 1 }}
-      >
-        +
-      </span>
+      {/* Grid corner markers */}
+      <span className="grid-marker" style={{ top: "24px", left: "16px", position: "absolute", zIndex: 1 }}>+</span>
+      <span className="grid-marker" style={{ top: "24px", right: "16px", position: "absolute", zIndex: 1 }}>+</span>
+      <span className="grid-marker" style={{ bottom: "24px", left: "16px", position: "absolute", zIndex: 1 }}>+</span>
+      <span className="grid-marker" style={{ bottom: "24px", right: "16px", position: "absolute", zIndex: 1 }}>+</span>
 
       {/* All content above the scrim */}
       <div className="relative overflow-x-hidden" style={{ zIndex: 1 }}>
+
+        {/* ── Section header — full-width px-12, matching Hero padding ── */}
+        <div className="px-12 mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.5, ease: EASING_SMOOTH }}
+            className="block text-xs tracking-widest uppercase mb-4"
+            style={{
+              color: "var(--color-accent)",
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "11px",
+            }}
+          >
+            // My Skillset
+          </motion.span>
+
+          <motion.h2
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.55, ease: EASING_SMOOTH }}
+            data-neon-header="pink"
+            className="font-display font-extrabold mb-4"
+            style={{
+              fontSize: "clamp(36px, 4vw, 60px)",
+              color: "var(--color-text-primary)",
+              letterSpacing: "-0.03em",
+              marginLeft: "-12px",
+            }}
+          >
+            How I Got Here
+          </motion.h2>
+
+          <motion.blockquote
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
+            className="max-w-2xl"
+            style={{
+              fontFamily: "var(--font-dm-serif)",
+              fontStyle: "italic",
+              fontSize: "clamp(20px, 2.5vw, 28px)",
+              color: "var(--color-text-secondary)",
+              lineHeight: 1.5,
+            }}
+          >
+            &ldquo;I build things because I can&apos;t help it. It&apos;s the
+            most honest thing I know how to do.&rdquo;
+          </motion.blockquote>
+        </div>
+
+        {/* ── Timeline — constrained + centered ── */}
         <div className="mx-auto max-w-6xl px-12">
-          {/* Section header */}
-          <div className="mb-16">
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.5, ease: EASING_SMOOTH }}
-              className="block text-xs tracking-widest uppercase mb-4"
-              style={{
-                color: "var(--color-accent)",
-                fontFamily: "var(--font-jetbrains)",
-                fontSize: "11px",
-              }}
-            >
-              // My Skillset
-            </motion.span>
+          <div className="relative mb-24" ref={timelineRef}>
 
-            <motion.h2
-              initial={{ opacity: 0, x: -16 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.55, ease: EASING_SMOOTH }}
-              data-neon-header="pink"
-              className="font-display font-extrabold mb-4"
-              style={{
-                fontSize: "clamp(36px, 4vw, 60px)",
-                color: "var(--color-text-primary)",
-                letterSpacing: "-0.03em",
-                marginLeft: "-12px",
-              }}
-            >
-              How I Got Here
-            </motion.h2>
-
-            <motion.blockquote
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
-              className="max-w-2xl"
-              style={{
-                fontFamily: "var(--font-dm-serif)",
-                fontStyle: "italic",
-                fontSize: "clamp(20px, 2.5vw, 28px)",
-                color: "var(--color-text-secondary)",
-                lineHeight: 1.5,
-              }}
-            >
-              &ldquo;I build things because I can&apos;t help it. It&apos;s the
-              most honest thing I know how to do.&rdquo;
-            </motion.blockquote>
-          </div>
-
-          {/* Timeline — alternating left/right cards */}
-          <div className="relative mb-24">
-            {/* Desktop spine — center, scroll-driven orange fill */}
+            {/* Orange fill overlay — bounded from first dot center to last dot center */}
             <div
-              className="hidden md:block absolute left-1/2 -translate-x-[1.5px] top-[6px] bottom-10 w-[3px]"
-              style={{ background: "var(--color-border)" }}
+              className="hidden md:block absolute left-1/2 pointer-events-none"
+              style={{
+                top: spineRange.top,
+                bottom: spineRange.bottom,
+                width: "6px",
+                transform: "translateX(-3px)",
+                zIndex: 5,
+                overflow: "hidden",
+              }}
             >
               <motion.div
                 style={{
@@ -460,7 +502,7 @@ export function BriefHistory() {
               />
             </div>
 
-            {/* Mobile spine — left edge, scroll-driven orange fill */}
+            {/* Mobile spine — left edge */}
             <div
               className="md:hidden absolute left-1.5 top-0 bottom-0"
               style={{ background: "var(--color-border)", width: "4px" }}
@@ -477,7 +519,20 @@ export function BriefHistory() {
 
             <div className="space-y-0">
               {timeline.map((item, i) => (
-                <TimelineCard key={item.year + item.org} item={item} index={i} />
+                <TimelineCard
+                  key={item.year + item.org}
+                  item={item}
+                  index={i}
+                  isFirst={i === 0}
+                  isLast={i === timeline.length - 1}
+                  dotRef={
+                    i === 0
+                      ? firstDotRef
+                      : i === timeline.length - 1
+                      ? lastDotRef
+                      : undefined
+                  }
+                />
               ))}
             </div>
           </div>
