@@ -100,7 +100,7 @@ function FloatingCard({
       }
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="absolute p-5 rounded-sm cursor-default transition-shadow duration-300"
+      className="absolute p-5 rounded-2xl cursor-default transition-shadow duration-300"
       style={{
         ...pos,
         minWidth: '220px',
@@ -256,7 +256,7 @@ export default function AboutPage() {
             className="mx-auto w-[240px] mb-12"
           >
             <div
-              className="relative rounded-lg overflow-hidden"
+              className="relative rounded-2xl overflow-hidden"
               style={{
                 aspectRatio: '3/4',
                 boxShadow: '0 0 30px rgba(244, 99, 30, 0.1), var(--shadow-lg)',
@@ -282,7 +282,7 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.08, ease: EASING_PREMIUM }}
-                className="p-5 rounded-sm"
+                className="p-5 rounded-2xl"
                 style={{
                   background: 'var(--color-surface)',
                   border: '1px solid var(--color-border)',

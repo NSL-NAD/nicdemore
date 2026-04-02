@@ -10,7 +10,7 @@ import { NeonScrollHandler } from "@/components/NeonScrollHandler";
 
 const sections = [
   { id: "overview", label: "Overview" },
-  { id: "skillset", label: "My Skillset" },
+  { id: "skillset", label: "My Journey" },
   { id: "work", label: "Ventures" },
   { id: "architecture", label: "Architecture" },
   { id: "contact", label: "Contact" },

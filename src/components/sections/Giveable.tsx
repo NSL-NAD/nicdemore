@@ -172,7 +172,7 @@ export function Giveable() {
           >
             {/* GAS ethos card */}
             <div
-              className="p-8 rounded-sm"
+              className="p-8 rounded-2xl"
               style={{
                 background: 'rgba(255, 255, 255, 0.04)',
                 border: '1px solid rgba(242, 237, 229, 0.1)',
@@ -211,7 +211,7 @@ export function Giveable() {
 
             {/* Registry model breakdown */}
             <div
-              className="p-6 rounded-sm"
+              className="p-6 rounded-2xl"
               style={{
                 background: 'rgba(255, 255, 255, 0.04)',
                 border: '1px solid rgba(242, 237, 229, 0.08)',

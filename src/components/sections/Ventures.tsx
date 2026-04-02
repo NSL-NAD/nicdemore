@@ -114,7 +114,7 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
       style={{
         background: 'var(--color-base)',
         border: `1px solid ${isActive ? 'rgba(244,99,30,0.55)' : 'var(--color-border)'}`,
-        borderRadius: '4px',
+        borderRadius: '16px',
         overflow: 'hidden',
         boxShadow: isActive
           ? '0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(244,99,30,0.3), 0 0 40px rgba(244,99,30,0.12)'

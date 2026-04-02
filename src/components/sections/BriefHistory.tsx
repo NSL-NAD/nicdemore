@@ -1,10 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   motion,
   useScroll,
   useTransform,
+  useMotionValue,
+  useSpring,
+  useInView,
   type MotionValue,
 } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
@@ -94,150 +97,141 @@ const timeline: TimelineEntry[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TimelineCard — cinematic 3D entrance from off-screen + per-card spine segments
+// SpineDot — gray by default, turns orange + pulses when scroll reaches it
 // ─────────────────────────────────────────────────────────────────────────────
 
-function TimelineCard({
-  item,
-  index,
-  isFirst,
-  isLast,
+function SpineDot({
   dotRef,
+  threshold,
+  sectionProgress,
 }: {
-  item: TimelineEntry;
-  index: number;
-  isFirst: boolean;
-  isLast: boolean;
-  dotRef?: React.RefObject<HTMLDivElement>;
+  dotRef?: (el: HTMLDivElement | null) => void;
+  threshold: number;
+  sectionProgress: MotionValue<number>;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isLeft = index % 2 === 0;
+  const [activated, setActivated] = useState(false);
 
-  // Scroll progress for the animated accent line inside the card
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.85", "start 0.4"],
-  });
-  const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  useEffect(() => {
+    // Check current value immediately (handles page load mid-scroll)
+    if (sectionProgress.get() >= threshold) {
+      setActivated(true);
+      return;
+    }
+    const unsubscribe = sectionProgress.on("change", (latest) => {
+      if (latest >= threshold) {
+        setActivated(true);
+        unsubscribe();
+      }
+    });
+    return unsubscribe;
+  }, [sectionProgress, threshold]);
 
-  // Dot shared between desktop center column and mobile
-  const dotEl = (ref?: React.RefObject<HTMLDivElement>) => (
+  return (
     <motion.div
-      ref={ref}
+      ref={dotRef}
       className="w-3 h-3 rounded-full shrink-0"
-      style={{ background: "var(--color-accent)", zIndex: 10, position: "relative" }}
-      initial={{ scale: 1, boxShadow: "0 0 0 0 rgba(244,99,30,0)" }}
-      whileInView={{
-        scale: 1,
-        boxShadow: [
-          "0 0 0 0 rgba(244,99,30,0)",
-          "0 0 0 8px rgba(244,99,30,0.45)",
-          "0 0 0 0 rgba(244,99,30,0)",
-        ],
-      }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      viewport={{ once: true, amount: 0.9 }}
+      animate={
+        activated
+          ? {
+              backgroundColor: "#F4631E",
+              boxShadow: [
+                "0 0 0 0 rgba(244,99,30,0.65)",
+                "0 0 0 12px rgba(244,99,30,0)",
+                "0 0 0 0 rgba(244,99,30,0)",
+              ],
+            }
+          : {
+              backgroundColor: "rgba(160,155,148,0.45)",
+              boxShadow: "0 0 0 0 rgba(244,99,30,0)",
+            }
+      }
+      transition={
+        activated
+          ? {
+              backgroundColor: { duration: 0.4, ease: "easeOut" },
+              boxShadow: { duration: 1.0, delay: 0.3 },
+            }
+          : { duration: 0.3 }
+      }
+      style={{ zIndex: 10, position: "relative" }}
     />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ParallaxCard — mouse-tracked 3D tilt + glare overlay (subtle, 4° max)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ParallaxCard({ children }: { children: React.ReactNode }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const TILT = 4; // reduced from 10 — subtle, premium feel
+  const SPRING = { stiffness: 180, damping: 22, mass: 0.5 };
+
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+
+  const rotateX = useSpring(rawY, SPRING);
+  const rotateY = useSpring(rawX, SPRING);
+  const scale = useSpring(1, SPRING);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width;
+    const cy = (e.clientY - rect.top) / rect.height;
+    const nx = (cx - 0.5) * 2;
+    const ny = (cy - 0.5) * 2;
+    rawX.set(nx * TILT);
+    rawY.set(-ny * TILT);
+    glareX.set(cx * 100);
+    glareY.set(cy * 100);
+    glareOpacity.set(0.15);
+  }, [rawX, rawY, glareX, glareY, glareOpacity]);
+
+  const handleMouseLeave = useCallback(() => {
+    rawX.set(0);
+    rawY.set(0);
+    scale.set(1);
+    glareOpacity.set(0);
+  }, [rawX, rawY, scale, glareOpacity]);
+
+  const handleMouseEnter = useCallback(() => {
+    scale.set(1.012);
+  }, [scale]);
+
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.5) 0%, transparent 65%)`
   );
 
   return (
-    // Perspective wrapper — required for translateZ depth
-    <div style={{ perspective: "1000px", perspectiveOrigin: "50% 50%" }}>
+    <div style={{ perspective: "800px" }}>
       <motion.div
-        ref={ref}
-        initial={{
-          opacity: 0,
-          x: isLeft ? -560 : 560,
-          y: 40,
-          z: -60,
-          rotateY: isLeft ? -18 : 18,
-          filter: "blur(12px)",
-        }}
-        whileInView={{
-          opacity: 1,
-          x: 0,
-          y: 0,
-          z: 0,
-          rotateY: 0,
-          filter: "blur(0px)",
-        }}
-        viewport={{ once: true, amount: 0.1 }}
-        transition={{
-          duration: 1.1,
-          ease: [0.16, 1, 0.3, 1],
-          delay: 0.05,
-          filter: { duration: 1.0, delay: 0.05 },
-        }}
-        style={{ transformStyle: "preserve-3d" }}
-        className="relative md:grid md:grid-cols-[1fr_40px_1fr] md:gap-0"
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        style={{ rotateX, rotateY, scale, transformStyle: "preserve-3d", position: "relative" }}
       >
-        {/* LEFT COLUMN — card content or empty */}
-        <div
-          className={`hidden md:block ${
-            isLeft ? "md:pr-8" : "md:col-start-3 md:pl-8"
-          }`}
-        >
-          {isLeft && (
-            <CardContent item={item} lineWidth={lineWidth} align="right" />
-          )}
-          {!isLeft && (
-            <CardContent item={item} lineWidth={lineWidth} align="left" />
-          )}
-        </div>
-
-        {/* CENTER SPINE — dot + gray connectors above/below */}
-        {/*
-          Structure: [top connector 4px] [dot 12px] [bottom connector flex-1]
-          Top connector: transparent for first card, gray for all others
-          Bottom connector: transparent for last card, gray for all others
-          This ensures the gray track starts exactly at the first dot
-          and ends exactly at the last dot — no overflow above or below.
-        */}
-        <div className="hidden md:flex flex-col items-center md:col-start-2">
-          {/* Top 4px connector (matches the mt-1 spacing the dot previously used) */}
-          <div
-            className="w-[6px] shrink-0"
-            style={{
-              height: "4px",
-              background: isFirst ? "transparent" : "var(--color-border)",
-            }}
-          />
-
-          {/* Dot */}
-          {dotEl(dotRef)}
-
-          {/* Bottom connector fills the rest of the row height */}
-          <div
-            className="w-[6px] flex-1"
-            style={{
-              background: isLast ? "transparent" : "var(--color-border)",
-              minHeight: 0,
-            }}
-          />
-        </div>
-
-        {/* Right-column spacer for left-side cards */}
-        {isLeft && <div className="hidden md:block" />}
-
-        {/* MOBILE LAYOUT */}
-        <div className="md:hidden pl-8 relative">
-          <motion.div
-            className="absolute left-0 top-1.5 w-3 h-3 rounded-full"
-            style={{ background: "var(--color-accent)", zIndex: 10 }}
-            initial={{ scale: 1, boxShadow: "0 0 0 0 rgba(244,99,30,0)" }}
-            whileInView={{
-              scale: 1,
-              boxShadow: [
-                "0 0 0 0 rgba(244,99,30,0)",
-                "0 0 0 8px rgba(244,99,30,0.45)",
-                "0 0 0 0 rgba(244,99,30,0)",
-              ],
-            }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true, amount: 0.9 }}
-          />
-          <CardContent item={item} lineWidth={lineWidth} align="left" />
-        </div>
+        {children}
+        {/* Glare overlay */}
+        <motion.div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "16px",
+            pointerEvents: "none",
+            opacity: glareOpacity,
+            background: glareBackground,
+            zIndex: 20,
+          }}
+        />
       </motion.div>
     </div>
   );
@@ -266,14 +260,12 @@ function CardContent({
         backdropFilter: "none",
         WebkitBackdropFilter: "none",
         border: `1px solid ${hovered ? "var(--color-accent)" : "rgba(255,255,255,0.1)"}`,
-        borderRadius: "4px",
+        borderRadius: "16px",
+        boxShadow: hovered
+          ? "0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)"
+          : "0 2px 12px rgba(0,0,0,0.15)",
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
       }}
-      animate={{ boxShadow: "0 2px 12px rgba(0,0,0,0.15)" }}
-      whileHover={{
-        y: -4,
-        boxShadow: "0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)",
-      }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -327,7 +319,7 @@ function CardContent({
         />
       </div>
 
-      {/* Description — always left-aligned for readability */}
+      {/* Description */}
       <p
         className="text-sm leading-relaxed mb-4 text-left"
         style={{ color: "rgba(255,255,255,0.70)" }}
@@ -335,25 +327,163 @@ function CardContent({
         {item.description}
       </p>
 
-      {/* Skills tags */}
+      {/* Skills tags — orange glow on hover */}
       <div className="flex flex-wrap gap-1.5">
         {item.skills.map((skill) => (
-          <span
+          <motion.span
             key={skill}
-            className="text-xs px-2 py-0.5 rounded-sm"
+            className="text-xs px-2 py-0.5 rounded-sm cursor-default"
             style={{
-              background: "rgba(255,255,255,0.08)",
-              color: "rgba(255,255,255,0.65)",
-              border: "1px solid rgba(255,255,255,0.12)",
+              background: "rgba(255,255,255,0.14)",
+              color: "rgba(255,255,255,0.82)",
+              border: "1px solid rgba(255,255,255,0.22)",
               fontFamily: "var(--font-jetbrains)",
               fontSize: "10px",
             }}
+            whileHover={{
+              y: -2,
+              backgroundColor: "rgba(244,99,30,0.18)",
+              color: "#F4631E",
+              borderColor: "rgba(244,99,30,0.45)",
+              boxShadow: "0 0 10px rgba(244,99,30,0.22)",
+            }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
           >
             {skill}
-          </span>
+          </motion.span>
         ))}
       </div>
     </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TimelineCard — cinematic 3D entrance: slides from off-screen + clockwise fall
+// ─────────────────────────────────────────────────────────────────────────────
+
+function TimelineCard({
+  item,
+  index,
+  isFirst,
+  isLast,
+  setDotRef,
+  dotThreshold,
+  sectionProgress,
+}: {
+  item: TimelineEntry;
+  index: number;
+  isFirst: boolean;
+  isLast: boolean;
+  setDotRef: (el: HTMLDivElement | null) => void;
+  dotThreshold: number;
+  sectionProgress: MotionValue<number>;
+}) {
+  // ref lives on the static grid row — used for scroll tracking + IntersectionObserver
+  const ref = useRef<HTMLDivElement>(null);
+  const isLeft = index % 2 === 0;
+
+  // Watch the grid ROW (not the off-screen card) to trigger card entrance
+  const rowInView = useInView(ref, { once: true, amount: 0.3 });
+
+  // Scroll progress for the animated accent line inside the card
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.85", "start 0.4"],
+  });
+  const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  const hiddenLeft = { opacity: 0, x: "-120vw", y: 40, z: -80, rotateY: -16, rotateZ: -45, filter: "blur(14px)" };
+  const hiddenRight = { opacity: 0, x: "120vw", y: 40, z: -80, rotateY: 16, rotateZ: 45, filter: "blur(14px)" };
+  const visible = { opacity: 1, x: 0, y: 0, z: 0, rotateY: 0, rotateZ: 0, filter: "blur(0px)" };
+
+  const entranceTransition = {
+    duration: 2.2,
+    ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    delay: 0.08,
+    filter: { duration: 1.8, delay: 0.08 },
+  };
+
+  return (
+    // Static grid row — spine stays put, only card content animates in
+    <div
+      ref={ref}
+      className="relative md:grid md:grid-cols-[1fr_40px_1fr] md:gap-0"
+    >
+      {/* COL 1 — left card (even rows) or empty spacer (odd rows) */}
+      <div className="hidden md:block md:pr-8">
+        {isLeft && (
+          <div style={{ perspective: "1000px" }}>
+            <motion.div
+              initial={hiddenLeft}
+              animate={rowInView ? visible : hiddenLeft}
+              transition={entranceTransition}
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              <ParallaxCard>
+                <CardContent item={item} lineWidth={lineWidth} align="right" />
+              </ParallaxCard>
+            </motion.div>
+          </div>
+        )}
+      </div>
+
+      {/* COL 2 — CENTER SPINE: always visible, static */}
+      <div className="hidden md:flex flex-col items-center md:col-start-2 h-full">
+        {/* Top connector — transparent for first card */}
+        <div
+          className="w-[2.25px] shrink-0"
+          style={{
+            height: "4px",
+            background: isFirst ? "transparent" : "var(--color-border)",
+          }}
+        />
+
+        <SpineDot
+          dotRef={setDotRef}
+          threshold={dotThreshold}
+          sectionProgress={sectionProgress}
+        />
+
+        {/* Bottom connector — transparent for last card */}
+        <div
+          className="w-[2.25px] flex-1"
+          style={{
+            background: isLast ? "transparent" : "var(--color-border)",
+            minHeight: 0,
+          }}
+        />
+      </div>
+
+      {/* COL 3 — right card (odd rows) or empty spacer (even rows) */}
+      <div className="hidden md:block md:col-start-3 md:pl-8">
+        {!isLeft && (
+          <div style={{ perspective: "1000px" }}>
+            <motion.div
+              initial={hiddenRight}
+              animate={rowInView ? visible : hiddenRight}
+              transition={entranceTransition}
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              <ParallaxCard>
+                <CardContent item={item} lineWidth={lineWidth} align="left" />
+              </ParallaxCard>
+            </motion.div>
+          </div>
+        )}
+      </div>
+
+      {/* MOBILE LAYOUT */}
+      <div className="md:hidden pl-8 relative">
+        <div className="absolute left-0 top-1.5">
+          <SpineDot
+            dotRef={undefined}
+            threshold={dotThreshold}
+            sectionProgress={sectionProgress}
+          />
+        </div>
+        <CardContent item={item} lineWidth={lineWidth} align="left" />
+      </div>
+    </div>
   );
 }
 
@@ -364,37 +494,65 @@ function CardContent({
 export function BriefHistory() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const firstDotRef = useRef<HTMLDivElement>(null);
-  const lastDotRef = useRef<HTMLDivElement>(null);
   const { isRetro } = useRetro();
 
-  // Orange fill grows as the section scrolls
+  // All dot elements — measured to compute activation thresholds
+  const dotEls = useRef<(HTMLDivElement | null)[]>(
+    new Array(timeline.length).fill(null)
+  );
+  const [dotThresholds, setDotThresholds] = useState<number[]>(
+    new Array(timeline.length).fill(0)
+  );
+
+  // Orange fill grows as the timeline scrolls — track timelineRef so progress
+  // maps 1:1 to layout position of each dot (d / timelineHeight when dot is at center)
   const { scrollYProgress: sectionProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.85", "end 0.15"],
+    target: timelineRef,
+    offset: ["start 0.5", "end 0.5"],
   });
   const spineHeight = useTransform(sectionProgress, [0, 1], ["0%", "100%"]);
 
-  // Measure first/last dot positions to bound the orange fill overlay exactly
-  const [spineRange, setSpineRange] = useState({ top: 0, bottom: 0 });
+  // Spine range — initialized to 9999 so orange overlay is hidden until measured
+  const [spineRange, setSpineRange] = useState({ top: 9999, bottom: 0 });
 
   useEffect(() => {
     const measure = () => {
-      if (!timelineRef.current || !firstDotRef.current || !lastDotRef.current) return;
+      const firstDot = dotEls.current[0];
+      const lastDot = dotEls.current[timeline.length - 1];
+      if (!timelineRef.current || !firstDot || !lastDot) return;
+
       const wrapperRect = timelineRef.current.getBoundingClientRect();
-      const firstRect = firstDotRef.current.getBoundingClientRect();
-      const lastRect = lastDotRef.current.getBoundingClientRect();
-      const r = firstRect.height / 2; // dot radius
-      setSpineRange({
-        top: firstRect.top - wrapperRect.top + r,
-        bottom: wrapperRect.bottom - lastRect.bottom + r,
+      const firstRect = firstDot.getBoundingClientRect();
+      const lastRect = lastDot.getBoundingClientRect();
+      const r = firstRect.height / 2;
+
+      const spineStart = firstRect.top - wrapperRect.top + r;
+      const spineEnd = wrapperRect.bottom - lastRect.bottom + r;
+      const spineTotal = wrapperRect.height - spineEnd - spineStart;
+
+      setSpineRange({ top: spineStart, bottom: spineEnd });
+
+      // Compute fractional position of each dot within the timeline height.
+      // With offset ["start 0.5", "end 0.5"], sectionProgress = d / timelineHeight
+      // when the item at offset d from timeline top is at viewport center.
+      // So threshold = dotCenter / wrapperRect.height gives a perfect 1:1 match.
+      const thresholds = dotEls.current.map((dotEl) => {
+        if (!dotEl) return 0;
+        const dotRect = dotEl.getBoundingClientRect();
+        const dotCenter = dotRect.top - wrapperRect.top + r;
+        return Math.max(0, Math.min(1, dotCenter / wrapperRect.height));
       });
+      setDotThresholds(thresholds);
     };
 
-    measure();
+    // Small delay to let layout stabilize after first render
+    const timer = setTimeout(measure, 80);
     const ro = new ResizeObserver(measure);
     if (timelineRef.current) ro.observe(timelineRef.current);
-    return () => ro.disconnect();
+    return () => {
+      clearTimeout(timer);
+      ro.disconnect();
+    };
   }, []);
 
   const scrimBackground = isRetro
@@ -405,7 +563,7 @@ export function BriefHistory() {
     <section
       ref={sectionRef}
       id="skillset"
-      className="py-24 sm:py-32 lg:py-40 section-glow"
+      className="pt-24 sm:pt-32 lg:pt-40 pb-12 section-glow"
       style={{ background: "transparent", position: "relative" }}
     >
       {/* Scrim */}
@@ -437,7 +595,7 @@ export function BriefHistory() {
               fontSize: "11px",
             }}
           >
-            // My Skillset
+            // My Journey
           </motion.span>
 
           <motion.h2
@@ -478,7 +636,7 @@ export function BriefHistory() {
 
         {/* ── Timeline — constrained + centered ── */}
         <div className="mx-auto max-w-6xl px-12">
-          <div className="relative mb-24" ref={timelineRef}>
+          <div className="relative mb-8" ref={timelineRef}>
 
             {/* Orange fill overlay — bounded from first dot center to last dot center */}
             <div
@@ -486,8 +644,8 @@ export function BriefHistory() {
               style={{
                 top: spineRange.top,
                 bottom: spineRange.bottom,
-                width: "6px",
-                transform: "translateX(-3px)",
+                width: "2.25px",
+                transform: "translateX(-1.125px)",
                 zIndex: 5,
                 overflow: "hidden",
               }}
@@ -525,13 +683,9 @@ export function BriefHistory() {
                   index={i}
                   isFirst={i === 0}
                   isLast={i === timeline.length - 1}
-                  dotRef={
-                    i === 0
-                      ? firstDotRef
-                      : i === timeline.length - 1
-                      ? lastDotRef
-                      : undefined
-                  }
+                  setDotRef={(el) => { dotEls.current[i] = el; }}
+                  dotThreshold={dotThresholds[i]}
+                  sectionProgress={sectionProgress}
                 />
               ))}
             </div>

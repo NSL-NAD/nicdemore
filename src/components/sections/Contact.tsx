@@ -146,7 +146,7 @@ export function Contact() {
         >
           {status === "success" ? (
             <div
-              className="text-center py-16 px-8 rounded-sm"
+              className="text-center py-16 px-8 rounded-2xl"
               style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
             >
               <p className="font-display font-bold text-xl mb-2" style={{ color: 'var(--color-text-primary)' }}>
