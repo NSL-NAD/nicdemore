@@ -7,7 +7,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { EASING_PREMIUM, EASING_SMOOTH, LAND_EASE, viewportOnce } from "@/lib/motion";
+import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
 import { useRetro } from "@/contexts/RetroContext";
 
 interface TimelineEntry {
@@ -119,31 +119,28 @@ function TimelineCard({
     <div style={{ perspective: "1000px", perspectiveOrigin: "50% 50%" }}>
       <motion.div
         ref={ref}
-        // 3D cinematic entrance — modeled on hero drop3D pattern
         initial={{
           opacity: 0,
-          x: isLeft ? -160 : 160,
-          z: 300,
-          rotateY: isLeft ? -12 : 12,
-          filter: "blur(6px)",
+          x: isLeft ? -240 : 240,
+          y: 24,
+          z: 600,
+          rotateY: isLeft ? -20 : 20,
+          filter: "blur(8px)",
         }}
         whileInView={{
           opacity: 1,
           x: 0,
+          y: 0,
           z: 0,
           rotateY: 0,
           filter: "blur(0px)",
         }}
-        viewport={{ once: true, margin: "-80px" }}
+        viewport={{ once: true, margin: "-60px" }}
         transition={{
-          duration: 0.9,
-          ease: LAND_EASE,
+          duration: 1.0,
+          ease: [0.16, 1, 0.3, 1],
           delay: 0.05,
-          // Blur clears before position fully settles — simulates focus pull
-          filter: {
-            duration: 0.9 * 0.7,
-            delay: 0.05 + 0.9 * 0.1,
-          },
+          filter: { duration: 1.0, delay: 0.05 },
         }}
         // REQUIRED: preserve-3d must be on every element in the chain
         // between the perspective container and animated child.
@@ -173,17 +170,17 @@ function TimelineCard({
         <div className="hidden md:flex flex-col items-center md:col-start-2">
           <motion.div
             className="w-3 h-3 rounded-full z-10 shrink-0 mt-1"
-            style={{ background: "var(--color-accent)" }}
-            initial={{ scale: 1, boxShadow: '0 0 0px 0px rgba(244,99,30,0)' }}
+            style={{ background: "var(--color-accent)", outline: '3px solid var(--color-base)' }}
+            initial={{ scale: 1, boxShadow: '0 0 0 0 rgba(244,99,30,0)' }}
             whileInView={{
-              scale: [1, 1.8, 1],
+              scale: 1,
               boxShadow: [
                 '0 0 0 0 rgba(244,99,30,0)',
-                '0 0 0 8px rgba(244,99,30,0.4)',
+                '0 0 0 10px rgba(244,99,30,0.5)',
                 '0 0 0 0 rgba(244,99,30,0)',
               ],
             }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             viewport={{ once: true, amount: 0.9 }}
           />
         </div>
@@ -196,17 +193,17 @@ function TimelineCard({
           {/* Dot — mobile */}
           <motion.div
             className="absolute left-0 top-1.5 w-3 h-3 rounded-full z-10"
-            style={{ background: "var(--color-accent)" }}
-            initial={{ scale: 1, boxShadow: '0 0 0px 0px rgba(244,99,30,0)' }}
+            style={{ background: "var(--color-accent)", outline: '3px solid var(--color-base)' }}
+            initial={{ scale: 1, boxShadow: '0 0 0 0 rgba(244,99,30,0)' }}
             whileInView={{
-              scale: [1, 1.8, 1],
+              scale: 1,
               boxShadow: [
                 '0 0 0 0 rgba(244,99,30,0)',
-                '0 0 0 8px rgba(244,99,30,0.4)',
+                '0 0 0 10px rgba(244,99,30,0.5)',
                 '0 0 0 0 rgba(244,99,30,0)',
               ],
             }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             viewport={{ once: true, amount: 0.9 }}
           />
           <CardContent item={item} lineWidth={lineWidth} align="left" />
@@ -230,29 +227,19 @@ function CardContent({
   align: "left" | "right";
 }) {
   const [hovered, setHovered] = useState(false);
-  const { isRetro } = useRetro();
-  const hoverBorderColor = isRetro ? "var(--retro-cyan)" : "var(--color-accent)";
 
   return (
     <motion.div
       className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)]"
       style={{
-        // Always show a subtle border; elevate on hover with solid + glow
-        border: `1px solid ${hovered ? hoverBorderColor : "var(--color-border)"}`,
-        // Frosted glass — inline to bypass any CSS class conflicts
-        backdropFilter: 'blur(12px) saturate(1.4)',
-        WebkitBackdropFilter: 'blur(12px) saturate(1.4)',
-        background: hovered
-          ? isRetro
-            ? "rgba(0, 20, 30, 0.85)"
-            : "rgba(250, 249, 246, 0.85)"
-          : isRetro
-          ? "rgba(0, 20, 30, 0.6)"
-          : "rgba(250, 249, 246, 0.75)",
+        background: 'var(--color-forest)',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
+        border: `1px solid ${hovered ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)'}`,
         borderRadius: "4px",
       }}
-      animate={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
-      whileHover={{ y: -4, boxShadow: '0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06)' }}
+      animate={{ boxShadow: '0 2px 12px rgba(0,0,0,0.15)' }}
+      whileHover={{ y: -4, boxShadow: '0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)' }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -263,11 +250,11 @@ function CardContent({
           align === "right" ? "md:ml-auto" : ""
         }`}
         style={{
-          color: item.accent ? "#fff" : "var(--color-accent)",
-          background: item.accent ? "var(--color-accent)" : "var(--color-surface)",
-          fontFamily: "var(--font-jetbrains)",
-          fontSize: "10px",
-          border: item.accent ? "none" : "1px solid var(--color-border)",
+          background: 'rgba(244,99,30,0.15)',
+          color: 'var(--color-accent)',
+          border: '1px solid rgba(244,99,30,0.3)',
+          fontFamily: 'var(--font-jetbrains)',
+          fontSize: '10px',
           display: "inline-block",
         }}
       >
@@ -276,7 +263,7 @@ function CardContent({
 
       <h3
         className="font-display font-bold text-xl mb-0.5"
-        style={{ color: "var(--color-text-primary)" }}
+        style={{ color: 'rgba(255,255,255,0.95)' }}
       >
         {item.role}
       </h3>
@@ -310,7 +297,7 @@ function CardContent({
       {/* Description — always left-aligned for readability */}
       <p
         className="text-sm leading-relaxed mb-4 text-left"
-        style={{ color: "var(--color-text-secondary)" }}
+        style={{ color: 'rgba(255,255,255,0.70)' }}
       >
         {item.description}
       </p>
@@ -322,11 +309,11 @@ function CardContent({
             key={skill}
             className="text-xs px-2 py-0.5 rounded-sm"
             style={{
-              background: "var(--color-surface)",
-              color: "var(--color-text-secondary)",
+              background: 'rgba(255,255,255,0.08)',
+              color: 'rgba(255,255,255,0.65)',
+              border: '1px solid rgba(255,255,255,0.12)',
               fontFamily: "var(--font-jetbrains)",
               fontSize: "10px",
-              border: "1px solid var(--color-border)",
             }}
           >
             {skill}
@@ -402,7 +389,7 @@ export function BriefHistory() {
 
       {/* All content above the scrim */}
       <div className="relative overflow-x-hidden" style={{ zIndex: 1 }}>
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-6xl px-12">
           {/* Section header */}
           <div className="mb-16">
             <motion.span
@@ -460,7 +447,7 @@ export function BriefHistory() {
           <div className="relative mb-24">
             {/* Desktop spine — center, scroll-driven orange fill */}
             <div
-              className="hidden md:block absolute left-1/2 -translate-x-px top-0 bottom-0 w-px"
+              className="hidden md:block absolute left-1/2 -translate-x-[1.5px] top-[6px] bottom-10 w-[3px]"
               style={{ background: "var(--color-border)" }}
             >
               <motion.div
@@ -476,7 +463,7 @@ export function BriefHistory() {
             {/* Mobile spine — left edge, scroll-driven orange fill */}
             <div
               className="md:hidden absolute left-1.5 top-0 bottom-0"
-              style={{ background: "var(--color-border)", width: "2px" }}
+              style={{ background: "var(--color-border)", width: "4px" }}
             >
               <motion.div
                 style={{
