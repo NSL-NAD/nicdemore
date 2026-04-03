@@ -202,7 +202,17 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
       className="cursor-pointer"
-      style={{ perspective: "1200px", height: "360px" }}
+      style={{
+        perspective: "1200px",
+        height: "360px",
+        borderRadius: "16px",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.18), 0 16px 48px rgba(0,0,0,0.14)",
+        transition: "box-shadow 0.35s ease, transform 0.35s ease",
+      }}
+      whileHover={{
+        boxShadow: "0 8px 28px rgba(0,0,0,0.22), 0 24px 64px rgba(0,0,0,0.18)",
+        y: -6,
+      }}
     >
       <div
         style={{
