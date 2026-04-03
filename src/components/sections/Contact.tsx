@@ -125,9 +125,6 @@ export function Contact() {
             transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
             className="text-lg leading-relaxed max-w-2xl mx-auto"
             style={{
-              fontFamily: 'var(--font-dm-serif)',
-              fontStyle: 'italic',
-              fontSize: 'clamp(18px, 2vw, 22px)',
               color: 'var(--color-text-secondary)',
             }}
           >

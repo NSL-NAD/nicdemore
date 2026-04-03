@@ -626,13 +626,9 @@ export function BriefHistory() {
           </motion.h2>
 
           <motion.blockquote
-            className="max-w-2xl"
+            className="max-w-2xl text-lg leading-relaxed"
             style={{
-              fontFamily: "var(--font-dm-serif)",
-              fontStyle: "italic",
-              fontSize: "clamp(20px, 2.5vw, 28px)",
               color: "var(--color-text-secondary)",
-              lineHeight: 1.5,
             }}
           >
             &ldquo;I build things because I can&apos;t help it. It&apos;s the

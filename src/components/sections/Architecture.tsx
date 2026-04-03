@@ -148,13 +148,9 @@ export function Architecture() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
-              className="mb-8"
+              className="mb-8 text-lg leading-relaxed"
               style={{
-                fontFamily: 'var(--font-dm-serif)',
-                fontStyle: 'italic',
-                fontSize: 'clamp(18px, 2vw, 24px)',
                 color: 'rgba(242, 237, 229, 0.85)',
-                lineHeight: 1.55,
               }}
             >
               &ldquo;I spent two years learning architecture to design my dream home. That obsession became a course.&rdquo;

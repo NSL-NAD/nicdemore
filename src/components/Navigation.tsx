@@ -10,7 +10,8 @@ import { NeonScrollHandler } from "@/components/NeonScrollHandler";
 
 const sections = [
   { id: "overview", label: "Overview" },
-  { id: "skillset", label: "My Journey" },
+  { id: "skillset", label: "Journey" },
+  { id: "skills", label: "Skills" },
   { id: "work", label: "Ventures" },
   { id: "architecture", label: "Architecture" },
   { id: "contact", label: "Contact" },
@@ -26,14 +27,15 @@ const LAND_EASE = [0.12, 0.9, 0.25, 1] as const;
 const NAV_ENTRIES: Array<{ delay: number; dur: number; x: number; y: number; z: number; blur: number }> = [
   { delay: 0.5, dur: 2.0, x: -200, y: -120, z: 500, blur: 6 },   // 0: Logo — from NW, starts with h1
   { delay: 0.9, dur: 1.4, x: -40,  y: -100, z: 400, blur: 4 },   // 1: Overview
-  { delay: 1.3, dur: 1.1, x: 0,    y: -80,  z: 350, blur: 3 },   // 2: My Skillset
-  { delay: 1.0, dur: 1.5, x: 20,   y: -100, z: 380, blur: 4 },   // 3: Ventures
-  { delay: 1.5, dur: 1.2, x: 40,   y: -90,  z: 360, blur: 3 },   // 4: Architecture
-  { delay: 1.1, dur: 1.3, x: 60,   y: -80,  z: 340, blur: 3 },   // 5: Contact
-  { delay: 1.4, dur: 1.4, x: 80,   y: -100, z: 380, blur: 4 },   // 6: About
-  { delay: 0.8, dur: 1.8, x: 150,  y: -90,  z: 420, blur: 5 },   // 7: Available indicator
-  { delay: 1.2, dur: 1.6, x: 200,  y: -110, z: 450, blur: 5 },   // 8: Retro toggle — from NE
-  { delay: 1.4, dur: 1.1, x: 100,  y: -80,  z: 350, blur: 4 },   // 9: Mobile hamburger
+  { delay: 1.3, dur: 1.1, x: 0,    y: -80,  z: 350, blur: 3 },   // 2: Journey
+  { delay: 1.15, dur: 1.2, x: 10,  y: -90,  z: 365, blur: 3 },   // 3: Skills
+  { delay: 1.0, dur: 1.5, x: 20,   y: -100, z: 380, blur: 4 },   // 4: Ventures
+  { delay: 1.5, dur: 1.2, x: 40,   y: -90,  z: 360, blur: 3 },   // 5: Architecture
+  { delay: 1.1, dur: 1.3, x: 60,   y: -80,  z: 340, blur: 3 },   // 6: Contact
+  { delay: 1.4, dur: 1.4, x: 80,   y: -100, z: 380, blur: 4 },   // 7: About
+  { delay: 0.8, dur: 1.8, x: 150,  y: -90,  z: 420, blur: 5 },   // 8: Available indicator
+  { delay: 1.2, dur: 1.6, x: 200,  y: -110, z: 450, blur: 5 },   // 9: Retro toggle — from NE
+  { delay: 1.4, dur: 1.1, x: 100,  y: -80,  z: 350, blur: 4 },   // 10: Mobile hamburger
 ];
 
 export function Navigation() {
@@ -266,7 +268,7 @@ export function Navigation() {
 
           {/* Mobile: RetroToggle + Hamburger */}
           <motion.div
-            {...navDrop3D(9)}
+            {...navDrop3D(10)}
             className="md:hidden flex items-center gap-3"
             style={{ transformStyle: 'preserve-3d' }}
           >

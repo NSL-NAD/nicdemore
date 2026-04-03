@@ -342,6 +342,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
 export function SkillsFlip() {
   return (
     <section
+      id="skills"
       className="pt-12 sm:pt-16 pb-24 sm:pb-32"
       style={{ background: "transparent", position: "relative" }}
     >
@@ -391,13 +392,9 @@ export function SkillsFlip() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
             transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
-            className="max-w-2xl"
+            className="max-w-2xl text-lg leading-relaxed"
             style={{
-              fontFamily: "var(--font-dm-serif)",
-              fontStyle: "italic",
-              fontSize: "clamp(18px, 2vw, 24px)",
               color: "var(--color-text-secondary)",
-              lineHeight: 1.55,
             }}
           >
             An operator with rare breadth and serious depth — across engineering,
