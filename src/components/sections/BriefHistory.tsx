@@ -641,8 +641,8 @@ export function BriefHistory() {
       </motion.div>
 
       {/* All remaining content — zIndex:3 ensures this always paints above the GPU-composited header motion.div */}
-      {/* pt-16 buffers the first card's upward ParallaxCard Y — overflow-x:hidden implicitly clips overflow-y too */}
-      <div className="relative overflow-x-hidden pt-16" style={{ zIndex: 3 }}>
+      {/* overflow-x:clip (not hidden) prevents horizontal scrollbar without creating a BFC or clipping overflow-y */}
+      <div className="relative pt-4" style={{ overflowX: 'clip', zIndex: 3 }}>
 
         {/* ── Timeline — constrained + centered ── */}
         <div className="mx-auto max-w-6xl px-12">
