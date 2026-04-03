@@ -202,17 +202,8 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
       className="cursor-pointer"
-      style={{
-        perspective: "1200px",
-        height: "360px",
-        borderRadius: "16px",
-        boxShadow: "0 4px 16px rgba(0,0,0,0.18), 0 16px 48px rgba(0,0,0,0.14)",
-        transition: "box-shadow 0.35s ease, transform 0.35s ease",
-      }}
-      whileHover={{
-        boxShadow: "0 8px 28px rgba(0,0,0,0.22), 0 24px 64px rgba(0,0,0,0.18)",
-        y: -6,
-      }}
+      style={{ perspective: "1200px", height: "360px" }}
+      whileHover={{ y: -6 }}
     >
       <div
         style={{
@@ -234,6 +225,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
             background: "var(--color-forest)",
             border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: "16px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.18), 0 16px 48px rgba(0,0,0,0.14)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -290,6 +282,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
             background: "rgba(250,249,246,0.98)",
             border: "1px solid rgba(244,99,30,0.28)",
             borderRadius: "16px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.18), 0 16px 48px rgba(0,0,0,0.14)",
             padding: "24px 20px",
             display: "flex",
             flexDirection: "column",
