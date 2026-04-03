@@ -6,7 +6,7 @@ export function Manifesto() {
   return (
     <section
       className="pt-4 pb-0 relative"
-      style={{ background: 'transparent', position: 'relative', zIndex: 20 }}
+      style={{ background: 'transparent', position: 'relative', zIndex: 20, marginTop: '-6rem' }}
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }}

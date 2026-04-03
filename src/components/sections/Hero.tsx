@@ -218,8 +218,8 @@ export function Hero() {
       ref={sectionRef}
       id="overview"
       className="relative flex items-center overflow-visible"
-      /* Shorter hero — 90vh instead of min-h-screen so next section peeks */
-      style={{ minHeight: '88vh' }}
+      /* Reduced so green Manifesto is visible on load */
+      style={{ minHeight: '80vh' }}
     >
       <motion.div
         style={{
