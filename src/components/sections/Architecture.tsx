@@ -81,7 +81,7 @@ export function Architecture() {
       ref={sectionRef}
       id="architecture"
       className="relative overflow-hidden"
-      style={{ minHeight: "80vh" }}
+      style={{ minHeight: "80vh", position: 'relative', zIndex: 10 }}
     >
       {/* Full-bleed background photo with parallax */}
       <motion.div
