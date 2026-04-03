@@ -352,10 +352,9 @@ export function Ventures() {
   return (
     <section
       id="work"
-      className="py-24 sm:py-32"
+      className="pt-0 pb-0"
       style={{ background: 'transparent', position: 'relative' }}
     >
-      <div className="px-12">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -363,8 +362,7 @@ export function Ventures() {
           transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
           style={{
             background: 'var(--color-forest)',
-            borderRadius: '24px',
-            boxShadow: '0 24px 64px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.10)',
+            borderRadius: 0,
             // overflow:clip clips cards at edge without creating a stacking context
             overflow: 'clip',
           }}
@@ -529,7 +527,6 @@ export function Ventures() {
 
           </div>
         </motion.div>
-      </div>
     </section>
   );
 }
