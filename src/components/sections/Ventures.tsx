@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
 import { ventures, type VentureStatus, type Venture } from "@/data/ventures";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -121,33 +121,75 @@ function getCardTransform(
 // ─── VentureCard ───────────────────────────────────────────────────────────────
 
 function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolean }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  // Orange cursor-tracking glare
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(244,99,30,0.18) 0%, transparent 62%)`
+  );
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    glareX.set(((e.clientX - rect.left) / rect.width) * 100);
+    glareY.set(((e.clientY - rect.top) / rect.height) * 100);
+  }
+
+  function handleMouseEnter() { glareOpacity.set(1); setHovered(true); }
+  function handleMouseLeave() { glareOpacity.set(0); setHovered(false); }
+
+  const borderColor = isActive
+    ? 'rgba(244,99,30,0.55)'
+    : hovered
+    ? 'rgba(244,99,30,0.38)'
+    : 'rgba(0,0,0,0.08)';
+
+  const shadow = isActive
+    ? '0 20px 56px rgba(0,0,0,0.50), 0 0 0 1px rgba(244,99,30,0.35), 0 0 32px rgba(244,99,30,0.14)'
+    : hovered
+    ? '0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.14)'
+    : 'none';
+
   return (
     <div
+      ref={cardRef}
       className="flex flex-col h-full"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{
+        position: 'relative',
         background: 'var(--color-base)',
-        border: `1px solid ${isActive ? 'rgba(244,99,30,0.55)' : 'rgba(0,0,0,0.08)'}`,
+        border: `1px solid ${borderColor}`,
         borderRadius: '16px',
         overflow: 'hidden',
-        // Shadow lives here (on the card itself) so overflow:clip on parent doesn't clip it
-        boxShadow: isActive
-          ? '0 20px 56px rgba(0,0,0,0.50), 0 0 0 1px rgba(244,99,30,0.35), 0 0 32px rgba(244,99,30,0.14)'
-          : 'none',
-        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+        boxShadow: shadow,
+        transition: 'border-color 0.25s ease, box-shadow 0.25s ease',
       }}
     >
-      {/* Active accent top bar */}
-      <div
+      {/* Orange cursor-tracking glare overlay */}
+      <motion.div
+        aria-hidden
         style={{
-          height: '2px',
-          background: 'var(--color-accent)',
-          transformOrigin: 'left',
-          transform: isActive ? 'scaleX(1)' : 'scaleX(0)',
-          transition: 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
+          position: 'absolute',
+          inset: 0,
+          borderRadius: '16px',
+          pointerEvents: 'none',
+          opacity: glareOpacity,
+          background: glareBackground,
+          zIndex: 10,
+          transition: 'opacity 0.2s ease',
         }}
       />
 
-      <div className="p-6 flex flex-col flex-1">
+      <div className="relative p-6 flex flex-col flex-1" style={{ zIndex: 11 }}>
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <h3
@@ -171,10 +213,11 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
         {venture.tags && (
           <div className="flex flex-wrap gap-1.5 mb-4">
             {venture.tags.map((tag) => (
-              <span
+              <motion.span
                 key={tag}
-                className="text-xs px-2 py-0.5 rounded-sm"
+                className="text-xs px-2 py-0.5 rounded-sm cursor-default"
                 style={{
+                  display: 'inline-block',
                   fontFamily: 'var(--font-jetbrains)',
                   fontSize: '10px',
                   letterSpacing: '0.06em',
@@ -182,9 +225,17 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
                   color: 'var(--color-text-secondary)',
                   border: '1px solid var(--color-border)',
                 }}
+                whileHover={{
+                  y: -2,
+                  backgroundColor: 'rgba(244,99,30,0.14)',
+                  color: '#F4631E',
+                  borderColor: 'rgba(244,99,30,0.45)',
+                  boxShadow: '0 0 10px rgba(244,99,30,0.22)',
+                }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 {tag}
-              </span>
+              </motion.span>
             ))}
           </div>
         )}
@@ -193,10 +244,11 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
         {venture.stack && (
           <div className="flex flex-wrap gap-1.5 mb-5">
             {venture.stack.map((tech) => (
-              <span
+              <motion.span
                 key={tech}
-                className="text-xs px-2 py-0.5 rounded-sm"
+                className="text-xs px-2 py-0.5 rounded-sm cursor-default"
                 style={{
+                  display: 'inline-block',
                   fontFamily: 'var(--font-jetbrains)',
                   fontSize: '10px',
                   letterSpacing: '0.06em',
@@ -204,9 +256,16 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
                   background: 'transparent',
                   border: '1px solid rgba(244, 99, 30, 0.25)',
                 }}
+                whileHover={{
+                  y: -2,
+                  backgroundColor: 'rgba(244,99,30,0.12)',
+                  borderColor: 'rgba(244,99,30,0.55)',
+                  boxShadow: '0 0 10px rgba(244,99,30,0.22)',
+                }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 {tech}
-              </span>
+              </motion.span>
             ))}
           </div>
         )}
@@ -272,8 +331,10 @@ function ArrowButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={dir === 'left' ? 'Previous venture' : 'Next venture'}
-      whileHover={disabled ? {} : { scale: 1.08, backgroundColor: 'rgba(255,255,255,0.18)' }}
-      whileTap={disabled ? {} : { scale: 0.94 }}
+      // Stop pointer events from bubbling to the carousel drag handler
+      onPointerDown={(e) => e.stopPropagation()}
+      whileHover={disabled ? {} : { scale: 1.1 }}
+      whileTap={disabled ? {} : { scale: 0.92 }}
       transition={{ duration: 0.15 }}
       style={{
         position: 'absolute',
@@ -281,20 +342,21 @@ function ArrowButton({
         ...(dir === 'left' ? { left: '20px' } : { right: '20px' }),
         transform: 'translateY(-50%)',
         zIndex: 20,
-        width: '44px',
-        height: '44px',
+        width: '48px',
+        height: '48px',
         borderRadius: '50%',
-        background: disabled ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.10)',
-        border: `1px solid ${disabled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.22)'}`,
-        color: disabled ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.82)',
+        background: disabled ? 'rgba(244,99,30,0.20)' : 'var(--color-accent)',
+        border: 'none',
+        color: disabled ? 'rgba(255,255,255,0.30)' : '#fff',
         cursor: disabled ? 'default' : 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '18px',
+        fontSize: '20px',
         lineHeight: 1,
         userSelect: 'none',
         WebkitUserSelect: 'none',
+        boxShadow: disabled ? 'none' : '0 4px 20px rgba(244,99,30,0.45)',
       }}
     >
       {dir === 'left' ? '←' : '→'}
@@ -320,6 +382,8 @@ export function Ventures() {
   const next = useCallback(() => setActiveIndex((i) => Math.min(ventures.length - 1, i + 1)), []);
 
   function handlePointerDown(e: React.PointerEvent) {
+    // Don't capture pointer events that originate from buttons (arrows)
+    if ((e.target as HTMLElement).closest('button')) return;
     setDragStart(e.clientX);
     e.currentTarget.setPointerCapture(e.pointerId);
   }
@@ -513,8 +577,6 @@ export function Ventures() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {activeIndex + 1} / {ventures.length}
-                {' · '}
                 {liveCount} Live
                 {' · '}
                 {buildCount} Building
