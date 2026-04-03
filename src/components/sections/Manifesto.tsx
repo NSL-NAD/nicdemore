@@ -6,7 +6,7 @@ export function Manifesto() {
   return (
     <section
       className="pt-4 pb-0 relative"
-      style={{ background: 'transparent' }}
+      style={{ background: 'transparent', position: 'relative', zIndex: 20 }}
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -15,7 +15,7 @@ export function Manifesto() {
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
         className="w-full text-center px-12 flex items-center justify-center"
         style={{
-          minHeight: '450px',
+          minHeight: '562px',
           background: 'var(--color-forest)',
           borderRadius: '24px',
           boxShadow: '0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)',

@@ -512,6 +512,27 @@ export function BriefHistory() {
   });
   const spineHeight = useTransform(sectionProgress, [0, 1], ["0%", "100%"]);
 
+  // Header reveal — measured directly from scrollY so the range is exact
+  const { scrollY } = useScroll();
+  const [sectionTop, setSectionTop] = useState(9999);
+  useEffect(() => {
+    const measure = () => {
+      if (!sectionRef.current) return;
+      setSectionTop(sectionRef.current.getBoundingClientRect().top + window.scrollY);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+  const headerY = useTransform(scrollY, (scrollVal) => {
+    const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+    const start = sectionTop - vh;       // section top at viewport bottom
+    const end = sectionTop - vh * 0.1;   // section top at 10% from viewport top
+    if (end <= start) return 0;
+    const progress = Math.max(0, Math.min(1, (scrollVal - start) / (end - start)));
+    return -200 * (1 - progress);
+  });
+
   // Spine range — initialized to 9999 so orange overlay is hidden until measured
   const [spineRange, setSpineRange] = useState({ top: 9999, bottom: 0 });
 
@@ -564,7 +585,7 @@ export function BriefHistory() {
       ref={sectionRef}
       id="skillset"
       className="pt-24 sm:pt-32 lg:pt-40 pb-12 section-glow"
-      style={{ background: "transparent", position: "relative" }}
+      style={{ background: "transparent", position: "relative", zIndex: 1 }}
     >
       {/* Scrim */}
       <div
@@ -578,16 +599,9 @@ export function BriefHistory() {
       <span className="grid-marker" style={{ bottom: "24px", left: "16px", position: "absolute", zIndex: 1 }}>+</span>
       <span className="grid-marker" style={{ bottom: "24px", right: "16px", position: "absolute", zIndex: 1 }}>+</span>
 
-      {/* All content above the scrim */}
-      <div className="relative overflow-x-hidden" style={{ zIndex: 1 }}>
-
-        {/* ── Section header — full-width px-12, matching Hero padding ── */}
-        <div className="px-12 mb-16">
+      {/* ── Section header — outside overflow-x-hidden so Y transform isn't clipped ── */}
+      <motion.div className="relative px-12 mb-8" style={{ y: headerY, zIndex: 1 }}>
           <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.5, ease: EASING_SMOOTH }}
             className="block text-xs tracking-widest uppercase mb-4"
             style={{
               color: "var(--color-accent)",
@@ -599,10 +613,6 @@ export function BriefHistory() {
           </motion.span>
 
           <motion.h2
-            initial={{ opacity: 0, x: -16 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.55, ease: EASING_SMOOTH }}
             data-neon-header="pink"
             className="font-display font-extrabold mb-4"
             style={{
@@ -616,10 +626,6 @@ export function BriefHistory() {
           </motion.h2>
 
           <motion.blockquote
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
             className="max-w-2xl"
             style={{
               fontFamily: "var(--font-dm-serif)",
@@ -632,7 +638,11 @@ export function BriefHistory() {
             &ldquo;I build things because I can&apos;t help it. It&apos;s the
             most honest thing I know how to do.&rdquo;
           </motion.blockquote>
-        </div>
+      </motion.div>
+
+      {/* All remaining content above the scrim */}
+      {/* pt-10 buffers the first card's upward ParallaxCard Y — overflow-x:hidden implicitly clips overflow-y too */}
+      <div className="relative overflow-x-hidden pt-10" style={{ zIndex: 1 }}>
 
         {/* ── Timeline — constrained + centered ── */}
         <div className="mx-auto max-w-6xl px-12">
