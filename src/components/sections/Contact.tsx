@@ -393,7 +393,7 @@ export function Contact() {
             letterSpacing: '0.1em',
           }}
         >
-          Based in Milwaukee, WI — available to relocate or work remotely
+          Based in Milwaukee, WI
         </motion.p>
       </div>
     </motion.section>

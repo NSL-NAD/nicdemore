@@ -22,8 +22,6 @@ export function Footer() {
       style={{
         background: '#1C1917',
         borderColor: 'rgba(255,255,255,0.06)',
-        position: 'relative',
-        zIndex: 5,
       }}
     >
       <motion.div
