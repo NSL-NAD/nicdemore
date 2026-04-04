@@ -1,12 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState, useCallback } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+  useInView,
+  type MotionValue,
+} from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { EASING_PREMIUM } from "@/lib/motion";
-import { useRetro } from "@/contexts/RetroContext";
+import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
 import { CountUpStat } from "@/components/CountUpStat";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Card data
+// ─────────────────────────────────────────────────────────────────────────────
 
 const cards = [
   {
@@ -39,125 +50,278 @@ const cards = [
   },
 ];
 
-// Organic positions for desktop floating cards around center photo
-const cardPositions = [
-  { top: "2%", left: "0%", delay: 0 },      // top-left
-  { top: "0%", right: "0%", delay: 0.3 },    // top-right
-  { top: "28%", left: "-2%", delay: 0.6 },   // mid-left
-  { top: "30%", right: "-2%", delay: 0.9 },  // mid-right
-  { top: "56%", left: "0%", delay: 1.2 },    // lower-left
-  { top: "58%", right: "0%", delay: 1.5 },   // lower-right
-  { top: "82%", left: "50%", delay: 1.8 },   // bottom-center
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// AboutParallaxCard — 3D mouse-tracked tilt + glare (matches ParallaxCard
+// from BriefHistory.tsx and VentureCard from Ventures.tsx)
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Drift animations — each card floats on a unique cycle
-const driftKeyframes = [
-  { x: [0, 6, -4, 2, 0], y: [0, -8, 4, -3, 0] },
-  { x: [0, -5, 7, -2, 0], y: [0, 6, -5, 3, 0] },
-  { x: [0, 8, -3, 5, 0], y: [0, -4, 7, -6, 0] },
-  { x: [0, -6, 4, -7, 0], y: [0, 5, -3, 8, 0] },
-  { x: [0, 4, -8, 3, 0], y: [0, -7, 5, -2, 0] },
-  { x: [0, -3, 6, -5, 0], y: [0, 8, -4, 6, 0] },
-  { x: [0, 5, -5, 4, 0], y: [0, -3, 6, -4, 0] },
-];
+const TILT = 4;
+const SPRING = { stiffness: 180, damping: 22, mass: 0.5 };
 
-function FloatingCard({
+function AboutParallaxCard({
   card,
   index,
 }: {
-  card: typeof cards[0];
+  card: (typeof cards)[0];
   index: number;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
-  const { isRetro } = useRetro();
-  const pos = cardPositions[index];
-  const drift = driftKeyframes[index];
 
-  const hoverBorder = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
-  const hoverGlow = isRetro
-    ? '0 0 16px rgba(0,229,255,0.35), 0 0 40px rgba(0,229,255,0.12), var(--shadow-lg)'
-    : '0 0 20px rgba(244, 99, 30, 0.15), var(--shadow-lg)';
-  const hoverTitleColor = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+
+  const rotateX = useSpring(rawY, SPRING);
+  const rotateY = useSpring(rawX, SPRING);
+  const scale = useSpring(1, SPRING);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) / rect.width;
+      const cy = (e.clientY - rect.top) / rect.height;
+      const nx = (cx - 0.5) * 2;
+      const ny = (cy - 0.5) * 2;
+      rawX.set(nx * TILT);
+      rawY.set(-ny * TILT);
+      glareX.set(cx * 100);
+      glareY.set(cy * 100);
+      glareOpacity.set(0.15);
+    },
+    [rawX, rawY, glareX, glareY, glareOpacity]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    rawX.set(0);
+    rawY.set(0);
+    scale.set(1);
+    glareOpacity.set(0);
+    setHovered(false);
+  }, [rawX, rawY, scale, glareOpacity]);
+
+  const handleMouseEnter = useCallback(() => {
+    scale.set(1.012);
+    setHovered(true);
+  }, [scale]);
+
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.5) 0%, transparent 65%)`
+  );
+
+  // Entrance: alternate slide direction
+  const isLeft = index % 2 === 0;
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.3 });
+
+  const hiddenLeft = {
+    opacity: 0,
+    x: -80,
+    y: 30,
+    rotateY: -8,
+    filter: "blur(8px)",
+  };
+  const hiddenRight = {
+    opacity: 0,
+    x: 80,
+    y: 30,
+    rotateY: 8,
+    filter: "blur(8px)",
+  };
+  const visible = {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotateY: 0,
+    filter: "blur(0px)",
+  };
+
+  const entranceTransition = {
+    duration: 1.2,
+    ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    delay: index * 0.08,
+    filter: { duration: 0.9, delay: index * 0.08 },
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-        x: hovered ? 0 : drift.x,
-        y: hovered ? 0 : drift.y,
-      }}
-      transition={
-        hovered
-          ? { duration: 0.3, ease: EASING_PREMIUM }
-          : {
-              opacity: { duration: 0.6, delay: pos.delay },
-              scale: { duration: 0.6, delay: pos.delay },
-              x: { duration: 12 + index * 2, repeat: Infinity, ease: "easeInOut" },
-              y: { duration: 14 + index * 2, repeat: Infinity, ease: "easeInOut" },
-            }
-      }
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="absolute p-5 rounded-2xl cursor-default transition-shadow duration-300"
-      style={{
-        ...pos,
-        minWidth: '220px',
-        maxWidth: '260px',
-        transform: index === 6 ? 'translateX(-50%)' : undefined,
-        background: 'var(--color-surface)',
-        border: `1px solid ${hovered ? hoverBorder : 'var(--color-border)'}`,
-        boxShadow: hovered ? hoverGlow : 'var(--shadow-sm)',
-        zIndex: hovered ? 20 : 10,
-      }}
+    <div
+      ref={ref}
+      className={index === 6 ? "md:col-span-2 lg:col-span-1 lg:col-start-2" : ""}
+      style={{ perspective: "800px" }}
     >
-      <h3
-        className="font-display font-bold text-sm mb-2"
-        style={{ color: hovered ? hoverTitleColor : 'var(--color-text-primary)' }}
+      <motion.div
+        ref={cardRef}
+        initial={isLeft ? hiddenLeft : hiddenRight}
+        animate={inView ? visible : isLeft ? hiddenLeft : hiddenRight}
+        transition={entranceTransition}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        style={{
+          rotateX,
+          rotateY,
+          scale,
+          transformStyle: "preserve-3d",
+          position: "relative",
+          background: "var(--color-forest)",
+          border: `1px solid ${hovered ? "var(--color-accent)" : "rgba(255,255,255,0.1)"}`,
+          borderRadius: "16px",
+          boxShadow: hovered
+            ? "0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)"
+            : "0 2px 12px rgba(0,0,0,0.15)",
+          transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+          cursor: "default",
+        }}
+        className="p-6"
       >
-        {card.title}
-      </h3>
-      <p
-        style={{ fontSize: '13px', lineHeight: '1.6', color: 'var(--color-text-secondary)', fontFamily: 'var(--font-syne)' }}
-      >
-        {card.body}
-      </p>
-    </motion.div>
+        <h3
+          className="font-display font-bold text-base mb-2"
+          style={{ color: "rgba(255,255,255,0.95)" }}
+        >
+          {card.title}
+        </h3>
+        <p
+          style={{
+            fontSize: "14px",
+            lineHeight: "1.7",
+            color: "rgba(255,255,255,0.70)",
+            fontFamily: "var(--font-syne)",
+          }}
+        >
+          {card.body}
+        </p>
+
+        {/* Glare overlay */}
+        <motion.div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "16px",
+            pointerEvents: "none",
+            opacity: glareOpacity,
+            background: glareBackground,
+            zIndex: 20,
+          }}
+        />
+      </motion.div>
+    </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// AboutPage
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function AboutPage() {
+  // Parallax refs
+  const pageRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
+  const cardSectionRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLDivElement>(null);
+  const philRef = useRef<HTMLDivElement>(null);
+
+  // Page-level scroll for wordmark parallax
+  const { scrollYProgress: pageScroll } = useScroll({
+    target: pageRef,
+    offset: ["start start", "end start"],
+  });
+  const wordmarkY = useTransform(pageScroll, [0, 1], ["0%", "25%"]);
+
+  // Title parallax
+  const { scrollYProgress: titleScroll } = useScroll({
+    target: titleRef,
+    offset: ["start end", "end start"],
+  });
+  const titleY = useTransform(titleScroll, [0, 1], [0, -40]);
+
+  // Stats parallax
+  const { scrollYProgress: statsScroll } = useScroll({
+    target: statsRef,
+    offset: ["start end", "end start"],
+  });
+  const statsY = useTransform(statsScroll, [0, 1], [20, -20]);
+
+  // Portrait parallax
+  const { scrollYProgress: portraitScroll } = useScroll({
+    target: portraitRef,
+    offset: ["start end", "end start"],
+  });
+  const portraitY = useTransform(portraitScroll, [0, 1], ["0%", "12%"]);
+
+  // Card section parallax
+  const { scrollYProgress: cardScroll } = useScroll({
+    target: cardSectionRef,
+    offset: ["start end", "end start"],
+  });
+  const cardContainerY = useTransform(cardScroll, [0, 1], [28, -28]);
+
+  // Quote divider parallax
+  const { scrollYProgress: quoteScroll } = useScroll({
+    target: quoteRef,
+    offset: ["start end", "end start"],
+  });
+  const quoteTextY = useTransform(quoteScroll, [0, 1], ["0%", "-8%"]);
+
+  // Philosophy parallax
+  const { scrollYProgress: philScroll } = useScroll({
+    target: philRef,
+    offset: ["start end", "end start"],
+  });
+  const philY = useTransform(philScroll, [0, 1], [60, 0]);
+
   return (
     <div
+      ref={pageRef}
       className="min-h-screen pt-24 pb-16"
-      style={{ background: 'var(--color-base)', position: 'relative' }}
+      style={{ background: "var(--color-base)", position: "relative" }}
     >
-      {/* Ghost / watermark text */}
+      {/* Ghost / watermark text — parallax drift */}
       <div
         aria-hidden="true"
         style={{
-          position: 'absolute',
-          top: '60px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontFamily: 'var(--font-syne)',
-          fontWeight: 800,
-          fontSize: 'clamp(80px, 18vw, 220px)',
-          letterSpacing: '-0.04em',
-          color: 'var(--color-text-primary)',
-          opacity: 0.025,
-          pointerEvents: 'none',
-          userSelect: 'none',
+          position: "absolute",
+          top: "60px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+          userSelect: "none",
           zIndex: 0,
-          lineHeight: 1,
         }}
       >
-        NIC DEMORE
+        <motion.div
+          style={{
+            y: wordmarkY,
+            fontFamily: "var(--font-syne)",
+            fontWeight: 800,
+            fontSize: "clamp(80px, 18vw, 220px)",
+            letterSpacing: "-0.04em",
+            color: "var(--color-text-primary)",
+            opacity: 0.045,
+            lineHeight: 1,
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)",
+          }}
+        >
+          NIC DEMORE
+        </motion.div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6" style={{ position: 'relative', zIndex: 1 }}>
+      <div
+        className="mx-auto max-w-7xl px-6"
+        style={{ position: "relative", zIndex: 1 }}
+      >
         {/* Back link */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -165,17 +329,23 @@ export default function AboutPage() {
           transition={{ duration: 0.4 }}
           className="mb-12"
         >
-          <Link
-            href="/"
-            className="text-sm animated-underline transition-colors"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            &larr; Back to nicdemore.com
-          </Link>
+          <motion.div whileHover={{ x: -4 }} transition={{ duration: 0.2 }}>
+            <Link
+              href="/"
+              className="text-sm animated-underline transition-colors"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              &larr; Back to nicdemore.com
+            </Link>
+          </motion.div>
         </motion.div>
 
-        {/* Page title */}
-        <section className="pt-4 pb-12 text-center" style={{ background: 'var(--color-base)' }}>
+        {/* Page title — parallax drift */}
+        <motion.section
+          ref={titleRef}
+          style={{ y: titleY }}
+          className="pt-4 pb-12 text-center"
+        >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -184,7 +354,12 @@ export default function AboutPage() {
           >
             <p
               className="font-mono text-xs tracking-widest uppercase mb-6"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)' }}
+              style={{
+                color: "var(--color-accent)",
+                fontFamily: "var(--font-jetbrains)",
+                fontSize: "11px",
+                letterSpacing: "0.08em",
+              }}
             >
               // About
             </p>
@@ -192,188 +367,292 @@ export default function AboutPage() {
               data-neon-header="pink"
               className="font-display font-extrabold leading-none mb-6 mx-auto"
               style={{
-                fontSize: 'clamp(48px, 6vw, 84px)',
-                color: 'var(--color-text-primary)',
-                letterSpacing: '-0.035em',
-                maxWidth: '800px',
+                fontSize: "clamp(48px, 6vw, 84px)",
+                color: "var(--color-text-primary)",
+                letterSpacing: "-0.035em",
+                maxWidth: "800px",
               }}
             >
-              Builder. Engineer.<br />
-              <span style={{ color: 'var(--color-accent)' }}>Founder.</span>
+              Builder. Engineer.
+              <br />
+              <span style={{ color: "var(--color-accent)" }}>Founder.</span>
             </h1>
           </motion.div>
-        </section>
+        </motion.section>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 px-2 border-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-          <CountUpStat end={9} suffix="+" label="Years Operating" />
-          <CountUpStat end={12} label="Ventures in 2025" />
-          <CountUpStat end={50} suffix="+" label="Team Members Led" />
-          <CountUpStat end={8} label="Skill Domains" />
-        </div>
-
-        {/* DESKTOP: floating cards around photo */}
-        <div className="hidden lg:block relative" style={{ minHeight: '900px' }}>
-          {/* Center photo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-            className="absolute left-1/2 top-[15%] -translate-x-1/2 w-[380px] z-[15]"
+        {/* Stats row — parallax drift */}
+        <motion.div ref={statsRef} style={{ y: statsY }}>
+          <div
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 px-2 border-y"
+            style={{ borderColor: "var(--color-border-subtle)" }}
           >
-            <div className="relative overflow-hidden" style={{ height: '440px' }}>
-              <Image
-                src="/nicdemore.jpg"
-                alt="Nic DeMore"
-                width={440}
-                height={440}
-                priority
-                style={{
-                  objectFit: 'cover',
-                  objectPosition: 'top',
-                  width: '100%',
-                  height: '440px',
-                  borderRadius: '2px',
-                  boxShadow: '0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)',
-                }}
-              />
-            </div>
-          </motion.div>
+            <CountUpStat end={9} suffix="+" label="Years Operating" />
+            <CountUpStat end={12} label="Ventures in 2025" />
+            <CountUpStat end={50} suffix="+" label="Team Members Led" />
+            <CountUpStat end={8} label="Skill Domains" />
+          </div>
+        </motion.div>
 
-          {/* Floating cards */}
-          {cards.map((card, i) => (
-            <FloatingCard key={card.title} card={card} index={i} />
-          ))}
-        </div>
-
-        {/* MOBILE/TABLET: stacked grid */}
-        <div className="lg:hidden">
-          {/* Photo */}
+        {/* Portrait — parallax image */}
+        <div ref={portraitRef} className="relative mt-16 mb-8 overflow-hidden">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={viewportOnce}
             transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-            className="mx-auto w-[240px] mb-12"
+            className="mx-auto"
+            style={{ maxWidth: "420px" }}
           >
             <div
-              className="relative rounded-2xl overflow-hidden"
+              className="relative overflow-hidden rounded-2xl"
               style={{
-                aspectRatio: '3/4',
-                boxShadow: '0 0 30px rgba(244, 99, 30, 0.1), var(--shadow-lg)',
-                border: '2px solid var(--color-accent)',
+                aspectRatio: "3 / 4",
+                boxShadow:
+                  "0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)",
               }}
             >
-              <Image
-                src="/nicdemore.jpg"
-                alt="Nic DeMore"
-                fill
-                priority
-                className="object-cover object-top"
-                sizes="240px"
-              />
+              <motion.div
+                style={{ y: portraitY }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src="/nicdemore.jpg"
+                  alt="Nic DeMore"
+                  fill
+                  priority
+                  className="object-cover object-top"
+                  sizes="420px"
+                  style={{ transform: "scale(1.1)" }}
+                />
+              </motion.div>
             </div>
           </motion.div>
+        </div>
 
-          {/* Cards grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Card grid — 3D tilt cards with parallax container */}
+        <motion.div
+          ref={cardSectionRef}
+          style={{ y: cardContainerY }}
+          className="relative mt-8 mb-16"
+        >
+          {/* Grid corner markers */}
+          <span
+            className="hidden lg:block absolute -top-4 -left-4 text-xs"
+            style={{
+              color: "var(--color-text-light)",
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "10px",
+              opacity: 0.5,
+            }}
+          >
+            +
+          </span>
+          <span
+            className="hidden lg:block absolute -top-4 -right-4 text-xs"
+            style={{
+              color: "var(--color-text-light)",
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "10px",
+              opacity: 0.5,
+            }}
+          >
+            +
+          </span>
+          <span
+            className="hidden lg:block absolute -bottom-4 -left-4 text-xs"
+            style={{
+              color: "var(--color-text-light)",
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "10px",
+              opacity: 0.5,
+            }}
+          >
+            +
+          </span>
+          <span
+            className="hidden lg:block absolute -bottom-4 -right-4 text-xs"
+            style={{
+              color: "var(--color-text-light)",
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "10px",
+              opacity: 0.5,
+            }}
+          >
+            +
+          </span>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cards.map((card, i) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: EASING_PREMIUM }}
-                className="p-5 rounded-2xl"
-                style={{
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                }}
-              >
-                <h3
-                  className="font-display font-bold text-sm mb-2"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  className="text-xs leading-relaxed"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  {card.body}
-                </p>
-              </motion.div>
+              <AboutParallaxCard key={card.title} card={card} index={i} />
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Full-bleed portrait section */}
-        <div
-          className="relative mt-16 -mx-6"
+        {/* Forest-green quote divider — matches Manifesto pattern */}
+        <motion.div
+          ref={quoteRef}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.8, ease: EASING_PREMIUM }}
+          className="w-full text-center px-8 md:px-12 flex items-center justify-center my-16"
           style={{
-            height: 'clamp(400px, 60vh, 700px)',
-            overflow: 'hidden',
+            minHeight: "320px",
+            background: "var(--color-forest)",
+            borderRadius: "24px",
+            boxShadow:
+              "0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)",
+            overflow: "hidden",
           }}
         >
-          <Image
-            src="/nicdemore.jpg"
-            alt="Nic DeMore"
-            fill
-            style={{ objectFit: 'cover', objectPosition: 'top center' }}
-            sizes="100vw"
-          />
-          <div
-            className="absolute inset-0"
+          <motion.p
             style={{
-              background: 'linear-gradient(to bottom, transparent 40%, var(--color-base) 100%)',
+              y: quoteTextY,
+              fontSize: "clamp(20px, 2.8vw, 34px)",
+              color: "rgba(255,255,255,0.92)",
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              maxWidth: "680px",
+              margin: "0 auto",
             }}
-          />
-        </div>
+            className="font-display leading-relaxed"
+          >
+            Always do your best. Leave things better than you found them.{" "}
+            <span style={{ color: "var(--color-accent)" }}>
+              It really is a beautiful life.
+            </span>
+          </motion.p>
+        </motion.div>
 
-        {/* Narrative section — below the floating cards area */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: EASING_PREMIUM }}
-          className="mt-24 mx-auto max-w-2xl"
-        >
-          <div className="h-px mb-12" style={{ background: 'var(--color-border)' }} />
+        {/* Philosophy section — parallax rise */}
+        <motion.div ref={philRef} style={{ y: philY }} className="mt-16">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={{ duration: 0.7, ease: EASING_PREMIUM }}
+            className="mx-auto max-w-3xl"
+          >
+          <div
+            className="h-px mb-12"
+            style={{ background: "var(--color-border)" }}
+          />
 
           <span
             className="block text-xs tracking-widest uppercase mb-8"
-            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+            style={{
+              color: "var(--color-accent)",
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "11px",
+              letterSpacing: "0.08em",
+            }}
           >
             // Philosophy
           </span>
 
-          <div className="space-y-6" style={{ color: 'var(--color-text-secondary)', lineHeight: '1.8' }}>
-            <p className="text-base">
-              I believe the best work comes from people who genuinely care — not just about shipping, but about what the thing they&apos;re building does in the world. That&apos;s been my north star since I started my first business at 18, and it&apos;s the lens I bring to everything I build now.
-            </p>
-            <p className="text-base">
-              The mechanical engineering background wasn&apos;t just a degree. It was a way of seeing. Systems. Constraints. Forces in tension. You learn to ask: what is this thing actually doing, and will it hold? That question applies to code, to organizations, to strategy, to life.
-            </p>
-            <p className="text-base">
-              Nine years running Margle taught me that building a business is a deeply human project. You can have the best strategy in the world — but if you can&apos;t build a team that trusts each other, none of it works. I learned operations, finance, client management, and leadership the hard way: by doing all of it, at the same time, under real pressure.
-            </p>
-            <p className="text-base">
-              Now I&apos;m building AI-native infrastructure and purpose-driven ventures. Not because it&apos;s trendy — because I genuinely believe this is the moment where the tools exist to do good work at a scale that wasn&apos;t possible before. That excites me every day.
-            </p>
+          <div className="lg:grid lg:grid-cols-2 lg:gap-12">
+            <div className="space-y-6">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={viewportOnce}
+                transition={{ duration: 0.5, ease: EASING_PREMIUM }}
+                className="text-lg leading-relaxed"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                I believe the best work comes from people who genuinely care —
+                not just about shipping, but about what the thing they&apos;re
+                building does in the world. That&apos;s been my north star since
+                I started my first business at 18, and it&apos;s the lens I
+                bring to everything I build now.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={viewportOnce}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.08,
+                  ease: EASING_PREMIUM,
+                }}
+                className="text-lg leading-relaxed"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                The mechanical engineering background wasn&apos;t just a degree.
+                It was a way of seeing. Systems. Constraints. Forces in tension.
+                You learn to ask: what is this thing actually doing, and will it
+                hold? That question applies to code, to organizations, to
+                strategy, to life.
+              </motion.p>
+            </div>
+            <div className="space-y-6 mt-6 lg:mt-0">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={viewportOnce}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.16,
+                  ease: EASING_PREMIUM,
+                }}
+                className="text-lg leading-relaxed"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                Nine years running Margle taught me that building a business is a
+                deeply human project. You can have the best strategy in the world
+                — but if you can&apos;t build a team that trusts each other,
+                none of it works. I learned operations, finance, client
+                management, and leadership the hard way: by doing all of it, at
+                the same time, under real pressure.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={viewportOnce}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.24,
+                  ease: EASING_PREMIUM,
+                }}
+                className="text-lg leading-relaxed"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                Now I&apos;m building AI-native infrastructure and
+                purpose-driven ventures. Not because it&apos;s trendy — because
+                I genuinely believe this is the moment where the tools exist to
+                do good work at a scale that wasn&apos;t possible before. That
+                excites me every day.
+              </motion.p>
+            </div>
           </div>
 
-          <div className="mt-12 pt-8" style={{ borderTop: '1px solid var(--color-border)' }}>
+          <div
+            className="mt-12 pt-8"
+            style={{ borderTop: "1px solid var(--color-border)" }}
+          >
             <p
-              className="text-sm"
-              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-dm-serif)', fontStyle: 'italic', fontSize: '16px' }}
+              style={{
+                color: "var(--color-text-secondary)",
+                fontFamily: "var(--font-dm-serif)",
+                fontStyle: "italic",
+                fontSize: "18px",
+              }}
             >
-              &ldquo;Always do your best. Leave things better than you found them. It really is a beautiful life.&rdquo;
+              &ldquo;Always do your best. Leave things better than you found
+              them. It really is a beautiful life.&rdquo;
             </p>
             <p
-              className="text-xs mt-3"
-              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+              className="mt-3"
+              style={{
+                color: "var(--color-text-light)",
+                fontFamily: "var(--font-jetbrains)",
+                fontSize: "11px",
+              }}
             >
               — Personal operating system, circa always
             </p>
           </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>
