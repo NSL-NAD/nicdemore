@@ -1,15 +1,38 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export function Footer() {
+  const footerRef = useRef<HTMLElement>(null);
+
+  // Parallax reveal: footer content rises from 60px below as it enters the viewport,
+  // giving the feel of emerging from behind the Contact card above it
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ["start end", "start 0.5"],
+  });
+  const contentY = useTransform(scrollYProgress, [0, 1], [60, 0]);
+
   return (
     <footer
+      ref={footerRef}
       className="border-t py-12 sm:py-16"
       style={{
         background: '#1C1917',
         borderColor: 'rgba(255,255,255,0.06)',
+        // Sticky at bottom: Contact section (z:30) scrolls over the footer
+        // as the user scrolls, revealing the footer from beneath
+        position: 'sticky',
+        bottom: 0,
+        zIndex: 5,
       }}
     >
-      <div className="mx-auto max-w-7xl px-6">
+      <motion.div
+        style={{ y: contentY }}
+        className="mx-auto max-w-7xl px-6"
+      >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
           {/* Brand */}
           <div>
@@ -114,7 +137,7 @@ export function Footer() {
             Always do your best.
           </p>
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 }
