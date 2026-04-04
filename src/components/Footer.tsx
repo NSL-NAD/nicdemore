@@ -13,7 +13,7 @@ export function Footer() {
     target: footerRef,
     offset: ["start end", "start 0.5"],
   });
-  const contentY = useTransform(scrollYProgress, [0, 1], [60, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [80, 0]);
 
   return (
     <footer

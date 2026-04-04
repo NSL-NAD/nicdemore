@@ -103,7 +103,7 @@ export function Contact() {
         borderRadius: '24px',
         overflow: 'hidden',
         marginTop: '-60px',
-        marginBottom: '-120px',
+        marginBottom: 0,
       }}
     >
       {/* Grid markers — architectural detail */}
