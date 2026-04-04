@@ -25,7 +25,7 @@ export function VentureOSAnchor({ state, onMouseEnter, onMouseLeave, onClick }: 
       style={{
         minWidth: '44px',
         minHeight: '44px',
-        opacity: isOpen || isHover ? 1 : 0.4,
+        opacity: 1,
         border: isRetro
           ? `1px solid ${isOpen ? 'var(--retro-cyan)' : 'rgba(0,229,255,0.3)'}`
           : `1px solid ${isOpen ? 'var(--color-border)' : 'transparent'}`,

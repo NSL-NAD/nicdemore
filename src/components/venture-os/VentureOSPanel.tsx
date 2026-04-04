@@ -54,24 +54,41 @@ export function VentureOSPanel({ onClose }: Props) {
         boxShadow: 'var(--shadow-lg)',
       }}
     >
-      {/* Header — Venture OS label + Available for Collabs + close */}
+      {/* Header — two rows in one bordered box */}
       <div
-        className="flex items-center justify-between px-4 py-3 border-b"
+        className="px-4 pt-3 pb-3 border-b"
         style={{ borderColor: 'var(--color-border)' }}
       >
-        <span
-          style={{
-            fontFamily: 'var(--font-jetbrains)',
-            fontSize: '10px',
-            letterSpacing: '0.12em',
-            color: 'var(--color-text-secondary)',
-            textTransform: 'uppercase',
-          }}
-        >
-          Venture OS
-        </span>
+        {/* Row 1: title + close */}
+        <div className="flex items-center justify-between mb-2">
+          <span
+            style={{
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '10px',
+              letterSpacing: '0.12em',
+              color: 'var(--color-text-secondary)',
+              textTransform: 'uppercase',
+            }}
+          >
+            Venture OS
+          </span>
+          <button
+            onClick={onClose}
+            aria-label="Close Venture OS"
+            className="text-xs hover:text-accent transition-colors"
+            style={{
+              color: 'var(--color-text-light)',
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '11px',
+              minWidth: '24px',
+              minHeight: '24px',
+            }}
+          >
+            ×
+          </button>
+        </div>
 
-        {/* Available for Collabs — sits between title and × */}
+        {/* Row 2: Available for Collabs — left-aligned under title */}
         <div className="flex items-center gap-1.5">
           <span
             className="pulse-dot inline-block rounded-full flex-shrink-0"
@@ -88,21 +105,6 @@ export function VentureOSPanel({ onClose }: Props) {
             Available for Collabs
           </span>
         </div>
-
-        <button
-          onClick={onClose}
-          aria-label="Close Venture OS"
-          className="text-xs hover:text-accent transition-colors"
-          style={{
-            color: 'var(--color-text-light)',
-            fontFamily: 'var(--font-jetbrains)',
-            fontSize: '11px',
-            minWidth: '24px',
-            minHeight: '24px',
-          }}
-        >
-          ×
-        </button>
       </div>
 
       {/* Live Feed — cycling activity item */}
