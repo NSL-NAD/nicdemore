@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
 
 const PERSONAL_DOMAINS = [
@@ -15,6 +15,16 @@ function isPersonalEmail(email: string): boolean {
 }
 
 export function Contact() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Parallax: section rises up from below as it enters the viewport,
+  // starting 60px lower and settling at 0 — so it visually slides over the green Giveable layer
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'start 0.55'],
+  });
+  const cardY = useTransform(scrollYProgress, [0, 1], [60, 0]);
+
   const [formData, setFormData] = useState({
     name: "",
     businessEmail: "",
@@ -81,18 +91,19 @@ export function Contact() {
   };
 
   return (
-    <section
+    <motion.section
+      ref={sectionRef}
       id="contact"
-      className="py-24 sm:py-32 lg:py-40 section-glow"
+      className="pt-20 pb-10 sm:pt-28 sm:pb-12 lg:pt-36 lg:pb-14 section-glow"
       style={{
+        y: cardY,
         background: 'var(--color-base)',
         position: 'relative',
         zIndex: 30,
         borderRadius: '24px',
         overflow: 'hidden',
-        // Pull up over Giveable's green bottom, sit above footer
         marginTop: '-60px',
-        marginBottom: '-60px',
+        marginBottom: '-36px',
       }}
     >
       {/* Grid markers — architectural detail */}
@@ -385,6 +396,6 @@ export function Contact() {
           Based in Milwaukee, WI — available to relocate or work remotely
         </motion.p>
       </div>
-    </section>
+    </motion.section>
   );
 }

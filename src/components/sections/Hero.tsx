@@ -87,82 +87,28 @@ const drop3DHeavy = (
 
 function HeroVideoPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const autoPlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Track whether video was playing before the user scrolled away
-  const wasPlayingRef = useRef(false);
 
-  // Hard-stop the video on unmount so navigating away never leaves a ghost audio stream
+  // Hard-stop on unmount — no ghost audio when navigating away
   useEffect(() => {
     const video = videoRef.current;
     return () => {
       if (!video) return;
       video.pause();
       video.removeAttribute('src');
-      video.load(); // flush buffered data and kill audio context
+      video.load();
     };
-  }, []);
-
-  // Auto-play (unmuted) after hero animations finish — last element lands ~2.9s, so 3.1s delay
-  useEffect(() => {
-    autoPlayTimerRef.current = setTimeout(() => {
-      const video = videoRef.current;
-      if (!video) return;
-      video.muted = false;
-      video.play()
-        .then(() => { setIsPlaying(true); setIsMuted(false); })
-        .catch(() => {
-          // Browser blocked unmuted autoplay — fallback to muted
-          video.muted = true;
-          setIsMuted(true);
-          video.play().then(() => setIsPlaying(true)).catch(() => {});
-        });
-    }, 3100);
-    return () => {
-      if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
-    };
-  }, []);
-
-  // Scroll-driven pause / resume — observe the player container
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const video = videoRef.current;
-        if (!video) return;
-        if (!entry.isIntersecting) {
-          // Hero scrolled off screen — pause if playing
-          if (!video.paused) {
-            wasPlayingRef.current = true;
-            video.pause();
-            setIsPlaying(false);
-          }
-        } else {
-          // Hero back in view — resume if it was playing before
-          if (wasPlayingRef.current) {
-            wasPlayingRef.current = false;
-            video.play().then(() => setIsPlaying(true)).catch(() => {});
-          }
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(container);
-    return () => observer.disconnect();
   }, []);
 
   // Track playback time + duration
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const onTimeUpdate   = () => setCurrentTime(video.currentTime);
-    const onMetadata     = () => setDuration(video.duration);
-    const onEnded        = () => { setIsPlaying(false); setCurrentTime(0); };
+    const onTimeUpdate = () => setCurrentTime(video.currentTime);
+    const onMetadata   = () => setDuration(video.duration);
+    const onEnded      = () => { setIsPlaying(false); setCurrentTime(0); };
     video.addEventListener('timeupdate', onTimeUpdate);
     video.addEventListener('loadedmetadata', onMetadata);
     video.addEventListener('ended', onEnded);
@@ -182,15 +128,6 @@ function HeroVideoPlayer() {
     } else {
       video.play().then(() => setIsPlaying(true)).catch(() => {});
     }
-  };
-
-  const handleMuteToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const video = videoRef.current;
-    if (!video) return;
-    const next = !isMuted;
-    video.muted = next;
-    setIsMuted(next);
   };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -213,7 +150,6 @@ function HeroVideoPlayer() {
 
   return (
     <div
-      ref={containerRef}
       className="relative w-full group film-grain"
       style={{
         background: 'var(--color-surface)',
@@ -282,32 +218,19 @@ function HeroVideoPlayer() {
           />
         </div>
 
-        {/* Controls row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Play / Pause */}
-            <button
-              onClick={handlePlayPause}
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-              className="text-white leading-none"
-              style={{ fontSize: '13px' }}
-            >
-              {isPlaying ? '⏸' : '▶'}
-            </button>
-            {/* Timestamps */}
-            <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', color: 'rgba(255,255,255,0.75)', letterSpacing: '0.04em' }}>
-              {fmt(currentTime)} / {fmt(duration)}
-            </span>
-          </div>
-          {/* Mute toggle */}
+        {/* Controls row — play/pause + timestamps only */}
+        <div className="flex items-center gap-3">
           <button
-            onClick={handleMuteToggle}
-            aria-label={isMuted ? 'Unmute' : 'Mute'}
+            onClick={handlePlayPause}
+            aria-label={isPlaying ? 'Pause' : 'Play'}
             className="text-white leading-none"
             style={{ fontSize: '13px' }}
           >
-            {isMuted ? '🔇' : '🔊'}
+            {isPlaying ? '⏸' : '▶'}
           </button>
+          <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', color: 'rgba(255,255,255,0.75)', letterSpacing: '0.04em' }}>
+            {fmt(currentTime)} / {fmt(duration)}
+          </span>
         </div>
       </div>
 
