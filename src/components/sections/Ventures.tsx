@@ -445,19 +445,18 @@ export function Ventures() {
   }
 
   function handleWheel(e: React.WheelEvent) {
-    // Only respond to intentional horizontal swipes
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-    // Already mid-gesture — ignore until cooldown expires
+    // Already mid-gesture — ignore until spring settles
     if (wheelLocked.current) return;
-    if (e.deltaX > 30) {
-      next();
-      wheelLocked.current = true;
-      setTimeout(() => { wheelLocked.current = false; }, 650);
-    } else if (e.deltaX < -30) {
-      prev();
-      wheelLocked.current = true;
-      setTimeout(() => { wheelLocked.current = false; }, 650);
-    }
+    // Need some horizontal intent
+    if (Math.abs(e.deltaX) < 5) return;
+    // Bail only if clearly a vertical scroll (deltaY more than 3× deltaX)
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX) * 3) return;
+
+    if (e.deltaX > 0) next();
+    else prev();
+
+    wheelLocked.current = true;
+    setTimeout(() => { wheelLocked.current = false; }, 650);
   }
 
   const liveCount    = ventures.filter((v) => v.status === 'LIVE').length;
@@ -477,7 +476,6 @@ export function Ventures() {
         marginBottom: '-80px',
       }}
     >
-      <div className="px-12">
         {/* Parallax wrapper — moves the entire green card at a different scroll rate */}
         <motion.div style={{ y: containerY }}>
           {/* Entrance animation wrapper */}
@@ -646,7 +644,6 @@ export function Ventures() {
 
           </motion.div>
         </motion.div>
-      </div>
     </section>
   );
 }
