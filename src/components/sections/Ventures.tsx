@@ -376,9 +376,11 @@ function ArrowButton({
       transition={{ duration: 0.15 }}
       style={{
         position: 'absolute',
-        top: '50%',
+        // calc(50% - 24px) centers the 48px button without using transform,
+        // which Framer Motion owns — using transform: translateY here gets
+        // dropped the moment whileHover applies scale.
+        top: 'calc(50% - 24px)',
         ...(dir === 'left' ? { left: '20px' } : { right: '20px' }),
-        transform: 'translateY(-50%)',
         zIndex: 20,
         width: '48px',
         height: '48px',
@@ -405,13 +407,14 @@ function ArrowButton({
 // ─── Main Ventures Section ─────────────────────────────────────────────────────
 
 export function Ventures() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  // GAS Studio is index 2 — start centered on it
+  const [activeIndex, setActiveIndex] = useState(2);
   const [dragStart, setDragStart] = useState<number | null>(null);
   const isMobile = useMediaQuery('(max-width: 767px)');
   const sectionRef = useRef<HTMLElement>(null);
 
-  const wheelAccum = useRef(0);
-  const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Cooldown lock — fires once per trackpad gesture, ignores rapid repeat events
+  const wheelLocked = useRef(false);
 
   // Scroll-driven parallax — container drifts slowly against page scroll
   const { scrollYProgress } = useScroll({
@@ -442,14 +445,19 @@ export function Ventures() {
   }
 
   function handleWheel(e: React.WheelEvent) {
+    // Only respond to intentional horizontal swipes
     if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-    wheelAccum.current += e.deltaX;
-    if (wheelTimer.current) clearTimeout(wheelTimer.current);
-    wheelTimer.current = setTimeout(() => {
-      if (wheelAccum.current > 60) next();
-      else if (wheelAccum.current < -60) prev();
-      wheelAccum.current = 0;
-    }, 80);
+    // Already mid-gesture — ignore until cooldown expires
+    if (wheelLocked.current) return;
+    if (e.deltaX > 30) {
+      next();
+      wheelLocked.current = true;
+      setTimeout(() => { wheelLocked.current = false; }, 650);
+    } else if (e.deltaX < -30) {
+      prev();
+      wheelLocked.current = true;
+      setTimeout(() => { wheelLocked.current = false; }, 650);
+    }
   }
 
   const liveCount    = ventures.filter((v) => v.status === 'LIVE').length;
