@@ -22,10 +22,7 @@ export function Footer() {
       style={{
         background: '#1C1917',
         borderColor: 'rgba(255,255,255,0.06)',
-        // Sticky at bottom: Contact section (z:30) scrolls over the footer
-        // as the user scrolls, revealing the footer from beneath
-        position: 'sticky',
-        bottom: 0,
+        position: 'relative',
         zIndex: 5,
       }}
     >
