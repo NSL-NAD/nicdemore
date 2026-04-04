@@ -96,6 +96,17 @@ function HeroVideoPlayer() {
   // Track whether video was playing before the user scrolled away
   const wasPlayingRef = useRef(false);
 
+  // Hard-stop the video on unmount so navigating away never leaves a ghost audio stream
+  useEffect(() => {
+    const video = videoRef.current;
+    return () => {
+      if (!video) return;
+      video.pause();
+      video.removeAttribute('src');
+      video.load(); // flush buffered data and kill audio context
+    };
+  }, []);
+
   // Auto-play (unmuted) after hero animations finish — last element lands ~2.9s, so 3.1s delay
   useEffect(() => {
     autoPlayTimerRef.current = setTimeout(() => {
@@ -103,7 +114,7 @@ function HeroVideoPlayer() {
       if (!video) return;
       video.muted = false;
       video.play()
-        .then(() => { setIsPlaying(true); })
+        .then(() => { setIsPlaying(true); setIsMuted(false); })
         .catch(() => {
           // Browser blocked unmuted autoplay — fallback to muted
           video.muted = true;

@@ -84,7 +84,16 @@ export function Contact() {
     <section
       id="contact"
       className="py-24 sm:py-32 lg:py-40 section-glow"
-      style={{ background: 'var(--color-base)', position: 'relative' }}
+      style={{
+        background: 'var(--color-base)',
+        position: 'relative',
+        zIndex: 30,
+        borderRadius: '24px',
+        overflow: 'hidden',
+        // Pull up over Giveable's green bottom, sit above footer
+        marginTop: '-60px',
+        marginBottom: '-60px',
+      }}
     >
       {/* Grid markers — architectural detail */}
       <span className="grid-marker" style={{ top: '24px', left: '16px' }}>+</span>
@@ -274,19 +283,26 @@ export function Contact() {
                 </p>
               )}
 
-              <button
+              <motion.button
                 type="submit"
                 disabled={status === "sending"}
-                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 font-bold text-sm transition-all hover:scale-[1.02] disabled:opacity-60"
+                whileHover={status !== "sending" ? {
+                  scale: 1.03,
+                  boxShadow: '0 12px 40px rgba(244,99,30,0.55)',
+                } : {}}
+                whileTap={status !== "sending" ? { scale: 0.97 } : {}}
+                transition={{ duration: 0.18 }}
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 font-bold text-sm disabled:opacity-60"
                 style={{
                   background: 'var(--color-accent)',
                   color: '#fff',
                   fontFamily: 'var(--font-syne)',
-                  boxShadow: 'var(--shadow-md)',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 20px rgba(244,99,30,0.32)',
                 }}
               >
                 {status === "sending" ? "Sending..." : "Send Message"}
-              </button>
+              </motion.button>
             </form>
           )}
         </motion.div>

@@ -197,11 +197,18 @@ export function Giveable() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.6, ease: EASING_SNAPPY, delay: i * 0.1 }}
-              className="p-5 flex flex-col gap-3"
+              whileHover={{
+                y: -3,
+                backgroundColor: 'rgba(244,99,30,0.09)',
+                borderColor: 'rgba(244,99,30,0.38)',
+                boxShadow: '0 0 28px rgba(244,99,30,0.22)',
+              }}
+              className="p-5 flex flex-col gap-3 cursor-default"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(242,237,229,0.09)',
                 borderRadius: '10px',
+                transition: 'background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
               }}
             >
               <span

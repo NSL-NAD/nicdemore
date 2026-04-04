@@ -204,7 +204,7 @@ export function Navigation() {
             })}
 
             {/* About page link */}
-            <motion.div {...navDrop3D(sections.length + 1)} style={{ transformStyle: 'preserve-3d' }}>
+            <motion.div {...navDrop3D(sections.length + 1)} className="flex items-center" style={{ transformStyle: 'preserve-3d' }}>
               <Link
                 href="/about"
                 className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
@@ -231,7 +231,7 @@ export function Navigation() {
 
             {/* Retro toggle */}
             {!isResumePage && (
-              <motion.div {...navDrop3D(sections.length + 2)} className="ml-1" style={{ transformStyle: 'preserve-3d' }}>
+              <motion.div {...navDrop3D(sections.length + 2)} className="flex items-center ml-1" style={{ transformStyle: 'preserve-3d' }}>
                 <RetroToggle />
               </motion.div>
             )}
