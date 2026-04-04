@@ -418,7 +418,7 @@ export function Hero() {
 
             {/* 2-col grid: left = h2 + card (TOP aligned), right = video */}
             <div
-              className="grid md:grid-cols-[1fr_1.5fr] gap-6 lg:gap-10 md:items-start"
+              className="grid md:grid-cols-[1fr_1.5fr] gap-6 lg:gap-10 md:items-center"
               style={{ transformStyle: 'preserve-3d' }}
             >
               {/* Left column: h2 + card — top-aligned, tight under H1 */}
