@@ -99,7 +99,7 @@ export default function RootLayout({
         <GlowingGrid />
         <RetroProvider>
           <Navigation />
-          <main className="flex-1" style={{ position: 'relative', zIndex: 10 }}>{children}</main>
+          <main className="flex-1" style={{ position: 'relative', zIndex: 10, background: '#1C1917' }}>{children}</main>
           <Footer />
           <VentureOSWrapper />
         </RetroProvider>
