@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   motion,
   useMotionValue,
@@ -411,7 +411,8 @@ export function Ventures() {
   const [activeIndex, setActiveIndex] = useState(2);
   const [dragStart, setDragStart] = useState<number | null>(null);
   const isMobile = useMediaQuery('(max-width: 767px)');
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef  = useRef<HTMLElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   // Cooldown lock — fires once per trackpad gesture, ignores rapid repeat events
   const wheelLocked = useRef(false);
@@ -444,20 +445,25 @@ export function Ventures() {
     setDragStart(null);
   }
 
-  function handleWheel(e: React.WheelEvent) {
-    // Already mid-gesture — ignore until spring settles
-    if (wheelLocked.current) return;
-    // Need some horizontal intent
-    if (Math.abs(e.deltaX) < 5) return;
-    // Bail only if clearly a vertical scroll (deltaY more than 3× deltaX)
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX) * 3) return;
-
-    if (e.deltaX > 0) next();
-    else prev();
-
-    wheelLocked.current = true;
-    setTimeout(() => { wheelLocked.current = false; }, 650);
-  }
+  // Native (non-passive) wheel listener on the carousel — lets us call
+  // preventDefault() to stop Chrome from treating horizontal swipe as Back/Forward.
+  // React's onWheel is always passive and cannot call preventDefault.
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const handler = (e: WheelEvent) => {
+      if (wheelLocked.current) return;
+      if (Math.abs(e.deltaX) < 5) return;
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) * 3) return;
+      e.preventDefault(); // claim the gesture before Chrome's Back/Forward kicks in
+      if (e.deltaX > 0) next();
+      else prev();
+      wheelLocked.current = true;
+      setTimeout(() => { wheelLocked.current = false; }, 650);
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [next, prev]);
 
   const liveCount    = ventures.filter((v) => v.status === 'LIVE').length;
   const buildCount   = ventures.filter((v) => v.status === 'BUILD' || v.status === 'TEST').length;
@@ -535,11 +541,11 @@ export function Ventures() {
 
             {/* ── DepthDeck Carousel ──────────────────────────────── */}
             <div
+              ref={carouselRef}
               className="relative select-none"
               style={{ height: `${CAROUSEL_H}px` }}
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
-              onWheel={handleWheel}
             >
               <ArrowButton dir="left" onClick={prev} disabled={activeIndex === 0} />
 
