@@ -54,7 +54,7 @@ export function VentureOSPanel({ onClose }: Props) {
         boxShadow: 'var(--shadow-lg)',
       }}
     >
-      {/* Header */}
+      {/* Header — Venture OS label + Available for Collabs + close */}
       <div
         className="flex items-center justify-between px-4 py-3 border-b"
         style={{ borderColor: 'var(--color-border)' }}
@@ -70,6 +70,25 @@ export function VentureOSPanel({ onClose }: Props) {
         >
           Venture OS
         </span>
+
+        {/* Available for Collabs — sits between title and × */}
+        <div className="flex items-center gap-1.5">
+          <span
+            className="pulse-dot inline-block rounded-full flex-shrink-0"
+            style={{ width: '6px', height: '6px', background: 'rgb(34,197,94)' }}
+          />
+          <span
+            style={{
+              fontFamily: 'var(--font-jetbrains)',
+              fontSize: '9px',
+              letterSpacing: '0.06em',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            Available for Collabs
+          </span>
+        </div>
+
         <button
           onClick={onClose}
           aria-label="Close Venture OS"
@@ -86,27 +105,6 @@ export function VentureOSPanel({ onClose }: Props) {
         </button>
       </div>
 
-      {/* Available for Collabs */}
-      <div
-        className="flex items-center gap-2 px-4 py-2.5 border-b"
-        style={{ borderColor: 'var(--color-border)' }}
-      >
-        <span
-          className="pulse-dot inline-block rounded-full flex-shrink-0"
-          style={{ width: '7px', height: '7px', background: 'rgb(34,197,94)' }}
-        />
-        <span
-          style={{
-            fontFamily: 'var(--font-jetbrains)',
-            fontSize: '10px',
-            letterSpacing: '0.06em',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          Available for Collabs
-        </span>
-      </div>
-
       {/* Live Feed — cycling activity item */}
       <div
         className="px-4 py-2.5 border-b overflow-hidden"
@@ -116,7 +114,7 @@ export function VentureOSPanel({ onClose }: Props) {
           className="text-xs mb-1 flex items-center gap-1.5"
           style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase' }}
         >
-          <span className="pulse-dot inline-block w-1.5 h-1.5 rounded-full" style={{ background: 'var(--color-accent)' }} />
+          <span className="pulse-dot inline-block rounded-full flex-shrink-0" style={{ width: '6px', height: '6px', background: 'var(--color-accent)' }} />
           Activity Feed
         </div>
         <AnimatePresence mode="wait">
