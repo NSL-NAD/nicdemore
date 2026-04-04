@@ -86,6 +86,27 @@ export function VentureOSPanel({ onClose }: Props) {
         </button>
       </div>
 
+      {/* Available for Collabs */}
+      <div
+        className="flex items-center gap-2 px-4 py-2.5 border-b"
+        style={{ borderColor: 'var(--color-border)' }}
+      >
+        <span
+          className="pulse-dot inline-block rounded-full flex-shrink-0"
+          style={{ width: '7px', height: '7px', background: 'rgb(34,197,94)' }}
+        />
+        <span
+          style={{
+            fontFamily: 'var(--font-jetbrains)',
+            fontSize: '10px',
+            letterSpacing: '0.06em',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          Available for Collabs
+        </span>
+      </div>
+
       {/* Live Feed — cycling activity item */}
       <div
         className="px-4 py-2.5 border-b overflow-hidden"

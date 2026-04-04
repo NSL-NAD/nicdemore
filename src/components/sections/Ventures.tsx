@@ -479,7 +479,7 @@ export function Ventures() {
         position: 'relative',
         zIndex: 20,
         // Pull Architecture section up behind the bottom of this layer
-        marginBottom: '-80px',
+        marginBottom: '-120px',
       }}
     >
         {/* Parallax wrapper — moves the entire green card at a different scroll rate */}
@@ -492,7 +492,7 @@ export function Ventures() {
             transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
             style={{
               background: 'var(--color-forest)',
-              borderRadius: '24px',
+              borderRadius: '24px 24px 0 0',
               boxShadow: '0 24px 64px rgba(0,0,0,0.22), 0 8px 24px rgba(0,0,0,0.12)',
               overflow: 'clip',
             }}

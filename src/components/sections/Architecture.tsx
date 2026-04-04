@@ -44,7 +44,7 @@ function ArchImageReveal({
         delay: index * 0.12,
       }}
       className="relative overflow-hidden aspect-[4/3]"
-      style={{ borderRadius: 0 }}
+      style={{ borderRadius: '10px' }}
     >
       <motion.div
         whileHover={{ scale: 1.04 }}
@@ -109,23 +109,23 @@ export function Architecture() {
       {/* Content */}
       <motion.div
         style={{ y: textY }}
-        className="relative z-10 mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:py-40"
+        className="relative z-10 mx-auto max-w-7xl px-6 pt-36 pb-16 sm:pt-44 sm:pb-20 lg:pt-52 lg:pb-24"
       >
-        {/* Section label */}
-        <motion.span
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.5 }}
-          className="block text-xs tracking-widest uppercase mb-6"
-          style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
-        >
-          04 / Passion Project
-        </motion.span>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-16">
-          {/* Left: headline */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-14">
+          {/* Left: label + headline + quote + button */}
           <div>
+            {/* Section label — left-aligned with h2 */}
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={{ duration: 0.5 }}
+              className="block text-xs tracking-widest uppercase mb-5"
+              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+            >
+              // Passion Project
+            </motion.span>
+
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -164,12 +164,18 @@ export function Architecture() {
               href="https://foacourse.com"
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.02 }}
-              className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-sm transition-all"
+              whileHover={{
+                scale: 1.03,
+                boxShadow: '0 12px 40px rgba(244,99,30,0.55)',
+              }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-sm"
               style={{
                 background: 'var(--color-accent)',
                 color: '#fff',
                 fontFamily: 'var(--font-syne)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 20px rgba(244,99,30,0.32)',
               }}
             >
               Explore FOA Course
@@ -214,13 +220,13 @@ export function Architecture() {
           </motion.div>
         </div>
 
-        {/* Architecture image grid */}
+        {/* Architecture image grid — rounded corners */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={viewportOnce}
           transition={{ duration: 0.4 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-2"
+          className="grid grid-cols-2 md:grid-cols-4 gap-3"
         >
           {archImages.map((img, i) => (
             <ArchImageReveal key={img.src} src={img.src} alt={img.alt} index={i} />

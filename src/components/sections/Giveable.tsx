@@ -1,43 +1,66 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { EASING_PREMIUM, EASING_SMOOTH, viewportOnce } from "@/lib/motion";
+import { EASING_PREMIUM, EASING_SMOOTH, EASING_SNAPPY, viewportOnce } from "@/lib/motion";
 
-const impact = [
-  { stat: "100%", label: "Impact-driven brands" },
-  { stat: "0", label: "Compromise on quality" },
-  { stat: "∞", label: "Good at scale" },
+const howItWorks = [
+  {
+    step: "01",
+    title: "Create Registry",
+    desc: "Set up a registry in minutes. Choose your occasion, add details, and customize your preferences.",
+  },
+  {
+    step: "02",
+    title: "Add Products",
+    desc: "Browse a curated collection of gifts from verified impact-driven brands and add your favorites.",
+  },
+  {
+    step: "03",
+    title: "Share It",
+    desc: "Share your registry with friends and family via link, text, email, or QR code.",
+  },
+  {
+    step: "04",
+    title: "Create Impact",
+    desc: "Every gift purchased creates measurable charitable impact. Track your total over time.",
+  },
 ];
 
 export function Giveable() {
   return (
     <section
       id="giveable"
-      className="py-24 sm:py-32 lg:py-40 relative overflow-hidden"
+      className="py-16 sm:py-20 lg:py-24 relative overflow-hidden"
       style={{ background: 'var(--color-forest)' }}
     >
       {/* Subtle texture */}
       <div
         className="absolute inset-0 opacity-20"
         style={{
-          backgroundImage: 'radial-gradient(ellipse at 80% 20%, rgba(244,99,30,0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(0,180,100,0.06) 0%, transparent 60%)',
+          backgroundImage:
+            'radial-gradient(ellipse at 80% 20%, rgba(244,99,30,0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(0,180,100,0.06) 0%, transparent 60%)',
         }}
         aria-hidden="true"
       />
 
       <div className="relative mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          {/* Left */}
+        {/* ── Two-column header area ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 mb-12 items-start">
+          {/* Left: label + h2 + desc + button */}
           <div>
             <motion.span
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.5, ease: EASING_SMOOTH }}
-              className="block text-xs tracking-widest uppercase mb-4"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
+              className="block text-xs tracking-widest uppercase mb-5"
+              style={{
+                color: 'var(--color-accent)',
+                fontFamily: 'var(--font-jetbrains)',
+                fontSize: '11px',
+              }}
             >
-              05 / Purpose Project
+              // Purpose Project
             </motion.span>
 
             <motion.h2
@@ -48,12 +71,12 @@ export function Giveable() {
               data-neon-header="cyan"
               className="font-display font-bold mb-6 leading-tight"
               style={{
-                fontSize: 'clamp(36px, 5vw, 60px)',
+                fontSize: 'clamp(36px, 5vw, 64px)',
                 color: '#FAF9F6',
                 letterSpacing: '-0.02em',
               }}
             >
-              Building Good at Scale
+              Every Gift Creates Change
             </motion.h2>
 
             <motion.p
@@ -61,93 +84,41 @@ export function Giveable() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.1 }}
-              className="text-lg leading-relaxed mb-6"
-              style={{
-                color: 'rgba(242, 237, 229, 0.8)',
-                fontFamily: 'var(--font-dm-serif)',
-                fontSize: 'clamp(17px, 1.8vw, 20px)',
-              }}
+              className="text-lg leading-relaxed mb-8"
+              style={{ color: 'rgba(242, 237, 229, 0.8)' }}
             >
-              Traveling through Kenya, I saw small local brands creating profound community impact —
-              women learning to sew, artisans preserving traditional crafts. Back home, I noticed a gap:
-              conscious consumers wanted to give gifts that meant something, but no registry was built for it.
+              &ldquo;Meaningful gift registries where 100% of products come from verified impact-driven brands. Every gift purchased creates measurable change.&rdquo;
             </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.18 }}
-              className="text-base leading-relaxed mb-10"
-              style={{ color: 'rgba(242, 237, 229, 0.6)' }}
-            >
-              Giveable is the curated registry where 100% of brands are impact-driven.
-              Gift-giving becomes a vehicle for doing good — without the friction of a donation ask.
-              Every transaction generates measurable impact through the brands&apos; built-in giving models.
-            </motion.p>
-
-            {/* Impact stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={viewportOnce}
-              transition={{ duration: 0.5, delay: 0.25 }}
-              className="grid grid-cols-3 gap-6 mb-10"
-            >
-              {impact.map((item, i) => (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{ delay: 0.3 + i * 0.07, duration: 0.45 }}
-                  className="text-center"
-                >
-                  <div
-                    className="font-display font-bold mb-1"
-                    style={{
-                      fontSize: 'clamp(28px, 3.5vw, 40px)',
-                      color: 'var(--color-accent)',
-                    }}
-                  >
-                    {item.stat}
-                  </div>
-                  <div
-                    className="text-xs leading-tight"
-                    style={{
-                      color: 'rgba(242, 237, 229, 0.5)',
-                      fontFamily: 'var(--font-jetbrains)',
-                      fontSize: '10px',
-                      letterSpacing: '0.06em',
-                    }}
-                  >
-                    {item.label}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
-              transition={{ delay: 0.4, duration: 0.45 }}
+              transition={{ delay: 0.3, duration: 0.45 }}
               className="flex items-center gap-4"
             >
-              <a
+              <motion.a
                 href="https://giveable.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-sm transition-all hover:scale-[1.02]"
+                whileHover={{
+                  scale: 1.03,
+                  boxShadow: '0 12px 40px rgba(244,99,30,0.55)',
+                }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.18 }}
+                className="inline-flex items-center gap-2 px-5 py-3 font-semibold text-sm"
                 style={{
                   background: 'var(--color-accent)',
                   color: '#fff',
                   fontFamily: 'var(--font-syne)',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 20px rgba(244,99,30,0.32)',
                 }}
               >
                 See Giveable
                 <span>→</span>
-              </a>
+              </motion.a>
               <span
                 className="text-xs"
                 style={{
@@ -162,84 +133,113 @@ export function Giveable() {
             </motion.div>
           </div>
 
-          {/* Right: abstract visual */}
+          {/* Right: story context */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
-            transition={{ duration: 0.75, ease: EASING_PREMIUM, delay: 0.2 }}
-            className="flex flex-col gap-4"
+            transition={{ duration: 0.6, ease: EASING_PREMIUM, delay: 0.15 }}
+            className="space-y-5 text-base leading-relaxed"
+            style={{ color: 'rgba(242, 237, 229, 0.72)' }}
           >
-            {/* GAS ethos card */}
-            <div
-              className="p-8 rounded-2xl"
-              style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(242, 237, 229, 0.1)',
-              }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                {/* GAS triple dot */}
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-accent)' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-accent)', opacity: 0.6 }} />
-                  <div className="w-3 h-3 rounded-full" style={{ background: 'var(--color-accent)', opacity: 0.3 }} />
-                </div>
-                <span
-                  className="font-bold text-sm"
-                  style={{
-                    color: 'var(--color-accent)',
-                    fontFamily: 'var(--font-syne)',
-                    letterSpacing: '0.06em',
-                  }}
-                >
-                  Good at Scale Studio
-                </span>
-              </div>
-              <p
-                style={{
-                  fontFamily: 'var(--font-dm-serif)',
-                  fontStyle: 'italic',
-                  fontSize: 'clamp(18px, 1.8vw, 22px)',
-                  color: 'rgba(242, 237, 229, 0.75)',
-                  lineHeight: 1.5,
-                }}
-              >
-                &ldquo;Doing good and doing well aren&apos;t in conflict. They&apos;re the same thing done right.&rdquo;
-              </p>
-            </div>
-
-            {/* Registry model breakdown */}
-            <div
-              className="p-6 rounded-2xl"
-              style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(242, 237, 229, 0.08)',
-              }}
-            >
-              <p
-                className="mb-4 text-xs uppercase tracking-widest"
-                style={{ color: 'rgba(242,237,229,0.4)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px' }}
-              >
-                How it works
-              </p>
+            <p>
+              Traveling through Kenya, I saw small local brands creating profound community impact —
+              women learning to sew, artisans preserving traditional crafts. Back home, I noticed the gap:
+              conscious consumers wanted to give gifts that meant something, but no registry was built for it.
+            </p>
+            <p>
+              Giveable is the curated registry where 100% of brands are impact-driven.
+              Gift-giving becomes a vehicle for doing good — without the friction of a donation ask.
+              Every transaction generates measurable impact through the brands&apos; built-in giving models.
+            </p>
+            <div className="flex items-center gap-8 pt-2">
               {[
-                ["Brands apply", "Vetted for genuine impact + quality"],
-                ["Registries created", "Free for anyone — weddings, birthdays, all occasions"],
-                ["Gifts purchased", "10–15% commission to Giveable"],
-                ["Impact generated", "Every purchase creates measurable good"],
-              ].map(([step, desc]) => (
-                <div key={step} className="flex items-start gap-3 mb-3 last:mb-0">
-                  <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: 'var(--color-accent)' }} />
-                  <div>
-                    <span className="text-sm font-medium" style={{ color: 'rgba(242,237,229,0.85)' }}>{step}</span>
-                    <span className="text-sm" style={{ color: 'rgba(242,237,229,0.45)' }}> — {desc}</span>
+                { stat: '100%', label: 'Impact-driven brands' },
+                { stat: '20+', label: 'Causes supported' },
+                { stat: '$1M', label: 'Impact goal' },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div
+                    className="font-display font-bold"
+                    style={{ fontSize: 'clamp(22px, 2.5vw, 30px)', color: 'var(--color-accent)' }}
+                  >
+                    {item.stat}
+                  </div>
+                  <div
+                    className="text-xs mt-0.5"
+                    style={{
+                      color: 'rgba(242, 237, 229, 0.45)',
+                      fontFamily: 'var(--font-jetbrains)',
+                      fontSize: '10px',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    {item.label}
                   </div>
                 </div>
               ))}
             </div>
           </motion.div>
         </div>
+
+        {/* ── How It Works grid — mirrors the Architecture image grid ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.4 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3"
+        >
+          {howItWorks.map((item, i) => (
+            <motion.div
+              key={item.step}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.6, ease: EASING_SNAPPY, delay: i * 0.1 }}
+              className="p-5 flex flex-col gap-3"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(242,237,229,0.09)',
+                borderRadius: '10px',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: 'var(--font-jetbrains)',
+                  fontSize: '10px',
+                  letterSpacing: '0.12em',
+                  color: 'var(--color-accent)',
+                  opacity: 0.7,
+                }}
+              >
+                {item.step}
+              </span>
+              <div>
+                <p
+                  className="font-semibold mb-1.5 leading-snug"
+                  style={{
+                    color: 'rgba(242,237,229,0.92)',
+                    fontFamily: 'var(--font-syne)',
+                    fontSize: '14px',
+                  }}
+                >
+                  {item.title}
+                </p>
+                <p
+                  className="text-xs leading-relaxed"
+                  style={{
+                    color: 'rgba(242,237,229,0.50)',
+                    fontFamily: 'var(--font-jetbrains)',
+                    fontSize: '11px',
+                  }}
+                >
+                  {item.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

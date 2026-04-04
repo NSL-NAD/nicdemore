@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { EASING_PREMIUM } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
@@ -87,8 +87,80 @@ const drop3DHeavy = (
 
 function HeroVideoPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autoPlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Track whether video was playing before the user scrolled away
+  const wasPlayingRef = useRef(false);
+
+  // Auto-play (unmuted) after hero animations finish — last element lands ~2.9s, so 3.1s delay
+  useEffect(() => {
+    autoPlayTimerRef.current = setTimeout(() => {
+      const video = videoRef.current;
+      if (!video) return;
+      video.muted = false;
+      video.play()
+        .then(() => { setIsPlaying(true); })
+        .catch(() => {
+          // Browser blocked unmuted autoplay — fallback to muted
+          video.muted = true;
+          setIsMuted(true);
+          video.play().then(() => setIsPlaying(true)).catch(() => {});
+        });
+    }, 3100);
+    return () => {
+      if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+    };
+  }, []);
+
+  // Scroll-driven pause / resume — observe the player container
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const video = videoRef.current;
+        if (!video) return;
+        if (!entry.isIntersecting) {
+          // Hero scrolled off screen — pause if playing
+          if (!video.paused) {
+            wasPlayingRef.current = true;
+            video.pause();
+            setIsPlaying(false);
+          }
+        } else {
+          // Hero back in view — resume if it was playing before
+          if (wasPlayingRef.current) {
+            wasPlayingRef.current = false;
+            video.play().then(() => setIsPlaying(true)).catch(() => {});
+          }
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  // Track playback time + duration
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const onTimeUpdate   = () => setCurrentTime(video.currentTime);
+    const onMetadata     = () => setDuration(video.duration);
+    const onEnded        = () => { setIsPlaying(false); setCurrentTime(0); };
+    video.addEventListener('timeupdate', onTimeUpdate);
+    video.addEventListener('loadedmetadata', onMetadata);
+    video.addEventListener('ended', onEnded);
+    return () => {
+      video.removeEventListener('timeupdate', onTimeUpdate);
+      video.removeEventListener('loadedmetadata', onMetadata);
+      video.removeEventListener('ended', onEnded);
+    };
+  }, []);
 
   const handlePlayPause = () => {
     const video = videoRef.current;
@@ -97,8 +169,7 @@ function HeroVideoPlayer() {
       video.pause();
       setIsPlaying(false);
     } else {
-      video.play();
-      setIsPlaying(true);
+      video.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
 
@@ -106,12 +177,32 @@ function HeroVideoPlayer() {
     e.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
-    video.muted = !isMuted;
-    setIsMuted(!isMuted);
+    const next = !isMuted;
+    video.muted = next;
+    setIsMuted(next);
   };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current;
+    if (!video || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    video.currentTime = pct * duration;
+    setCurrentTime(pct * duration);
+  };
+
+  const fmt = (s: number) => {
+    if (!isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div
+      ref={containerRef}
       className="relative w-full group film-grain"
       style={{
         background: 'var(--color-surface)',
@@ -126,25 +217,23 @@ function HeroVideoPlayer() {
         ref={videoRef}
         className="w-full h-full object-cover"
         poster="/hero-video-poster.jpg"
-        muted
         playsInline
-        onEnded={() => setIsPlaying(false)}
         style={{ display: 'block' }}
       >
         <source src="/hero-video.mp4" type="video/mp4" />
       </video>
 
-      <button
-        onClick={handlePlayPause}
-        className="absolute inset-0 flex items-center justify-center transition-opacity"
-        style={{ background: isPlaying ? 'transparent' : 'rgba(0,0,0,0.35)' }}
-        aria-label={isPlaying ? "Pause video" : "Play video"}
-      >
-        {!isPlaying && (
+      {/* Centre play overlay — shown only when paused */}
+      {!isPlaying && (
+        <button
+          onClick={handlePlayPause}
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.35)' }}
+          aria-label="Play video"
+        >
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
             className="flex items-center justify-center w-14 h-14 rounded-full"
             style={{ background: 'var(--color-accent)', backdropFilter: 'blur(4px)' }}
           >
@@ -152,29 +241,66 @@ function HeroVideoPlayer() {
               <path d="M2 1.5l17 9.5-17 9.5V1.5z" />
             </svg>
           </motion.div>
-        )}
-      </button>
+        </button>
+      )}
 
+      {/* Bottom controls bar — always visible when paused, fades in on hover when playing */}
       <div
-        className={`absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 py-2 transition-opacity ${isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'}`}
-        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)' }}
+        className={`absolute bottom-0 left-0 right-0 transition-opacity duration-200 ${
+          isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'
+        }`}
+        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%)', padding: '28px 12px 10px' }}
       >
-        <button
-          onClick={handlePlayPause}
-          className="text-white text-xs font-medium px-2 py-1 rounded"
-          style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', letterSpacing: '0.06em' }}
+        {/* Progress bar */}
+        <div
+          className="relative w-full mb-2.5 cursor-pointer"
+          style={{ height: '3px', background: 'rgba(255,255,255,0.22)', borderRadius: '2px' }}
+          onClick={handleSeek}
         >
-          {isPlaying ? "⏸ PAUSE" : "▶ PLAY"}
-        </button>
-        <button
-          onClick={handleMuteToggle}
-          className="text-white text-xs font-medium px-2 py-1 rounded"
-          style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', letterSpacing: '0.06em' }}
-        >
-          {isMuted ? "🔇 UNMUTE" : "🔊 MUTE"}
-        </button>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              height: '100%',
+              width: `${progress}%`,
+              background: 'var(--color-accent)',
+              borderRadius: '2px',
+              transition: 'width 0.1s linear',
+            }}
+          />
+        </div>
+
+        {/* Controls row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Play / Pause */}
+            <button
+              onClick={handlePlayPause}
+              aria-label={isPlaying ? 'Pause' : 'Play'}
+              className="text-white leading-none"
+              style={{ fontSize: '13px' }}
+            >
+              {isPlaying ? '⏸' : '▶'}
+            </button>
+            {/* Timestamps */}
+            <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', color: 'rgba(255,255,255,0.75)', letterSpacing: '0.04em' }}>
+              {fmt(currentTime)} / {fmt(duration)}
+            </span>
+          </div>
+          {/* Mute toggle */}
+          <button
+            onClick={handleMuteToggle}
+            aria-label={isMuted ? 'Unmute' : 'Mute'}
+            className="text-white leading-none"
+            style={{ fontSize: '13px' }}
+          >
+            {isMuted ? '🔇' : '🔊'}
+          </button>
+        </div>
       </div>
 
+      {/* Corner label */}
       <div
         className="absolute top-3 left-3 px-2 py-1 rounded"
         style={{

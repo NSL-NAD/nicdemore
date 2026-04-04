@@ -13,7 +13,7 @@ const sections = [
   { id: "skillset", label: "Journey" },
   { id: "skills", label: "Skills" },
   { id: "work", label: "Ventures" },
-  { id: "architecture", label: "Architecture" },
+  { id: "architecture", label: "Projects" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -229,38 +229,9 @@ export function Navigation() {
               </Link>
             </motion.div>
 
-            {/* Available for ventures indicator */}
-            <motion.div
-              {...navDrop3D(sections.length + 2)}
-              className="hidden md:flex items-center gap-2 mr-3"
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              <span
-                style={{
-                  display: 'inline-block',
-                  width: '7px',
-                  height: '7px',
-                  borderRadius: '50%',
-                  background: 'rgb(34,197,94)',
-                  flexShrink: 0,
-                  animation: 'ping 2s cubic-bezier(0,0,0.2,1) infinite',
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: 'var(--font-jetbrains)',
-                  fontSize: '10px',
-                  letterSpacing: '0.06em',
-                  color: 'var(--color-text-secondary)',
-                }}
-              >
-                Available for ventures
-              </span>
-            </motion.div>
-
             {/* Retro toggle */}
             {!isResumePage && (
-              <motion.div {...navDrop3D(sections.length + 3)} className="ml-1" style={{ transformStyle: 'preserve-3d' }}>
+              <motion.div {...navDrop3D(sections.length + 2)} className="ml-1" style={{ transformStyle: 'preserve-3d' }}>
                 <RetroToggle />
               </motion.div>
             )}
