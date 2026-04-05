@@ -530,7 +530,7 @@ export default function AboutPage() {
   return (
     <div
       ref={pageRef}
-      className="min-h-screen pt-24 pb-16"
+      className="min-h-screen pb-16"
       style={{ position: "relative" }}
     >
       {/* "DEMORE" wordmark — positioned between heading and stats, overlapping both */}
@@ -569,6 +569,7 @@ export default function AboutPage() {
 
       {/* Opaque header area — masks the grid glow above the stats */}
       <div
+        className="pt-24"
         style={{
           position: "relative",
           zIndex: 1,
