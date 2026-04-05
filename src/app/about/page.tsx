@@ -658,133 +658,137 @@ export default function AboutPage() {
           ))}
         </div>
 
-        {/* Philosophy section — parallax rise */}
+        {/* Philosophy section — forest-green card like Manifesto */}
         <motion.div ref={philRef} style={{ y: philY }} className="mt-12">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
-            transition={{ duration: 0.7, ease: EASING_PREMIUM }}
-            className="mx-auto max-w-3xl"
+            transition={{ duration: 0.8, ease: EASING_PREMIUM }}
+            className="w-full px-8 md:px-12 lg:px-16 py-14 md:py-20"
+            style={{
+              background: "var(--color-forest)",
+              borderRadius: "24px",
+              boxShadow:
+                "0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)",
+              overflow: "hidden",
+            }}
           >
-            <div
-              className="h-px mb-12"
-              style={{ background: "var(--color-border)" }}
-            />
-
-            <span
-              className="block text-xs tracking-widest uppercase mb-8"
-              style={{
-                color: "var(--color-accent)",
-                fontFamily: "var(--font-jetbrains)",
-                fontSize: "11px",
-                letterSpacing: "0.08em",
-              }}
-            >
-              // Philosophy
-            </span>
-
-            <div className="lg:grid lg:grid-cols-2 lg:gap-12">
-              <div className="space-y-6">
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{ duration: 0.5, ease: EASING_PREMIUM }}
-                  className="text-lg leading-relaxed"
-                  style={{ color: "var(--color-text-primary)" }}
-                >
-                  I believe the best work comes from people who genuinely care —
-                  not just about shipping, but about what the thing they&apos;re
-                  building does in the world. That&apos;s been my north star
-                  since I started my first business at 18, and it&apos;s the
-                  lens I bring to everything I build now.
-                </motion.p>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.08,
-                    ease: EASING_PREMIUM,
-                  }}
-                  className="text-lg leading-relaxed"
-                  style={{ color: "var(--color-text-primary)" }}
-                >
-                  The mechanical engineering background wasn&apos;t just a
-                  degree. It was a way of seeing. Systems. Constraints. Forces in
-                  tension. You learn to ask: what is this thing actually doing,
-                  and will it hold? That question applies to code, to
-                  organizations, to strategy, to life.
-                </motion.p>
-              </div>
-              <div className="space-y-6 mt-6 lg:mt-0">
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.16,
-                    ease: EASING_PREMIUM,
-                  }}
-                  className="text-lg leading-relaxed"
-                  style={{ color: "var(--color-text-primary)" }}
-                >
-                  Nine years running Margle taught me that building a business is
-                  a deeply human project. You can have the best strategy in the
-                  world — but if you can&apos;t build a team that trusts each
-                  other, none of it works. I learned operations, finance, client
-                  management, and leadership the hard way: by doing all of it,
-                  at the same time, under real pressure.
-                </motion.p>
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={viewportOnce}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.24,
-                    ease: EASING_PREMIUM,
-                  }}
-                  className="text-lg leading-relaxed"
-                  style={{ color: "var(--color-text-primary)" }}
-                >
-                  Now I&apos;m building AI-native infrastructure and
-                  purpose-driven ventures. Not because it&apos;s trendy —
-                  because I genuinely believe this is the moment where the tools
-                  exist to do good work at a scale that wasn&apos;t possible
-                  before. That excites me every day.
-                </motion.p>
-              </div>
-            </div>
-
-            <div
-              className="mt-12 pt-8"
-              style={{ borderTop: "1px solid var(--color-border)" }}
-            >
-              <p
+            <div className="mx-auto max-w-4xl">
+              <span
+                className="block text-xs tracking-widest uppercase mb-10"
                 style={{
-                  color: "var(--color-text-secondary)",
-                  fontFamily: "var(--font-dm-serif)",
-                  fontStyle: "italic",
-                  fontSize: "18px",
-                }}
-              >
-                &ldquo;Always do your best. Leave things better than you found
-                them. It really is a beautiful life.&rdquo;
-              </p>
-              <p
-                className="mt-3"
-                style={{
-                  color: "var(--color-text-light)",
+                  color: "var(--color-accent)",
                   fontFamily: "var(--font-jetbrains)",
                   fontSize: "11px",
+                  letterSpacing: "0.08em",
                 }}
               >
-                — Personal operating system, circa always
-              </p>
+                // Philosophy
+              </span>
+
+              <div className="lg:grid lg:grid-cols-2 lg:gap-12">
+                <div className="space-y-6">
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{ duration: 0.5, ease: EASING_PREMIUM }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    I believe the best work comes from people who genuinely care
+                    — not just about shipping, but about what the thing
+                    they&apos;re building does in the world. That&apos;s been my
+                    north star since I started my first business at 18, and
+                    it&apos;s the lens I bring to everything I build now.
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.08,
+                      ease: EASING_PREMIUM,
+                    }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    The mechanical engineering background wasn&apos;t just a
+                    degree. It was a way of seeing. Systems. Constraints. Forces
+                    in tension. You learn to ask: what is this thing actually
+                    doing, and will it hold? That question applies to code, to
+                    organizations, to strategy, to life.
+                  </motion.p>
+                </div>
+                <div className="space-y-6 mt-6 lg:mt-0">
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.16,
+                      ease: EASING_PREMIUM,
+                    }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    Nine years running Margle taught me that building a business
+                    is a deeply human project. You can have the best strategy in
+                    the world — but if you can&apos;t build a team that trusts
+                    each other, none of it works. I learned operations, finance,
+                    client management, and leadership the hard way: by doing all
+                    of it, at the same time, under real pressure.
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.24,
+                      ease: EASING_PREMIUM,
+                    }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    Now I&apos;m building AI-native infrastructure and
+                    purpose-driven ventures. Not because it&apos;s trendy —
+                    because I genuinely believe this is the moment where the
+                    tools exist to do good work at a scale that wasn&apos;t
+                    possible before. That excites me every day.
+                  </motion.p>
+                </div>
+              </div>
+
+              <div
+                className="mt-12 pt-8"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.12)" }}
+              >
+                <p
+                  style={{
+                    color: "rgba(255,255,255,0.75)",
+                    fontFamily: "var(--font-dm-serif)",
+                    fontStyle: "italic",
+                    fontSize: "18px",
+                  }}
+                >
+                  &ldquo;Always do your best. Leave things better than you found
+                  them. It really is a beautiful life.&rdquo;
+                </p>
+                <p
+                  className="mt-3"
+                  style={{
+                    color: "rgba(255,255,255,0.4)",
+                    fontFamily: "var(--font-jetbrains)",
+                    fontSize: "11px",
+                  }}
+                >
+                  — Personal operating system, circa always
+                </p>
+              </div>
             </div>
           </motion.div>
         </motion.div>
