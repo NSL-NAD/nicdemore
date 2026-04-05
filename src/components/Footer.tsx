@@ -27,10 +27,20 @@ export function Footer() {
         borderColor: 'rgba(255,255,255,0.06)',
         position: 'relative',
         overflow: 'hidden',
+        isolation: 'isolate',
         zIndex: 1,
         ...(isRetro ? { paddingBottom: '160px' } : {}),
       }}
     >
+      {/* Solid cover to guarantee grid canvas is hidden behind footer */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: '#1C1917',
+          zIndex: 0,
+        }}
+      />
       <VaporwaveSun />
       <motion.div
         style={{ y: contentY, position: 'relative', zIndex: 2 }}

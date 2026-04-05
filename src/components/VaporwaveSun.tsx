@@ -18,7 +18,7 @@ export function VaporwaveSun() {
         transform: 'translateX(-50%)',
         width: '520px',
         height: '260px',
-        zIndex: 0,
+        zIndex: 1,
       }}
     >
     <motion.div
