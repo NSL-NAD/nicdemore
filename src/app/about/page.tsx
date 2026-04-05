@@ -187,7 +187,7 @@ function AboutParallaxCard({
   );
 
   return (
-    <div style={{ perspective: "800px" }}>
+    <div className="flex-1" style={{ perspective: "800px" }}>
       <motion.div
         ref={cardRef}
         initial={fromLeft ? hiddenLeft : hiddenRight}
@@ -210,8 +210,9 @@ function AboutParallaxCard({
             : "0 2px 12px rgba(0,0,0,0.15)",
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           cursor: "default",
+          height: "100%",
         }}
-        className="p-6 lg:min-h-[170px] flex flex-col justify-center"
+        className="p-6 flex flex-col justify-center"
       >
         <h3
           className="font-display font-bold text-base mb-2"
@@ -264,12 +265,12 @@ function QuoteCard({
   inView: boolean;
 }) {
   return (
-    <div style={{ perspective: "800px" }}>
+    <div className="flex-1" style={{ perspective: "800px" }}>
       <motion.div
         initial={fromLeft ? hiddenLeft : hiddenRight}
         animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
         transition={entranceTransition(delay)}
-        className="p-6 flex items-center lg:min-h-[170px]"
+        className="p-6 flex items-center h-full"
         style={{
           background: "var(--color-forest)",
           borderRadius: "16px",
@@ -326,7 +327,7 @@ function ParallaxImage({
         transition={entranceTransition(delay)}
         className="relative overflow-hidden rounded-2xl h-full"
         style={{
-          minHeight: "600px",
+          minHeight: "720px",
           border: "1px solid var(--color-accent)",
           boxShadow:
             "0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)",
@@ -399,8 +400,8 @@ function CardImageRow({
   const imageOrder = row.cardsFirst ? "order-1 lg:order-2" : "order-1 lg:order-1";
 
   return (
-    <div ref={ref} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className={`flex flex-col gap-4 ${cardsOrder}`}>
+    <div ref={ref} className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
+      <div className={`flex flex-col gap-5 ${cardsOrder}`}>
         {cardElements}
       </div>
       <div className={imageOrder}>
@@ -459,7 +460,7 @@ export default function AboutPage() {
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: "clamp(260px, 34vh, 400px)",
+          top: "clamp(320px, 42vh, 480px)",
           left: "50%",
           transform: "translateX(-50%)",
           whiteSpace: "nowrap",
@@ -473,7 +474,7 @@ export default function AboutPage() {
             y: wordmarkY,
             fontFamily: "var(--font-syne)",
             fontWeight: 800,
-            fontSize: "clamp(80px, 16vw, 200px)",
+            fontSize: "clamp(88px, 17.6vw, 220px)",
             letterSpacing: "-0.04em",
             color: "var(--color-text-primary)",
             opacity: 0.054,
@@ -488,81 +489,89 @@ export default function AboutPage() {
         </motion.div>
       </div>
 
+      {/* Opaque header area — masks the grid glow above the stats */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          background: "var(--color-base)",
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-6">
+          {/* Back link */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-8"
+          >
+            <motion.div whileHover={{ x: -4 }} transition={{ duration: 0.2 }}>
+              <Link
+                href="/"
+                className="text-sm animated-underline transition-colors"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                &larr; Back to nicdemore.com
+              </Link>
+            </motion.div>
+          </motion.div>
+
+          {/* Page title — parallax drift */}
+          <motion.section
+            ref={titleRef}
+            style={{ y: titleY }}
+            className="pt-4 pb-4 text-center"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASING_PREMIUM }}
+              className="mb-6"
+            >
+              <p
+                className="font-mono text-xs tracking-widest uppercase mb-6"
+                style={{
+                  color: "var(--color-accent)",
+                  fontFamily: "var(--font-jetbrains)",
+                  fontSize: "11px",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                // About
+              </p>
+              <h1
+                data-neon-header="pink"
+                className="font-display font-extrabold leading-none mb-6 mx-auto"
+                style={{
+                  fontSize: "clamp(48px, 6vw, 84px)",
+                  color: "var(--color-text-primary)",
+                  letterSpacing: "-0.035em",
+                  maxWidth: "800px",
+                }}
+              >
+                Builder. Engineer.
+                <br />
+                <span style={{ color: "var(--color-accent)" }}>Founder.</span>
+              </h1>
+            </motion.div>
+          </motion.section>
+
+          {/* Stats row — parallax drift */}
+          <motion.div ref={statsRef} style={{ y: statsY }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 px-2">
+              <CountUpStat end={9} suffix="+" label="Years Operating" />
+              <CountUpStat end={12} label="Ventures in 2025" />
+              <CountUpStat end={50} suffix="+" label="Team Members Led" />
+              <CountUpStat end={8} label="Skill Domains" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
       <div
         className="mx-auto max-w-7xl px-6"
         style={{ position: "relative", zIndex: 1 }}
       >
-        {/* Back link */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-8"
-        >
-          <motion.div whileHover={{ x: -4 }} transition={{ duration: 0.2 }}>
-            <Link
-              href="/"
-              className="text-sm animated-underline transition-colors"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              &larr; Back to nicdemore.com
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        {/* Page title — parallax drift */}
-        <motion.section
-          ref={titleRef}
-          style={{ y: titleY }}
-          className="pt-4 pb-4 text-center"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASING_PREMIUM }}
-            className="mb-6"
-          >
-            <p
-              className="font-mono text-xs tracking-widest uppercase mb-6"
-              style={{
-                color: "var(--color-accent)",
-                fontFamily: "var(--font-jetbrains)",
-                fontSize: "11px",
-                letterSpacing: "0.08em",
-              }}
-            >
-              // About
-            </p>
-            <h1
-              data-neon-header="pink"
-              className="font-display font-extrabold leading-none mb-6 mx-auto"
-              style={{
-                fontSize: "clamp(48px, 6vw, 84px)",
-                color: "var(--color-text-primary)",
-                letterSpacing: "-0.035em",
-                maxWidth: "800px",
-              }}
-            >
-              Builder. Engineer.
-              <br />
-              <span style={{ color: "var(--color-accent)" }}>Founder.</span>
-            </h1>
-          </motion.div>
-        </motion.section>
-
-        {/* Stats row — parallax drift */}
-        <motion.div ref={statsRef} style={{ y: statsY }}>
-          <div
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 px-2 border-y"
-            style={{ borderColor: "var(--color-border-subtle)" }}
-          >
-            <CountUpStat end={9} suffix="+" label="Years Operating" />
-            <CountUpStat end={12} label="Ventures in 2025" />
-            <CountUpStat end={50} suffix="+" label="Team Members Led" />
-            <CountUpStat end={8} label="Skill Domains" />
-          </div>
-        </motion.div>
-
         {/* Alternating card + image rows */}
         <div className="mt-12 space-y-10 mx-auto max-w-6xl">
           {rows.map((row, i) => (
