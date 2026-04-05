@@ -50,6 +50,10 @@ export function GlowingGrid() {
     const accent = ACCENT; // same orange glow in both modes
     const base = isRetro ? RETRO_BASE : BASE_COLOR;
 
+    // Get footer bounds so we can skip drawing grid lines there
+    const footerEl = document.querySelector('footer');
+    const footerTop = footerEl ? footerEl.getBoundingClientRect().top : h + 1;
+
     const mx = sm.x;
     const my = sm.y;
 
@@ -59,6 +63,7 @@ export function GlowingGrid() {
     // Draw all horizontal lines
     for (let row = 0; row <= rows; row++) {
       const y = row * GRID_SIZE;
+      if (y >= footerTop) continue; // skip footer region
       for (let col = 0; col < cols; col++) {
         const x1 = col * GRID_SIZE;
         const x2 = x1 + GRID_SIZE;
@@ -95,6 +100,7 @@ export function GlowingGrid() {
       for (let row = 0; row < rows; row++) {
         const y1 = row * GRID_SIZE;
         const y2 = y1 + GRID_SIZE;
+        if (y1 >= footerTop) continue; // skip footer region
         const segMidY = (y1 + y2) / 2;
         const dx = x - mx;
         const dy = segMidY - my;
