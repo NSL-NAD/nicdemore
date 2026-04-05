@@ -6,7 +6,6 @@ import { Ventures } from "@/components/sections/Ventures";
 import { Architecture } from "@/components/sections/Architecture";
 import { Giveable } from "@/components/sections/Giveable";
 import { Contact } from "@/components/sections/Contact";
-import { VaporwaveSun } from "@/components/VaporwaveSun";
 
 export default function Home() {
   return (
@@ -19,7 +18,6 @@ export default function Home() {
       <Architecture />
       <Giveable />
       <Contact />
-      <VaporwaveSun />
     </>
   );
 }

@@ -20,32 +20,63 @@ export function VaporwaveSun() {
         left: '50%',
         bottom: '0',
         transform: 'translateX(-50%)',
-        zIndex: -1,
-        width: 'clamp(200px, 30vw, 400px)',
-        height: 'clamp(100px, 15vw, 200px)',
-        overflow: 'hidden',
+        zIndex: 1,
+        width: 'clamp(300px, 45vw, 600px)',
+        height: 'clamp(150px, 22.5vw, 300px)',
+        overflow: 'visible',
       }}
     >
       <svg
-        viewBox="0 0 280 140"
+        viewBox="-60 -60 400 260"
         xmlns="http://www.w3.org/2000/svg"
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', overflow: 'visible' }}
       >
         <defs>
+          {/* Sun gradient: hot pink top → orange mid → golden yellow bottom */}
           <radialGradient id="sun-grad" cx="50%" cy="100%" r="100%">
-            <stop offset="0%" stopColor="#FF2D78" stopOpacity="0.9" />
-            <stop offset="35%" stopColor="#FF6B00" stopOpacity="0.8" />
-            <stop offset="65%" stopColor="#7B2FBE" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#0A0A14" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="#FF3090" stopOpacity="1.0" />
+            <stop offset="30%" stopColor="#FF5050" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#FF6B2D" stopOpacity="0.95" />
+            <stop offset="80%" stopColor="#FFB347" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#FFD700" stopOpacity="0.85" />
           </radialGradient>
-          <filter id="sun-glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+
+          {/* Ambient glow behind sun — large pink/purple haze */}
+          <radialGradient id="sun-ambient" cx="50%" cy="80%" r="100%">
+            <stop offset="0%" stopColor="#FF3090" stopOpacity="0.5" />
+            <stop offset="40%" stopColor="#B026FF" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#0B0B1A" stopOpacity="0" />
+          </radialGradient>
+
+          {/* Crisp glow filter for the sun body */}
+          <filter id="sun-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur1" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur2" />
+            <feMerge>
+              <feMergeNode in="blur2" />
+              <feMergeNode in="blur1" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          {/* Intense outer ring glow */}
+          <filter id="ring-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
         </defs>
+
+        {/* Ambient pink/purple haze — extends far beyond sun */}
+        <ellipse
+          cx="140"
+          cy="140"
+          rx="220"
+          ry="180"
+          fill="url(#sun-ambient)"
+        />
 
         {/* Sun semicircle */}
         <path
@@ -54,32 +85,45 @@ export function VaporwaveSun() {
           filter="url(#sun-glow)"
         />
 
-        {/* Horizontal lines creating the retro stripe effect */}
-        {[1, 2, 3, 4, 5, 6, 7].map((n) => {
-          const y = 140 - n * (140 / 8);
-          const xOffset = Math.sqrt(Math.max(0, 140 * 140 - (140 - y) * (140 - y)));
+        {/* Horizontal stripe lines — classic synthwave */}
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
+          const y = 140 - n * (140 / 10);
+          const r = 140;
+          const dy = r - y;
+          const xOffset = Math.sqrt(Math.max(0, r * r - dy * dy));
+          const strokeW = n <= 2 ? 5 : n <= 5 ? 4 : 3;
           return (
             <line
               key={n}
-              x1={140 - xOffset}
-              y1={y + 2}
-              x2={140 + xOffset}
-              y2={y + 2}
-              stroke="#0A0A14"
-              strokeWidth={n < 3 ? 4 : n < 6 ? 3 : 2}
-              opacity={0.7}
+              x1={140 - xOffset + 2}
+              y1={y}
+              x2={140 + xOffset - 2}
+              y2={y}
+              stroke="#0B0B1A"
+              strokeWidth={strokeW}
+              opacity={0.8}
             />
           );
         })}
 
-        {/* Outer glow ring */}
+        {/* Outer glow ring — bright pink with heavy glow */}
         <path
-          d="M 10 140 A 130 130 0 0 1 270 140"
+          d="M -4 140 A 144 144 0 0 1 284 140"
           fill="none"
-          stroke="#FF2D78"
-          strokeWidth="1"
-          opacity="0.4"
-          filter="url(#sun-glow)"
+          stroke="#FF3090"
+          strokeWidth="2"
+          opacity="0.7"
+          filter="url(#ring-glow)"
+        />
+
+        {/* Second outer ring — purple, wider glow */}
+        <path
+          d="M -10 140 A 150 150 0 0 1 290 140"
+          fill="none"
+          stroke="#B026FF"
+          strokeWidth="1.5"
+          opacity="0.3"
+          filter="url(#ring-glow)"
         />
       </svg>
     </motion.div>
