@@ -417,9 +417,9 @@ img {
   transition: opacity 0.3s ease;
 }
 
-/* Retro mode — section backgrounds */
+/* Retro mode — section backgrounds: transparent so grid shows through */
 [data-theme="retro"] section {
-  background: var(--color-base) !important;
+  background: transparent !important;
 }
 
 [data-theme="retro"] section[id="giveable"] {
@@ -427,7 +427,8 @@ img {
 }
 
 [data-theme="retro"] section[id="architecture"] {
-  /* Keep full-bleed photo */
+  /* Pull up to close gap with Ventures section above */
+  margin-top: -2px;
 }
 
 /* Retro mode — light scrims become dark so text is readable */

@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { VaporwaveSun } from "@/components/VaporwaveSun";
+import { useRetro } from "@/contexts/RetroContext";
 
 export function Footer() {
+  const { isRetro } = useRetro();
   const footerRef = useRef<HTMLElement>(null);
 
   // Parallax reveal: footer content rises from 60px below as it enters the viewport,
@@ -25,6 +27,7 @@ export function Footer() {
         borderColor: 'rgba(255,255,255,0.06)',
         position: 'relative',
         overflow: 'hidden',
+        ...(isRetro ? { paddingBottom: '320px' } : {}),
       }}
     >
       <VaporwaveSun />

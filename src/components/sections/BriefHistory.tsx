@@ -104,10 +104,12 @@ function SpineDot({
   dotRef,
   threshold,
   sectionProgress,
+  isRetro,
 }: {
   dotRef?: (el: HTMLDivElement | null) => void;
   threshold: number;
   sectionProgress: MotionValue<number>;
+  isRetro: boolean;
 }) {
   const [activated, setActivated] = useState(false);
 
@@ -133,16 +135,24 @@ function SpineDot({
       animate={
         activated
           ? {
-              backgroundColor: "#F4631E",
-              boxShadow: [
-                "0 0 0 0 rgba(244,99,30,0.65)",
-                "0 0 0 12px rgba(244,99,30,0)",
-                "0 0 0 0 rgba(244,99,30,0)",
-              ],
+              backgroundColor: isRetro ? "#0FEC9F" : "#F4631E",
+              boxShadow: isRetro
+                ? [
+                    "0 0 0 0 rgba(15,236,159,0.65)",
+                    "0 0 0 12px rgba(15,236,159,0)",
+                    "0 0 0 0 rgba(15,236,159,0)",
+                  ]
+                : [
+                    "0 0 0 0 rgba(244,99,30,0.65)",
+                    "0 0 0 12px rgba(244,99,30,0)",
+                    "0 0 0 0 rgba(244,99,30,0)",
+                  ],
             }
           : {
               backgroundColor: "rgba(160,155,148,0.45)",
-              boxShadow: "0 0 0 0 rgba(244,99,30,0)",
+              boxShadow: isRetro
+                ? "0 0 0 0 rgba(15,236,159,0)"
+                : "0 0 0 0 rgba(244,99,30,0)",
             }
       }
       transition={
@@ -254,7 +264,7 @@ function CardContent({
 
   return (
     <motion.div
-      className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)]"
+      className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)] retro-card"
       style={{
         background: "var(--color-forest)",
         backdropFilter: "none",
@@ -369,6 +379,7 @@ function TimelineCard({
   setDotRef,
   dotThreshold,
   sectionProgress,
+  isRetro,
 }: {
   item: TimelineEntry;
   index: number;
@@ -377,6 +388,7 @@ function TimelineCard({
   setDotRef: (el: HTMLDivElement | null) => void;
   dotThreshold: number;
   sectionProgress: MotionValue<number>;
+  isRetro: boolean;
 }) {
   // ref lives on the static grid row — used for scroll tracking + IntersectionObserver
   const ref = useRef<HTMLDivElement>(null);
@@ -442,6 +454,7 @@ function TimelineCard({
           dotRef={setDotRef}
           threshold={dotThreshold}
           sectionProgress={sectionProgress}
+          isRetro={isRetro}
         />
 
         {/* Bottom connector — transparent for last card */}
@@ -479,6 +492,7 @@ function TimelineCard({
             dotRef={undefined}
             threshold={dotThreshold}
             sectionProgress={sectionProgress}
+            isRetro={isRetro}
           />
         </div>
         <CardContent item={item} lineWidth={lineWidth} align="left" />
@@ -691,6 +705,7 @@ export function BriefHistory() {
                   setDotRef={(el) => { dotEls.current[i] = el; }}
                   dotThreshold={dotThresholds[i]}
                   sectionProgress={sectionProgress}
+                  isRetro={isRetro}
                 />
               ))}
             </div>

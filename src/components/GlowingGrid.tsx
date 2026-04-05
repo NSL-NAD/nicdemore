@@ -9,9 +9,8 @@ const BASE_LINE_OPACITY = 0.09; // visible always — like faint graph paper
 const MAX_LINE_OPACITY = 0.65;
 const GLOW_RADIUS = 320;
 const FOLLOW_SPEED = 0.1; // smooth follow
-const ACCENT = { r: 244, g: 99, b: 30 }; // --color-accent #F4631E
+const ACCENT = { r: 244, g: 99, b: 30 }; // --color-accent #F4631E — same in both modes
 const BASE_COLOR = { r: 180, g: 170, b: 160 }; // warm gray, visible on #FAF9F6
-const RETRO_ACCENT = { r: 0, g: 240, b: 255 }; // --retro-cyan #00F0FF
 const RETRO_BASE = { r: 40, g: 40, b: 80 }; // subtle purple-blue base
 
 export function GlowingGrid() {
@@ -48,7 +47,7 @@ export function GlowingGrid() {
 
     // Detect retro mode for color switching
     const isRetro = document.documentElement.dataset.theme === 'retro';
-    const accent = isRetro ? RETRO_ACCENT : ACCENT;
+    const accent = ACCENT; // same orange glow in both modes
     const base = isRetro ? RETRO_BASE : BASE_COLOR;
 
     const mx = sm.x;
