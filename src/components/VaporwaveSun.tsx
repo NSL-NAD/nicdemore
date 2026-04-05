@@ -20,7 +20,7 @@ export function VaporwaveSun() {
         left: '50%',
         bottom: '0',
         transform: 'translateX(-50%)',
-        zIndex: 1,
+        zIndex: 0,
         width: 'clamp(300px, 45vw, 600px)',
         height: 'clamp(150px, 22.5vw, 300px)',
         overflow: 'visible',
@@ -32,14 +32,14 @@ export function VaporwaveSun() {
         style={{ width: '100%', height: '100%', overflow: 'visible' }}
       >
         <defs>
-          {/* Sun gradient: hot pink top → orange mid → golden yellow bottom */}
-          <radialGradient id="sun-grad" cx="50%" cy="100%" r="100%">
-            <stop offset="0%" stopColor="#FF3090" stopOpacity="1.0" />
-            <stop offset="30%" stopColor="#FF5050" stopOpacity="0.95" />
+          {/* Sun gradient: yellow/gold top → orange mid → hot pink bottom (correct synthwave) */}
+          <linearGradient id="sun-grad" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#FFD700" stopOpacity="0.95" />
+            <stop offset="25%" stopColor="#FFB347" stopOpacity="0.95" />
             <stop offset="55%" stopColor="#FF6B2D" stopOpacity="0.95" />
-            <stop offset="80%" stopColor="#FFB347" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#FFD700" stopOpacity="0.85" />
-          </radialGradient>
+            <stop offset="80%" stopColor="#FF5050" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#FF3090" stopOpacity="1.0" />
+          </linearGradient>
 
           {/* Ambient glow behind sun — large pink/purple haze */}
           <radialGradient id="sun-ambient" cx="50%" cy="80%" r="100%">

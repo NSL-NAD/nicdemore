@@ -197,7 +197,7 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="flex flex-col"
+        className="flex flex-col retro-card"
         style={{
           rotateX,
           rotateY,

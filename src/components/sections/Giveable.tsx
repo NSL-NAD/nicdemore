@@ -203,7 +203,7 @@ export function Giveable() {
                 borderColor: 'rgba(244,99,30,0.38)',
                 boxShadow: '0 0 28px rgba(244,99,30,0.22)',
               }}
-              className="p-5 flex flex-col gap-3 cursor-default"
+              className="p-5 flex flex-col gap-3 cursor-default retro-card"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(242,237,229,0.09)',

@@ -217,6 +217,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       >
         {/* ── FRONT — deep forest green, icon + display label + skill count ── */}
         <div
+          className="retro-card"
           style={{
             position: "absolute",
             inset: 0,
@@ -273,6 +274,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
 
         {/* ── BACK — neutral/cream, prominent orange header + BriefHistory-style tags ── */}
         <div
+          className="retro-card"
           style={{
             position: "absolute",
             inset: 0,

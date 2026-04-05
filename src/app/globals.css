@@ -470,13 +470,13 @@ img {
 }
 
 /* Retro mode — card borders glow (green tint at rest) */
-[data-theme="retro"] [style*="border: 1px solid var(--color-border)"] {
+[data-theme="retro"] .retro-card {
   border-color: rgba(15, 236, 159, 0.2) !important;
   transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
 }
 
 /* Retro mode — hover neons (Blue Hut-style, super vibrant) */
-[data-theme="retro"] [style*="border: 1px solid var(--color-border)"]:hover {
+[data-theme="retro"] .retro-card:hover {
   border-color: rgba(0, 240, 255, 0.85) !important;
   box-shadow:
     0 0 20px rgba(0, 240, 255, 0.8),
@@ -522,7 +522,7 @@ img {
 }
 
 [data-theme="retro"] .section-glow::after {
-  background: radial-gradient(ellipse at center, rgba(15, 236, 159, 0.08) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(15, 236, 159, 0.18) 0%, transparent 70%);
 }
 
 /* ===================================================

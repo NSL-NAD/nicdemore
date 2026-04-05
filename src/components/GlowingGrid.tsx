@@ -25,7 +25,7 @@ export function GlowingGrid() {
   useEffect(() => {
     const checkTheme = () => {
       const isRetro = document.documentElement.dataset.theme === 'retro';
-      setGridZIndex(isRetro ? 2 : 0);
+      setGridZIndex(isRetro ? 11 : 0);
     };
     checkTheme();
     const observer = new MutationObserver(checkTheme);
