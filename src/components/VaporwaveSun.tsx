@@ -19,7 +19,7 @@ export function VaporwaveSun() {
         position: 'absolute',
         bottom: 0,
         left: '50%',
-        transform: 'translateX(-50%)',
+        transform: 'translateX(calc(-50% - 50px))',
         width: '520px',
         height: '260px',
         zIndex: 0,

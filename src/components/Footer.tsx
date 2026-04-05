@@ -27,7 +27,7 @@ export function Footer() {
         borderColor: 'rgba(255,255,255,0.06)',
         position: 'relative',
         overflow: 'hidden',
-        ...(isRetro ? { paddingBottom: '320px' } : {}),
+        ...(isRetro ? { paddingBottom: '160px', zIndex: 1 } : {}),
       }}
     >
       <VaporwaveSun />
