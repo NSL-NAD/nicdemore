@@ -529,7 +529,7 @@ export default function AboutPage() {
   return (
     <div
       ref={pageRef}
-      className="min-h-screen pb-16"
+      className="min-h-screen"
       style={{ position: "relative" }}
     >
       {/* "DEMORE" wordmark — positioned between heading and stats, overlapping both */}
@@ -638,23 +638,24 @@ export default function AboutPage() {
             <CardImageRow key={i} row={row} />
           ))}
         </div>
+      </div>
 
-        {/* Philosophy section — forest-green card like Manifesto */}
-        <motion.div ref={philRef} style={{ y: philY }} className="mt-12">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={viewportOnce}
-            transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-            className="w-full px-8 md:px-12 lg:px-16 py-14 md:py-20"
-            style={{
-              background: "var(--color-forest)",
-              borderRadius: "24px",
-              boxShadow:
-                "0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)",
-              overflow: "hidden",
-            }}
-          >
+      {/* Philosophy section — full-width forest-green, flush with footer */}
+      <motion.div ref={philRef} style={{ y: philY }} className="mt-12">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.8, ease: EASING_PREMIUM }}
+          className="w-full px-8 md:px-12 lg:px-16 py-14 md:py-20"
+          style={{
+            background: "var(--color-forest)",
+            borderRadius: "24px 24px 0 0",
+            boxShadow:
+              "0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)",
+            overflow: "hidden",
+          }}
+        >
             <div className="mx-auto max-w-4xl">
               <span
                 className="block text-xs tracking-widest uppercase mb-10"
@@ -773,7 +774,6 @@ export default function AboutPage() {
             </div>
           </motion.div>
         </motion.div>
-      </div>
     </div>
   );
 }
