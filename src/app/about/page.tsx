@@ -211,7 +211,7 @@ function AboutParallaxCard({
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
           cursor: "default",
         }}
-        className="p-6"
+        className="p-6 lg:min-h-[170px] flex flex-col justify-center"
       >
         <h3
           className="font-display font-bold text-base mb-2"
@@ -269,7 +269,7 @@ function QuoteCard({
         initial={fromLeft ? hiddenLeft : hiddenRight}
         animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
         transition={entranceTransition(delay)}
-        className="p-6 flex items-center"
+        className="p-6 flex items-center lg:min-h-[170px]"
         style={{
           background: "var(--color-forest)",
           borderRadius: "16px",
@@ -326,7 +326,7 @@ function ParallaxImage({
         transition={entranceTransition(delay)}
         className="relative overflow-hidden rounded-2xl h-full"
         style={{
-          minHeight: "400px",
+          minHeight: "600px",
           border: "1px solid var(--color-accent)",
           boxShadow:
             "0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)",
@@ -452,14 +452,14 @@ export default function AboutPage() {
     <div
       ref={pageRef}
       className="min-h-screen pt-24 pb-16"
-      style={{ background: "var(--color-base)", position: "relative" }}
+      style={{ position: "relative" }}
     >
       {/* "DEMORE" wordmark — positioned between heading and stats, overlapping both */}
       <div
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: "clamp(200px, 28vh, 320px)",
+          top: "clamp(260px, 34vh, 400px)",
           left: "50%",
           transform: "translateX(-50%)",
           whiteSpace: "nowrap",
@@ -473,7 +473,7 @@ export default function AboutPage() {
             y: wordmarkY,
             fontFamily: "var(--font-syne)",
             fontWeight: 800,
-            fontSize: "clamp(100px, 22vw, 280px)",
+            fontSize: "clamp(80px, 16vw, 200px)",
             letterSpacing: "-0.04em",
             color: "var(--color-text-primary)",
             opacity: 0.054,
@@ -564,7 +564,7 @@ export default function AboutPage() {
         </motion.div>
 
         {/* Alternating card + image rows */}
-        <div className="mt-12 space-y-10">
+        <div className="mt-12 space-y-10 mx-auto max-w-6xl">
           {rows.map((row, i) => (
             <CardImageRow key={i} row={row} />
           ))}
