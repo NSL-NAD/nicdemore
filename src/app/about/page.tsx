@@ -21,31 +21,31 @@ import { CountUpStat } from "@/components/CountUpStat";
 
 const cards = [
   {
-    title: "The Foundation",
+    title: "Foundation",
     body: "Milwaukee raised. Marquette educated. Mechanical engineering gave me a systems lens I've never set down — every problem is a design problem, every process has a load it has to bear.",
   },
   {
-    title: "The Entrepreneur",
+    title: "Entrepreneur",
     body: "Co-founded Margle Media at 22 with no clients and no playbook. Built it to seven figures. Learned that building an organization is the hardest and most rewarding design challenge there is.",
   },
   {
-    title: "The Operator",
+    title: "Operator",
     body: "Nine years running every dimension of a growing agency — sales, finance, ops, people, legal, creative, production. If a digital marketing agency can ask it of you, I've done it.",
   },
   {
-    title: "The Student",
+    title: "Student",
     body: "Two years obsessively studying architecture to design my dream home. Watched, absorbed, applied. Turned that education into a course — because the process changed how I see space, and that was worth sharing.",
   },
   {
-    title: "The Builder",
+    title: "Builder",
     body: "Now building a studio of purpose-driven ventures under one roof. AI-native infrastructure, autonomous agents, and businesses built to do genuinely good work — at scale.",
   },
   {
-    title: "The Values",
+    title: "Values",
     body: "Integrity isn't a policy — it's a foundation. Curiosity over certainty. Always do your best. Leave things better than you found them. It really is a beautiful life.",
   },
   {
-    title: "The Personal",
+    title: "Personal",
     body: "Husband to Natasha. Dad to Leo. Deep Milwaukee roots — my grandfather fished McKinley Pier. Passionate about travel, photography, design, and building things that last.",
   },
 ];
@@ -466,7 +466,7 @@ export default function AboutPage() {
           whiteSpace: "nowrap",
           pointerEvents: "none",
           userSelect: "none",
-          zIndex: 0,
+          zIndex: 2,
         }}
       >
         <motion.div
@@ -497,7 +497,7 @@ export default function AboutPage() {
           background: "var(--color-base)",
         }}
       >
-        <div className="mx-auto max-w-7xl px-6">
+        <div className="mx-auto max-w-7xl px-6" style={{ position: "relative", zIndex: 3 }}>
           {/* Back link */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
