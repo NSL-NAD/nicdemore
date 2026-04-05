@@ -11,6 +11,8 @@ const GLOW_RADIUS = 320;
 const FOLLOW_SPEED = 0.1; // smooth follow
 const ACCENT = { r: 244, g: 99, b: 30 }; // --color-accent #F4631E
 const BASE_COLOR = { r: 180, g: 170, b: 160 }; // warm gray, visible on #FAF9F6
+const RETRO_ACCENT = { r: 0, g: 240, b: 255 }; // --retro-cyan #00F0FF
+const RETRO_BASE = { r: 40, g: 40, b: 80 }; // subtle purple-blue base
 
 export function GlowingGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,6 +46,11 @@ export function GlowingGrid() {
 
     ctx.clearRect(0, 0, w, h);
 
+    // Detect retro mode for color switching
+    const isRetro = document.documentElement.dataset.theme === 'retro';
+    const accent = isRetro ? RETRO_ACCENT : ACCENT;
+    const base = isRetro ? RETRO_BASE : BASE_COLOR;
+
     const mx = sm.x;
     const my = sm.y;
 
@@ -66,13 +73,13 @@ export function GlowingGrid() {
         const opacity = BASE_LINE_OPACITY + (MAX_LINE_OPACITY - BASE_LINE_OPACITY) * eased;
 
         if (eased > 0.01) {
-          const r = Math.round(BASE_COLOR.r + (ACCENT.r - BASE_COLOR.r) * eased);
-          const g = Math.round(BASE_COLOR.g + (ACCENT.g - BASE_COLOR.g) * eased);
-          const b = Math.round(BASE_COLOR.b + (ACCENT.b - BASE_COLOR.b) * eased);
+          const r = Math.round(base.r + (accent.r - base.r) * eased);
+          const g = Math.round(base.g + (accent.g - base.g) * eased);
+          const b = Math.round(base.b + (accent.b - base.b) * eased);
           ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH + eased * 0.5; // slightly thicker near cursor
         } else {
-          ctx.strokeStyle = `rgba(${BASE_COLOR.r},${BASE_COLOR.g},${BASE_COLOR.b},${opacity})`;
+          ctx.strokeStyle = `rgba(${base.r},${base.g},${base.b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH;
         }
 
@@ -99,13 +106,13 @@ export function GlowingGrid() {
         const opacity = BASE_LINE_OPACITY + (MAX_LINE_OPACITY - BASE_LINE_OPACITY) * eased;
 
         if (eased > 0.01) {
-          const r = Math.round(BASE_COLOR.r + (ACCENT.r - BASE_COLOR.r) * eased);
-          const g = Math.round(BASE_COLOR.g + (ACCENT.g - BASE_COLOR.g) * eased);
-          const b = Math.round(BASE_COLOR.b + (ACCENT.b - BASE_COLOR.b) * eased);
+          const r = Math.round(base.r + (accent.r - base.r) * eased);
+          const g = Math.round(base.g + (accent.g - base.g) * eased);
+          const b = Math.round(base.b + (accent.b - base.b) * eased);
           ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH + eased * 0.5;
         } else {
-          ctx.strokeStyle = `rgba(${BASE_COLOR.r},${BASE_COLOR.g},${BASE_COLOR.b},${opacity})`;
+          ctx.strokeStyle = `rgba(${base.r},${base.g},${base.b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH;
         }
 

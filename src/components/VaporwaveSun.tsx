@@ -20,7 +20,7 @@ export function VaporwaveSun() {
         left: '50%',
         bottom: '0',
         transform: 'translateX(-50%)',
-        zIndex: 0,
+        zIndex: -1,
         width: 'clamp(200px, 30vw, 400px)',
         height: 'clamp(100px, 15vw, 200px)',
         overflow: 'hidden',
