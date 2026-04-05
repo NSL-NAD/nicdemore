@@ -8,7 +8,6 @@ import { RetroProvider } from "@/contexts/RetroContext";
 import { PersonSchema } from "@/components/PersonSchema";
 import { VentureOSWrapper } from "@/components/venture-os/VentureOSWrapper";
 import { GlowingGrid } from "@/components/GlowingGrid";
-import { VaporwaveSun } from "@/components/VaporwaveSun";
 import "./globals.css";
 
 const syne = Syne({
@@ -102,7 +101,6 @@ export default function RootLayout({
           <Navigation />
           <main className="flex-1" style={{ position: 'relative', zIndex: 10 }}>{children}</main>
           <Footer />
-          <VaporwaveSun />
           <VentureOSWrapper />
         </RetroProvider>
         <CookieConsent />

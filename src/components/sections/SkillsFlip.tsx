@@ -383,7 +383,6 @@ export function SkillsFlip() {
               fontSize: "clamp(36px, 4vw, 60px)",
               color: "var(--color-text-primary)",
               letterSpacing: "-0.03em",
-              marginLeft: "-12px",
             }}
           >
             What I Bring

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 // Grid configuration — 22px squares matching retro grid
 const GRID_SIZE = 22;
@@ -19,19 +19,6 @@ export function GlowingGrid() {
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const smoothMouse = useRef({ x: -9999, y: -9999 });
   const rafRef = useRef<number>(0);
-  const [gridZIndex, setGridZIndex] = useState(0);
-
-  // Watch theme changes to adjust z-index
-  useEffect(() => {
-    const checkTheme = () => {
-      const isRetro = document.documentElement.dataset.theme === 'retro';
-      setGridZIndex(isRetro ? 11 : 0);
-    };
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, []);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -168,7 +155,7 @@ export function GlowingGrid() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none"
-      style={{ zIndex: gridZIndex }}
+      style={{ zIndex: 0 }}
       aria-hidden="true"
     />
   );

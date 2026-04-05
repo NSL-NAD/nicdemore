@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { VaporwaveSun } from "@/components/VaporwaveSun";
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
@@ -22,10 +23,13 @@ export function Footer() {
       style={{
         background: '#1C1917',
         borderColor: 'rgba(255,255,255,0.06)',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <VaporwaveSun />
       <motion.div
-        style={{ y: contentY }}
+        style={{ y: contentY, position: 'relative', zIndex: 2 }}
         className="mx-auto max-w-7xl px-6"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">
