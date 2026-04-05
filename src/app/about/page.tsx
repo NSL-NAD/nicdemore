@@ -250,7 +250,7 @@ function AboutParallaxCard({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// QuoteCard — accent pull-quote styled to match card grid
+// QuoteCard — venture-card style with 3D tilt + orange glare
 // ─────────────────────────────────────────────────────────────────────────────
 
 function QuoteCard({
@@ -264,31 +264,109 @@ function QuoteCard({
   delay: number;
   inView: boolean;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+
+  const rotateX = useSpring(rawY, SPRING);
+  const rotateY = useSpring(rawX, SPRING);
+  const scale = useSpring(1, SPRING);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) / rect.width;
+      const cy = (e.clientY - rect.top) / rect.height;
+      rawX.set((cx - 0.5) * 2 * TILT);
+      rawY.set(-((cy - 0.5) * 2) * TILT);
+      glareX.set(cx * 100);
+      glareY.set(cy * 100);
+    },
+    [rawX, rawY, glareX, glareY]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    rawX.set(0);
+    rawY.set(0);
+    scale.set(1);
+    glareOpacity.set(0);
+    setHovered(false);
+  }, [rawX, rawY, scale, glareOpacity]);
+
+  const handleMouseEnter = useCallback(() => {
+    scale.set(1.012);
+    glareOpacity.set(1);
+    setHovered(true);
+  }, [scale, glareOpacity]);
+
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(244,99,30,0.18) 0%, transparent 62%)`
+  );
+
   return (
     <div className="flex-1" style={{ perspective: "800px" }}>
       <motion.div
+        ref={cardRef}
         initial={fromLeft ? hiddenLeft : hiddenRight}
         animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
         transition={entranceTransition(delay)}
-        className="p-6 flex items-center h-full"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        className="flex items-center h-full"
         style={{
-          background: "var(--color-forest)",
+          rotateX,
+          rotateY,
+          scale,
+          transformStyle: "preserve-3d",
+          position: "relative",
+          background: "var(--color-base)",
+          border: `1px solid ${hovered ? "rgba(244,99,30,0.38)" : "rgba(0,0,0,0.08)"}`,
           borderRadius: "16px",
-          border: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+          overflow: "hidden",
+          boxShadow: hovered
+            ? "0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.14)"
+            : "none",
+          transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+          cursor: "default",
         }}
       >
-        <p
+        {/* Orange cursor glare overlay */}
+        <motion.div
+          aria-hidden
           style={{
-            fontFamily: "var(--font-dm-serif)",
-            fontStyle: "italic",
-            fontSize: "clamp(18px, 2vw, 24px)",
-            color: "rgba(255,255,255,0.92)",
-            lineHeight: 1.5,
+            position: "absolute",
+            inset: 0,
+            borderRadius: "16px",
+            pointerEvents: "none",
+            opacity: glareOpacity,
+            background: glareBackground,
+            zIndex: 10,
           }}
-        >
-          &ldquo;{text}&rdquo;
-        </p>
+        />
+
+        <div className="relative p-6" style={{ zIndex: 11 }}>
+          <p
+            style={{
+              fontFamily: "var(--font-dm-serif)",
+              fontStyle: "italic",
+              fontSize: "clamp(18px, 2vw, 24px)",
+              color: "var(--color-text-primary)",
+              lineHeight: 1.5,
+            }}
+          >
+            &ldquo;{text}&rdquo;
+          </p>
+        </div>
       </motion.div>
     </div>
   );
