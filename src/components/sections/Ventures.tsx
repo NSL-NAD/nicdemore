@@ -259,7 +259,7 @@ function VentureCard({ venture, isActive }: { venture: Venture; isActive: boolea
                     fontFamily: 'var(--font-jetbrains)',
                     fontSize: '10px',
                     letterSpacing: '0.06em',
-                    background: 'var(--color-surface)',
+                    background: 'transparent',
                     color: 'var(--color-text-secondary)',
                     border: '1px solid var(--color-border)',
                   }}
@@ -505,7 +505,7 @@ export function Ventures() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={viewportOnce}
                 transition={{ duration: 0.5, ease: EASING_SMOOTH }}
-                className="block text-xs tracking-widest uppercase mb-4"
+                className="block text-xs tracking-widest uppercase mb-4 section-label"
                 style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
               >
                 // Ventures

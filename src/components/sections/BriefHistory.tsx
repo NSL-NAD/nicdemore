@@ -284,7 +284,7 @@ function CardContent({
         <span
           className="inline-block font-mono tracking-wide px-2 py-0.5 rounded-sm"
           style={{
-            background: "var(--color-accent)",
+            background: "#F4631E",
             color: "#fff",
             fontFamily: "var(--font-jetbrains)",
             fontSize: "10px",
@@ -616,7 +616,7 @@ export function BriefHistory() {
       {/* ── Section header — outside overflow-x-hidden so Y transform isn't clipped ── */}
       <motion.div className="relative px-12 mb-8" style={{ y: headerY, zIndex: 1 }}>
           <motion.span
-            className="block text-xs tracking-widest uppercase mb-4"
+            className="block text-xs tracking-widest uppercase mb-4 section-label"
             style={{
               color: "var(--color-accent)",
               fontFamily: "var(--font-jetbrains)",

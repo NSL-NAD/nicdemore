@@ -116,7 +116,7 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
             transition={{ duration: 0.5, ease: EASING_SMOOTH }}
-            className="block text-xs tracking-widest uppercase mb-6"
+            className="block text-xs tracking-widest uppercase mb-6 section-label"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
           >
             // Contact

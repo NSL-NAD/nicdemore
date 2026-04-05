@@ -41,8 +41,8 @@
   --color-text-secondary: #9E9BCF;
   --color-text-light:     #6B68A0;
   --color-forest:         #14143A;
-  --color-accent:       #F4631E;
-  --color-accent-hover: #C4501A;
+  --color-accent:       #0FEC9F;
+  --color-accent-hover: #3DFDB5;
   --color-border:       #2A2A5A;
   --color-border-subtle: #1E1E40;
 
@@ -467,6 +467,22 @@ img {
   color: #fff;
 }
 
+/* Retro — keep GAS Orange for: nav wordmark "N", active nav links, section subheaders */
+[data-theme="retro"] .text-accent {
+  color: #F4631E !important;
+}
+[data-theme="retro"] .nav-link-hover:hover {
+  color: #F4631E !important;
+}
+[data-theme="retro"] .section-label {
+  color: #F4631E !important;
+}
+[data-theme="retro"] .nav-active {
+  color: #F4631E !important;
+}
+[data-theme="retro"] .nav-active > div {
+  background: #F4631E !important;
+}
 
 /* ===================================================
    SECTION GLOW — subtle ambient radial gradient at section transitions
@@ -613,11 +629,13 @@ img {
 [data-theme="retro"] .frosted-card {
   background: linear-gradient(
     135deg,
-    rgba(255, 107, 0, 0.06) 0%,
-    rgba(10, 10, 20, 0.6) 40%,
-    rgba(20, 20, 58, 0.5) 100%
+    rgba(20, 20, 58, 0.97) 0%,
+    rgba(11, 11, 26, 0.98) 50%,
+    rgba(20, 20, 58, 0.97) 100%
   );
   border-color: rgba(0, 229, 255, 0.2);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 [data-theme="retro"] .frosted-card:hover {

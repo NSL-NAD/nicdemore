@@ -295,7 +295,7 @@ export function Hero() {
           <div>
             <motion.p
               {...drop3D(T.overview.delay, T.overview.dur, -200, -60, 400, 6)}
-              className="font-mono text-xs tracking-widest uppercase mb-2"
+              className="font-mono text-xs tracking-widest uppercase mb-2 section-label"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px', transformStyle: 'preserve-3d' }}
             >
               // Overview
@@ -386,7 +386,7 @@ export function Hero() {
           {/* // Overview label */}
           <motion.p
             {...drop3D(T.overview.delay, T.overview.dur, -300, -40, 400, 5)}
-            className="text-xs tracking-widest uppercase mb-2"
+            className="text-xs tracking-widest uppercase mb-2 section-label"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px', transformStyle: 'preserve-3d' }}
           >
             // Overview

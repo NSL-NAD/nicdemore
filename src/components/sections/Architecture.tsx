@@ -120,7 +120,7 @@ export function Architecture() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.5 }}
-              className="block text-xs tracking-widest uppercase mb-5"
+              className="block text-xs tracking-widest uppercase mb-5 section-label"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
             >
               // Passion Project
