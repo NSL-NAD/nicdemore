@@ -281,6 +281,11 @@ export function Hero() {
       /* Reduced so green Manifesto is visible on load */
       style={{ minHeight: '80vh' }}
     >
+      {/* Scrim — softens grid visibility */}
+      <div
+        className="absolute inset-0 pointer-events-none grid-scrim"
+        style={{ zIndex: 0 }}
+      />
       <motion.div
         style={{
           opacity: heroOpacity,
@@ -288,7 +293,7 @@ export function Hero() {
           perspective: 1200,
           perspectiveOrigin: '50% 40%',
         }}
-        className="relative w-full mx-auto px-12 pt-24 pb-8 md:pt-28 md:pb-8"
+        className="relative w-full mx-auto px-12 pt-24 pb-8 md:pt-28 md:pb-8 z-[1]"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6" style={{ transformStyle: 'preserve-3d' }}>

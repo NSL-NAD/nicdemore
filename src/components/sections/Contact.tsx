@@ -106,10 +106,16 @@ export function Contact() {
         marginBottom: 0,
       }}
     >
+      {/* Scrim — softens grid visibility to match journey section's muted look */}
+      <div
+        className="absolute inset-0 pointer-events-none grid-scrim"
+        style={{ zIndex: 0 }}
+      />
+
       {/* Grid markers — architectural detail */}
       <span className="grid-marker" style={{ top: '24px', left: '16px' }}>+</span>
       <span className="grid-marker" style={{ top: '24px', right: '16px' }}>+</span>
-      <div className="mx-auto max-w-4xl px-6">
+      <div className="mx-auto max-w-4xl px-6 relative" style={{ zIndex: 1 }}>
         <div className="text-center mb-12">
           <motion.span
             initial={{ opacity: 0, y: 10 }}

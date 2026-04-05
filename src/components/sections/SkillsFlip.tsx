@@ -345,7 +345,7 @@ export function SkillsFlip() {
   return (
     <section
       id="skills"
-      className="pt-12 sm:pt-16 pb-10 sm:pb-12"
+      className="pt-12 sm:pt-16 pb-2 sm:pb-4"
       style={{ background: "transparent", position: "relative" }}
     >
       {/* Scrim */}
