@@ -128,6 +128,11 @@ export function GlowingGrid() {
       }
     }
 
+    // Erase footer region — guaranteed no grid pixels in the footer
+    if (footerTop < h) {
+      ctx.clearRect(0, footerTop, w, h - footerTop);
+    }
+
     rafRef.current = requestAnimationFrame(draw);
   }, []);
 
