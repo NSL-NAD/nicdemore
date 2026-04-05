@@ -11,7 +11,6 @@ import {
   type MotionValue,
 } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
 import { CountUpStat } from "@/components/CountUpStat";
 
@@ -577,24 +576,6 @@ export default function AboutPage() {
         }}
       >
         <div className="mx-auto max-w-7xl px-6" style={{ position: "relative", zIndex: 3 }}>
-          {/* Back link */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-8"
-          >
-            <motion.div whileHover={{ x: -4 }} transition={{ duration: 0.2 }}>
-              <Link
-                href="/"
-                className="text-sm animated-underline transition-colors"
-                style={{ color: "var(--color-text-secondary)" }}
-              >
-                &larr; Back to nicdemore.com
-              </Link>
-            </motion.div>
-          </motion.div>
-
           {/* Page title — parallax drift */}
           <motion.section
             ref={titleRef}
