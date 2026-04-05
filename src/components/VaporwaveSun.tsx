@@ -8,11 +8,7 @@ export function VaporwaveSun() {
   if (!isRetro) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+    <div
       className="pointer-events-none select-none"
       aria-hidden="true"
       style={{
@@ -24,6 +20,13 @@ export function VaporwaveSun() {
         height: '260px',
         zIndex: 0,
       }}
+    >
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+      style={{ width: '100%', height: '100%', position: 'relative' }}
     >
       {/* Sun atmospheric glow */}
       <div
@@ -87,5 +90,6 @@ export function VaporwaveSun() {
         />
       </div>
     </motion.div>
+    </div>
   );
 }

@@ -99,8 +99,8 @@ export function GlowingGrid() {
       const x = col * GRID_SIZE;
       for (let row = 0; row < rows; row++) {
         const y1 = row * GRID_SIZE;
-        const y2 = y1 + GRID_SIZE;
         if (y1 >= footerTop) continue; // skip footer region
+        const y2 = Math.min(y1 + GRID_SIZE, footerTop);
         const segMidY = (y1 + y2) / 2;
         const dx = x - mx;
         const dy = segMidY - my;
