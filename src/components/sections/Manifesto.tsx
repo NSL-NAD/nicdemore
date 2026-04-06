@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 export function Manifesto() {
   return (
     <section
-      className="pt-4 pb-0 relative"
-      style={{ background: 'transparent', position: 'relative', zIndex: 20, marginTop: '-1.5rem' }}
+      className="pt-4 pb-0 relative mt-4 md:-mt-6"
+      style={{ background: 'transparent', position: 'relative', zIndex: 20 }}
     >
       <motion.div
         initial={{ opacity: 0, y: 40 }}

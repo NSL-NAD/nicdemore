@@ -486,8 +486,8 @@ function TimelineCard({
       </div>
 
       {/* MOBILE LAYOUT */}
-      <div className="md:hidden pl-6 relative">
-        <div className="absolute left-[2px] top-1.5">
+      <div className="md:hidden pl-8 relative">
+        <div className="absolute top-3" style={{ left: '2px' }}>
           <SpineDot
             dotRef={undefined}
             threshold={dotThreshold}

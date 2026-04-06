@@ -152,12 +152,11 @@ function HeroVideoPlayer() {
     <div
       className="relative w-full group film-grain"
       style={{
-        background: 'var(--color-surface)',
+        background: '#000',
         boxShadow: '0 0 0 1px var(--color-accent), 0 38px 100px rgba(0,0,0,0.32), 0 12px 38px rgba(0,0,0,0.19)',
         borderRadius: '16px',
         overflow: 'hidden',
-        height: '100%',
-        minHeight: 'clamp(280px, 50vw, 460px)',
+        aspectRatio: '16 / 9',
       }}
     >
       <video
