@@ -157,7 +157,7 @@ function HeroVideoPlayer() {
         borderRadius: '16px',
         overflow: 'hidden',
         height: '100%',
-        minHeight: '460px',
+        minHeight: 'clamp(280px, 50vw, 460px)',
       }}
     >
       <video

@@ -487,7 +487,7 @@ function TimelineCard({
 
       {/* MOBILE LAYOUT */}
       <div className="md:hidden pl-6 relative">
-        <div className="absolute left-0 top-1.5">
+        <div className="absolute left-[2px] top-1.5">
           <SpineDot
             dotRef={undefined}
             threshold={dotThreshold}
@@ -694,7 +694,7 @@ export function BriefHistory() {
               />
             </div>
 
-            <div className="space-y-0">
+            <div className="space-y-4 md:space-y-0">
               {timeline.map((item, i) => (
                 <TimelineCard
                   key={item.year + item.org}

@@ -479,7 +479,7 @@ export function Ventures() {
         position: 'relative',
         zIndex: 20,
         // Pull Architecture section up behind the bottom of this layer
-        marginBottom: isMobile ? '-60px' : '-120px',
+        marginBottom: isMobile ? '-100px' : '-120px',
       }}
     >
         {/* Parallax wrapper — moves the entire green card at a different scroll rate */}
@@ -543,7 +543,7 @@ export function Ventures() {
             <div
               ref={carouselRef}
               className="relative select-none"
-              style={{ height: `${CAROUSEL_H}px` }}
+              style={{ height: `${CAROUSEL_H}px`, touchAction: 'pan-y' }}
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
             >
