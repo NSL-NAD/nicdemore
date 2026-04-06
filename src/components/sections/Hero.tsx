@@ -152,12 +152,11 @@ function HeroVideoPlayer() {
     <div
       className="relative w-full group film-grain"
       style={{
-        background: 'var(--color-surface)',
+        background: '#000',
         boxShadow: '0 0 0 1px var(--color-accent), 0 38px 100px rgba(0,0,0,0.32), 0 12px 38px rgba(0,0,0,0.19)',
         borderRadius: '16px',
         overflow: 'hidden',
-        height: '100%',
-        minHeight: '460px',
+        aspectRatio: '16 / 9',
       }}
     >
       <video
@@ -332,7 +331,7 @@ export function Hero() {
           perspective: 1200,
           perspectiveOrigin: '50% 40%',
         }}
-        className="relative w-full mx-auto px-12 pt-24 pb-8 md:pt-28 md:pb-8 z-[1]"
+        className="relative w-full mx-auto px-5 md:px-12 pt-24 pb-8 md:pt-28 md:pb-8 z-[1]"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6" style={{ transformStyle: 'preserve-3d' }}>

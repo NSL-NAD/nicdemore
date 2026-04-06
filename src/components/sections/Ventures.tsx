@@ -425,8 +425,8 @@ export function Ventures() {
   const containerY = useTransform(scrollYProgress, [0, 1], [28, -28]);
 
   const CARD_WIDTH  = isMobile ? 300 : 360;
-  const CARD_HEIGHT = isMobile ? 460 : 440;
-  const CAROUSEL_H  = isMobile ? 480 : 460;
+  const CARD_HEIGHT = isMobile ? 400 : 440;
+  const CAROUSEL_H  = isMobile ? 420 : 460;
 
   const prev = useCallback(() => setActiveIndex((i) => Math.max(0, i - 1)), []);
   const next = useCallback(() => setActiveIndex((i) => Math.min(ventures.length - 1, i + 1)), []);
@@ -479,7 +479,7 @@ export function Ventures() {
         position: 'relative',
         zIndex: 20,
         // Pull Architecture section up behind the bottom of this layer
-        marginBottom: '-120px',
+        marginBottom: isMobile ? '-100px' : '-120px',
       }}
     >
         {/* Parallax wrapper — moves the entire green card at a different scroll rate */}
@@ -499,7 +499,7 @@ export function Ventures() {
           >
 
             {/* ── Header ──────────────────────────────────────────── */}
-            <div className="pt-12 px-12 mb-10">
+            <div className="pt-12 px-5 md:px-12 mb-10">
               <motion.span
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -543,7 +543,7 @@ export function Ventures() {
             <div
               ref={carouselRef}
               className="relative select-none"
-              style={{ height: `${CAROUSEL_H}px` }}
+              style={{ height: `${CAROUSEL_H}px`, touchAction: 'pan-y' }}
               onPointerDown={handlePointerDown}
               onPointerUp={handlePointerUp}
             >
@@ -582,6 +582,8 @@ export function Ventures() {
                         left: isMobile ? '0' : `calc(50% - ${CARD_WIDTH / 2}px)`,
                         width: isMobile ? '100%' : `${CARD_WIDTH}px`,
                         height: `${CARD_HEIGHT}px`,
+                        padding: isMobile ? '0 56px' : undefined,
+                        boxSizing: isMobile ? 'border-box' as const : undefined,
                         marginTop: `-${CARD_HEIGHT / 2}px`,
                         transformStyle: 'preserve-3d',
                         cursor: index !== activeIndex ? 'pointer' : 'default',
@@ -600,7 +602,7 @@ export function Ventures() {
             </div>
 
             {/* ── Dots + Status bar ─────────────────────────────────── */}
-            <div className="px-12 pb-12 pt-6">
+            <div className="px-5 md:px-12 pb-12 pt-6">
               <div className="flex items-center justify-center gap-2 mb-6">
                 {ventures.map((_, i) => (
                   <motion.button

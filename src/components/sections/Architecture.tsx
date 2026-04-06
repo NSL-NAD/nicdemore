@@ -37,7 +37,7 @@ function ArchImageReveal({
     <motion.div
       initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.6 }}
       whileInView={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "200px" }}
       transition={{
         duration: 0.9,
         ease: EASING_SNAPPY,

@@ -201,8 +201,8 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       onClick={() => setFlipped((f) => !f)}
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
-      className="cursor-pointer"
-      style={{ perspective: "1200px", height: "360px" }}
+      className="cursor-pointer h-[240px] sm:h-[360px]"
+      style={{ perspective: "1200px" }}
       whileHover={{ y: -6 }}
     >
       <div
@@ -269,6 +269,21 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
             }}
           >
             {group.skills.length} skills
+          </span>
+
+          {/* Mobile flip hint */}
+          <span
+            className="sm:hidden"
+            style={{
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "8px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.4)",
+              marginTop: "4px",
+            }}
+          >
+            Tap to flip ↻
           </span>
         </div>
 
@@ -356,7 +371,7 @@ export function SkillsFlip() {
 
       <div className="relative" style={{ zIndex: 1 }}>
         {/* ── Section header — full-width px-12, matching all other sections ── */}
-        <div className="px-12 mb-14">
+        <div className="px-5 md:px-12 mb-14">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -406,8 +421,8 @@ export function SkillsFlip() {
         </div>
 
         {/* ── Cards grid — constrained to max-w-6xl ── */}
-        <div className="mx-auto max-w-6xl px-12">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <div className="mx-auto max-w-6xl px-5 md:px-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {skillGroups.map((group, i) => (
               <FlipCard key={group.label} group={group} index={i} />
             ))}
