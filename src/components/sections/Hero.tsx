@@ -332,7 +332,7 @@ export function Hero() {
           perspective: 1200,
           perspectiveOrigin: '50% 40%',
         }}
-        className="relative w-full mx-auto px-12 pt-24 pb-8 md:pt-28 md:pb-8 z-[1]"
+        className="relative w-full mx-auto px-5 md:px-12 pt-24 pb-8 md:pt-28 md:pb-8 z-[1]"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6" style={{ transformStyle: 'preserve-3d' }}>

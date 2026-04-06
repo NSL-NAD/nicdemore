@@ -486,7 +486,7 @@ function TimelineCard({
       </div>
 
       {/* MOBILE LAYOUT */}
-      <div className="md:hidden pl-8 relative">
+      <div className="md:hidden pl-6 relative">
         <div className="absolute left-0 top-1.5">
           <SpineDot
             dotRef={undefined}
@@ -614,7 +614,7 @@ export function BriefHistory() {
       <span className="grid-marker" style={{ bottom: "24px", right: "16px", position: "absolute", zIndex: 1 }}>+</span>
 
       {/* ── Section header — outside overflow-x-hidden so Y transform isn't clipped ── */}
-      <motion.div className="relative px-12 mb-8" style={{ y: headerY, zIndex: 1 }}>
+      <motion.div className="relative px-5 md:px-12 mb-8" style={{ y: headerY, zIndex: 1 }}>
           <motion.span
             className="block text-xs tracking-widest uppercase mb-4 section-label"
             style={{
@@ -654,7 +654,7 @@ export function BriefHistory() {
       <div className="relative pt-4" style={{ overflowX: 'clip', zIndex: 3 }}>
 
         {/* ── Timeline — constrained + centered ── */}
-        <div className="mx-auto max-w-6xl px-12">
+        <div className="mx-auto max-w-6xl px-5 md:px-12">
           <div className="relative mb-8" ref={timelineRef}>
 
             {/* Orange fill overlay — bounded from first dot center to last dot center */}

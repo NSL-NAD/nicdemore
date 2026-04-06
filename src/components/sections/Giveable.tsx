@@ -152,7 +152,7 @@ export function Giveable() {
               Gift-giving becomes a vehicle for doing good — without the friction of a donation ask.
               Every transaction generates measurable impact through the brands&apos; built-in giving models.
             </p>
-            <div className="flex items-center gap-8 pt-2">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-2">
               {[
                 { stat: '100%', label: 'Impact-driven brands' },
                 { stat: '20+', label: 'Causes supported' },

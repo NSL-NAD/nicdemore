@@ -13,7 +13,7 @@ export function Manifesto() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-        className="w-full text-center px-12 flex items-center justify-center"
+        className="w-full text-center px-5 md:px-12 flex items-center justify-center"
         style={{
           minHeight: '562px',
           background: 'var(--color-forest)',
@@ -22,13 +22,12 @@ export function Manifesto() {
         }}
       >
         <p
-          className="font-display leading-relaxed"
+          className="font-display leading-relaxed max-w-[90%] md:max-w-[50%]"
           style={{
             fontSize: 'clamp(22px, 3vw, 36px)',
             color: 'rgba(255,255,255,0.92)',
             fontWeight: 600,
             letterSpacing: '-0.02em',
-            maxWidth: '50%',
             margin: '0 auto',
           }}
         >
