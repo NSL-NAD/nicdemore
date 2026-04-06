@@ -189,8 +189,11 @@ function SkillTagBack({ skill, index }: { skill: string; index: number }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // FlipCard — forest green front + neutral back, 16px radius, smooth flip
 // ─────────────────────────────────────────────────────────────────────────────
-function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: number }) {
-  const [flipped, setFlipped] = useState(false);
+function FlipCard({ group, index, flipped, onFlip }: { group: typeof skillGroups[0]; index: number; flipped: boolean; onFlip: () => void }) {
+  const [hoverFlipped, setHoverFlipped] = useState(false);
+
+  // Desktop uses hover (independent per card), mobile uses tap (managed by parent)
+  const isFlipped = hoverFlipped || flipped;
 
   return (
     <motion.div
@@ -198,9 +201,9 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.23, 1, 0.32, 1] }}
-      onClick={() => setFlipped((f) => !f)}
-      onMouseEnter={() => setFlipped(true)}
-      onMouseLeave={() => setFlipped(false)}
+      onClick={onFlip}
+      onMouseEnter={() => setHoverFlipped(true)}
+      onMouseLeave={() => setHoverFlipped(false)}
       className="cursor-pointer h-[240px] sm:h-[360px]"
       style={{ perspective: "1200px" }}
       whileHover={{ y: -6 }}
@@ -211,7 +214,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
           width: "100%",
           height: "100%",
           transformStyle: "preserve-3d",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
           transition: "transform 0.82s cubic-bezier(0.23, 1, 0.32, 1)",
         }}
       >
@@ -340,7 +343,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
 
           {/* Skill tags — pinned to bottom, remount on flip to re-fire stagger */}
           <div
-            key={flipped ? "back" : "front"}
+            key={isFlipped ? "back" : "front"}
             style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
           >
             {group.skills.map((skill, i) => (
@@ -357,6 +360,8 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
 // SkillsFlip — section with full-width header (px-12) matching other sections
 // ─────────────────────────────────────────────────────────────────────────────
 export function SkillsFlip() {
+  const [activeFlip, setActiveFlip] = useState<number | null>(null);
+
   return (
     <section
       id="skills"
@@ -424,7 +429,13 @@ export function SkillsFlip() {
         <div className="mx-auto max-w-6xl px-5 md:px-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {skillGroups.map((group, i) => (
-              <FlipCard key={group.label} group={group} index={i} />
+              <FlipCard
+                key={group.label}
+                group={group}
+                index={i}
+                flipped={activeFlip === i}
+                onFlip={() => setActiveFlip((prev) => (prev === i ? null : i))}
+              />
             ))}
           </div>
         </div>
