@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import Link from "next/link";
+
 import { ease, viewportOnce } from "@/lib/motion";
 import { DownloadPDFButton } from "@/components/DownloadPDFButton";
 
@@ -114,21 +114,20 @@ export default function ResumePage() {
   const letter = companySlug ? coverLetters[companySlug] : null;
 
   return (
-    <div className="pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-16">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6">
-        {/* Back link + Download */}
+    <div className="pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-16 relative">
+      {/* Scrim to mute background grid behind text */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "rgba(250, 249, 246, 0.82)", zIndex: 0 }}
+      />
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 relative" style={{ zIndex: 1 }}>
+        {/* Download button */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease }}
-          className="mb-12 flex items-center justify-between gap-4 flex-wrap no-print"
+          className="mb-12 flex items-center justify-end no-print"
         >
-          <Link
-            href="/"
-            className="text-sm text-ink-muted hover:text-ink animated-underline transition-colors"
-          >
-            &larr; Back to nicdemore.com
-          </Link>
           <DownloadPDFButton
             label={letter ? `Download Cover Letter — ${letter.company}` : "Download Resume as PDF"}
             filename={letter ? `nic-demore-cover-letter-${companySlug}` : "nic-demore-resume"}

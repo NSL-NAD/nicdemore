@@ -402,9 +402,8 @@ function ParallaxImage({
         initial={fromLeft ? hiddenLeft : hiddenRight}
         animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
         transition={entranceTransition(delay)}
-        className="relative overflow-hidden rounded-2xl h-full"
+        className="relative overflow-hidden rounded-2xl h-full min-h-[420px] md:min-h-[720px]"
         style={{
-          minHeight: "clamp(320px, 55vh, 720px)",
           border: "1px solid var(--color-accent)",
           boxShadow:
             "0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)",

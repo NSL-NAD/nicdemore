@@ -20,12 +20,14 @@ export function DownloadPDFButton({ label = "Download as PDF", filename = "nic-d
   return (
     <button
       onClick={handleDownload}
-      className="no-print inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all hover:scale-[1.02]"
+      className="no-print inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all hover:scale-[1.03] hover:shadow-lg"
       style={{
         background: 'var(--color-accent)',
         color: '#fff',
         fontFamily: 'var(--font-syne)',
         fontSize: '13px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 20px rgba(244,99,30,0.32)',
       }}
       aria-label="Download this page as PDF"
     >
