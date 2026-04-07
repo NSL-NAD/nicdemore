@@ -404,7 +404,7 @@ function ParallaxImage({
         transition={entranceTransition(delay)}
         className="relative overflow-hidden rounded-2xl h-full"
         style={{
-          minHeight: "720px",
+          minHeight: "clamp(320px, 55vh, 720px)",
           border: "1px solid var(--color-accent)",
           boxShadow:
             "0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)",
@@ -530,7 +530,7 @@ export default function AboutPage() {
     <div
       ref={pageRef}
       className="min-h-screen"
-      style={{ position: "relative" }}
+      style={{ position: "relative", overflowX: "clip" }}
     >
       {/* "DEMORE" wordmark — positioned between heading and stats, overlapping both */}
       <div
@@ -618,7 +618,7 @@ export default function AboutPage() {
 
           {/* Stats row — parallax drift */}
           <motion.div ref={statsRef} style={{ y: statsY }}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 px-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 py-10 px-2">
               <CountUpStat end={9} suffix="+" label="Years Operating" />
               <CountUpStat end={12} label="Ventures in 2025" />
               <CountUpStat end={50} suffix="+" label="Team Members Led" />
@@ -647,7 +647,7 @@ export default function AboutPage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-          className="w-full px-8 md:px-12 lg:px-16 py-14 md:py-20"
+          className="w-full px-5 md:px-12 lg:px-16 py-14 md:py-20"
           style={{
             background: "var(--color-forest)",
             borderRadius: "24px 24px 0 0",

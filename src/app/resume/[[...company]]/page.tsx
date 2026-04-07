@@ -114,8 +114,8 @@ export default function ResumePage() {
   const letter = companySlug ? coverLetters[companySlug] : null;
 
   return (
-    <div className="pt-24 pb-16">
-      <div className="mx-auto max-w-3xl px-6">
+    <div className="pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-16">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6">
         {/* Back link + Download */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -164,7 +164,7 @@ export default function ResumePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease, delay: 0.1 }}
-            className="mb-20 bg-white rounded-lg border border-line p-8 sm:p-10"
+            className="mb-12 sm:mb-16 md:mb-20 bg-white rounded-lg border border-line p-5 sm:p-8 md:p-10"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-8 bg-accent rounded-full" />
@@ -191,14 +191,14 @@ export default function ResumePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.6, ease }}
-          className="mb-20 resume-section"
+          className="mb-12 sm:mb-16 md:mb-20 resume-section"
         >
           <h2 className="font-display text-2xl text-ink mb-10">Experience</h2>
 
           <div className="relative">
             <div className="absolute left-3 top-2 bottom-2 w-px bg-line" />
 
-            <div className="space-y-10">
+            <div className="space-y-6 sm:space-y-8 md:space-y-10">
               {timeline.map((entry, i) => (
                 <motion.div
                   key={entry.org}
@@ -233,7 +233,7 @@ export default function ResumePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.6, ease }}
-          className="mb-20 resume-section"
+          className="mb-12 sm:mb-16 md:mb-20 resume-section"
         >
           <h2 className="font-display text-2xl text-ink mb-6">The Value I Bring to the Table</h2>
           <div className="space-y-3 text-ink-muted leading-relaxed">
