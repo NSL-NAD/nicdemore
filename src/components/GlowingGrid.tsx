@@ -9,8 +9,9 @@ const BASE_LINE_OPACITY = 0.09; // visible always — like faint graph paper
 const MAX_LINE_OPACITY = 0.65;
 const GLOW_RADIUS = 320;
 const FOLLOW_SPEED = 0.1; // smooth follow
-const ACCENT = { r: 244, g: 99, b: 30 }; // --color-accent #F4631E
+const ACCENT = { r: 244, g: 99, b: 30 }; // --color-accent #F4631E — same in both modes
 const BASE_COLOR = { r: 180, g: 170, b: 160 }; // warm gray, visible on #FAF9F6
+const RETRO_BASE = { r: 40, g: 40, b: 80 }; // subtle purple-blue base
 
 export function GlowingGrid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,6 +45,15 @@ export function GlowingGrid() {
 
     ctx.clearRect(0, 0, w, h);
 
+    // Detect retro mode for color switching
+    const isRetro = document.documentElement.dataset.theme === 'retro';
+    const accent = ACCENT; // same orange glow in both modes
+    const base = isRetro ? RETRO_BASE : BASE_COLOR;
+
+    // Get footer bounds so we can skip drawing grid lines there
+    const footerEl = document.querySelector('footer');
+    const footerTop = footerEl ? footerEl.getBoundingClientRect().top : h + 1;
+
     const mx = sm.x;
     const my = sm.y;
 
@@ -53,6 +63,7 @@ export function GlowingGrid() {
     // Draw all horizontal lines
     for (let row = 0; row <= rows; row++) {
       const y = row * GRID_SIZE;
+      if (y >= footerTop) continue; // skip footer region
       for (let col = 0; col < cols; col++) {
         const x1 = col * GRID_SIZE;
         const x2 = x1 + GRID_SIZE;
@@ -66,13 +77,13 @@ export function GlowingGrid() {
         const opacity = BASE_LINE_OPACITY + (MAX_LINE_OPACITY - BASE_LINE_OPACITY) * eased;
 
         if (eased > 0.01) {
-          const r = Math.round(BASE_COLOR.r + (ACCENT.r - BASE_COLOR.r) * eased);
-          const g = Math.round(BASE_COLOR.g + (ACCENT.g - BASE_COLOR.g) * eased);
-          const b = Math.round(BASE_COLOR.b + (ACCENT.b - BASE_COLOR.b) * eased);
+          const r = Math.round(base.r + (accent.r - base.r) * eased);
+          const g = Math.round(base.g + (accent.g - base.g) * eased);
+          const b = Math.round(base.b + (accent.b - base.b) * eased);
           ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH + eased * 0.5; // slightly thicker near cursor
         } else {
-          ctx.strokeStyle = `rgba(${BASE_COLOR.r},${BASE_COLOR.g},${BASE_COLOR.b},${opacity})`;
+          ctx.strokeStyle = `rgba(${base.r},${base.g},${base.b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH;
         }
 
@@ -88,7 +99,8 @@ export function GlowingGrid() {
       const x = col * GRID_SIZE;
       for (let row = 0; row < rows; row++) {
         const y1 = row * GRID_SIZE;
-        const y2 = y1 + GRID_SIZE;
+        if (y1 >= footerTop) continue; // skip footer region
+        const y2 = Math.min(y1 + GRID_SIZE, footerTop);
         const segMidY = (y1 + y2) / 2;
         const dx = x - mx;
         const dy = segMidY - my;
@@ -99,13 +111,13 @@ export function GlowingGrid() {
         const opacity = BASE_LINE_OPACITY + (MAX_LINE_OPACITY - BASE_LINE_OPACITY) * eased;
 
         if (eased > 0.01) {
-          const r = Math.round(BASE_COLOR.r + (ACCENT.r - BASE_COLOR.r) * eased);
-          const g = Math.round(BASE_COLOR.g + (ACCENT.g - BASE_COLOR.g) * eased);
-          const b = Math.round(BASE_COLOR.b + (ACCENT.b - BASE_COLOR.b) * eased);
+          const r = Math.round(base.r + (accent.r - base.r) * eased);
+          const g = Math.round(base.g + (accent.g - base.g) * eased);
+          const b = Math.round(base.b + (accent.b - base.b) * eased);
           ctx.strokeStyle = `rgba(${r},${g},${b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH + eased * 0.5;
         } else {
-          ctx.strokeStyle = `rgba(${BASE_COLOR.r},${BASE_COLOR.g},${BASE_COLOR.b},${opacity})`;
+          ctx.strokeStyle = `rgba(${base.r},${base.g},${base.b},${opacity})`;
           ctx.lineWidth = LINE_WIDTH;
         }
 
@@ -114,6 +126,11 @@ export function GlowingGrid() {
         ctx.lineTo(x, y2);
         ctx.stroke();
       }
+    }
+
+    // Erase footer region — guaranteed no grid pixels in the footer
+    if (footerTop < h) {
+      ctx.clearRect(0, footerTop, w, h - footerTop);
     }
 
     rafRef.current = requestAnimationFrame(draw);

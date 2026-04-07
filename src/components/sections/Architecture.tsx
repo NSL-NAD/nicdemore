@@ -37,7 +37,7 @@ function ArchImageReveal({
     <motion.div
       initial={{ clipPath: "inset(0 0 100% 0)", opacity: 0.6 }}
       whileInView={{ clipPath: "inset(0 0 0% 0)", opacity: 1 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "200px" }}
       transition={{
         duration: 0.9,
         ease: EASING_SNAPPY,
@@ -120,7 +120,7 @@ export function Architecture() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.5 }}
-              className="block text-xs tracking-widest uppercase mb-5"
+              className="block text-xs tracking-widest uppercase mb-5 section-label"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
             >
               // Passion Project

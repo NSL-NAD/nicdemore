@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { VaporwaveSun } from "@/components/VaporwaveSun";
+import { useRetro } from "@/contexts/RetroContext";
 
 export function Footer() {
+  const { isRetro } = useRetro();
   const footerRef = useRef<HTMLElement>(null);
 
   // Parallax reveal: footer content rises from 60px below as it enters the viewport,
@@ -22,10 +25,25 @@ export function Footer() {
       style={{
         background: '#1C1917',
         borderColor: 'rgba(255,255,255,0.06)',
+        position: 'relative',
+        overflow: 'hidden',
+        isolation: 'isolate',
+        zIndex: 1,
+        ...(isRetro ? { paddingBottom: '160px' } : {}),
       }}
     >
+      {/* Solid cover to guarantee grid canvas is hidden behind footer */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: '#1C1917',
+          zIndex: 0,
+        }}
+      />
+      <VaporwaveSun />
       <motion.div
-        style={{ y: contentY }}
+        style={{ y: contentY, position: 'relative', zIndex: 2 }}
         className="mx-auto max-w-7xl px-6"
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8">

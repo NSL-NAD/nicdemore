@@ -1,12 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useRef, useState, useCallback } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+  useInView,
+  type MotionValue,
+} from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import { EASING_PREMIUM } from "@/lib/motion";
-import { useRetro } from "@/contexts/RetroContext";
+import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
 import { CountUpStat } from "@/components/CountUpStat";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Card data
+// ─────────────────────────────────────────────────────────────────────────────
 
 const cards = [
   {
@@ -39,346 +49,730 @@ const cards = [
   },
 ];
 
-// Organic positions for desktop floating cards around center photo
-const cardPositions = [
-  { top: "2%", left: "0%", delay: 0 },      // top-left
-  { top: "0%", right: "0%", delay: 0.3 },    // top-right
-  { top: "28%", left: "-2%", delay: 0.6 },   // mid-left
-  { top: "30%", right: "-2%", delay: 0.9 },  // mid-right
-  { top: "56%", left: "0%", delay: 1.2 },    // lower-left
-  { top: "58%", right: "0%", delay: 1.5 },   // lower-right
-  { top: "82%", left: "50%", delay: 1.8 },   // bottom-center
+// Row definitions: each row pairs cards (+ optional quote) with an image
+const rows = [
+  {
+    cardIndices: [0, 1],
+    quote: "Always do your best.",
+    image: { src: "/nicdemore.jpg", alt: "Nic DeMore — portrait" },
+    cardsFirst: true,
+  },
+  {
+    cardIndices: [2, 3, 4],
+    image: {
+      src: "/imagery/IMG_7546.jpeg",
+      alt: "Nic DeMore — on the lake",
+    },
+    cardsFirst: false,
+  },
+  {
+    cardIndices: [5, 6],
+    quote: "Leave things better than you found them.",
+    image: {
+      src: "/imagery/IMG_9277.JPG",
+      alt: "Nic DeMore — Milwaukee waterfront",
+    },
+    cardsFirst: true,
+  },
 ];
 
-// Drift animations — each card floats on a unique cycle
-const driftKeyframes = [
-  { x: [0, 6, -4, 2, 0], y: [0, -8, 4, -3, 0] },
-  { x: [0, -5, 7, -2, 0], y: [0, 6, -5, 3, 0] },
-  { x: [0, 8, -3, 5, 0], y: [0, -4, 7, -6, 0] },
-  { x: [0, -6, 4, -7, 0], y: [0, 5, -3, 8, 0] },
-  { x: [0, 4, -8, 3, 0], y: [0, -7, 5, -2, 0] },
-  { x: [0, -3, 6, -5, 0], y: [0, 8, -4, 6, 0] },
-  { x: [0, 5, -5, 4, 0], y: [0, -3, 6, -4, 0] },
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// Journey-style entrance animation (matches BriefHistory TimelineCard)
+// ─────────────────────────────────────────────────────────────────────────────
 
-function FloatingCard({
+const ENTRANCE_EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
+const hiddenLeft = {
+  opacity: 0,
+  x: "-60vw",
+  y: 40,
+  z: -80,
+  rotateY: -16,
+  rotateZ: -25,
+  filter: "blur(14px)",
+};
+const hiddenRight = {
+  opacity: 0,
+  x: "60vw",
+  y: 40,
+  z: -80,
+  rotateY: 16,
+  rotateZ: 25,
+  filter: "blur(14px)",
+};
+const visibleState = {
+  opacity: 1,
+  x: 0,
+  y: 0,
+  z: 0,
+  rotateY: 0,
+  rotateZ: 0,
+  filter: "blur(0px)",
+};
+
+function entranceTransition(delay: number) {
+  return {
+    duration: 2.2,
+    ease: ENTRANCE_EASE,
+    delay,
+    filter: { duration: 1.8, delay: delay + 0.1 },
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AboutParallaxCard — 3D mouse-tracked tilt + glare
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TILT = 4;
+const SPRING = { stiffness: 180, damping: 22, mass: 0.5 };
+
+function AboutParallaxCard({
   card,
-  index,
+  fromLeft,
+  delay,
+  inView,
 }: {
-  card: typeof cards[0];
-  index: number;
+  card: (typeof cards)[0];
+  fromLeft: boolean;
+  delay: number;
+  inView: boolean;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
-  const { isRetro } = useRetro();
-  const pos = cardPositions[index];
-  const drift = driftKeyframes[index];
 
-  const hoverBorder = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
-  const hoverGlow = isRetro
-    ? '0 0 16px rgba(0,229,255,0.35), 0 0 40px rgba(0,229,255,0.12), var(--shadow-lg)'
-    : '0 0 20px rgba(244, 99, 30, 0.15), var(--shadow-lg)';
-  const hoverTitleColor = isRetro ? 'var(--retro-cyan)' : 'var(--color-accent)';
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+
+  const rotateX = useSpring(rawY, SPRING);
+  const rotateY = useSpring(rawX, SPRING);
+  const scale = useSpring(1, SPRING);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) / rect.width;
+      const cy = (e.clientY - rect.top) / rect.height;
+      rawX.set((cx - 0.5) * 2 * TILT);
+      rawY.set(-((cy - 0.5) * 2) * TILT);
+      glareX.set(cx * 100);
+      glareY.set(cy * 100);
+      glareOpacity.set(0.15);
+    },
+    [rawX, rawY, glareX, glareY, glareOpacity]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    rawX.set(0);
+    rawY.set(0);
+    scale.set(1);
+    glareOpacity.set(0);
+    setHovered(false);
+  }, [rawX, rawY, scale, glareOpacity]);
+
+  const handleMouseEnter = useCallback(() => {
+    scale.set(1.012);
+    setHovered(true);
+  }, [scale]);
+
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.5) 0%, transparent 65%)`
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{
-        opacity: 1,
-        scale: 1,
-        x: hovered ? 0 : drift.x,
-        y: hovered ? 0 : drift.y,
-      }}
-      transition={
-        hovered
-          ? { duration: 0.3, ease: EASING_PREMIUM }
-          : {
-              opacity: { duration: 0.6, delay: pos.delay },
-              scale: { duration: 0.6, delay: pos.delay },
-              x: { duration: 12 + index * 2, repeat: Infinity, ease: "easeInOut" },
-              y: { duration: 14 + index * 2, repeat: Infinity, ease: "easeInOut" },
-            }
-      }
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="absolute p-5 rounded-2xl cursor-default transition-shadow duration-300"
-      style={{
-        ...pos,
-        minWidth: '220px',
-        maxWidth: '260px',
-        transform: index === 6 ? 'translateX(-50%)' : undefined,
-        background: 'var(--color-surface)',
-        border: `1px solid ${hovered ? hoverBorder : 'var(--color-border)'}`,
-        boxShadow: hovered ? hoverGlow : 'var(--shadow-sm)',
-        zIndex: hovered ? 20 : 10,
-      }}
-    >
-      <h3
-        className="font-display font-bold text-sm mb-2"
-        style={{ color: hovered ? hoverTitleColor : 'var(--color-text-primary)' }}
+    <div className="flex-1" style={{ perspective: "800px" }}>
+      <motion.div
+        ref={cardRef}
+        initial={fromLeft ? hiddenLeft : hiddenRight}
+        animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
+        transition={entranceTransition(delay)}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        style={{
+          rotateX,
+          rotateY,
+          scale,
+          transformStyle: "preserve-3d",
+          position: "relative",
+          background: "var(--color-forest)",
+          border: `1px solid ${hovered ? "var(--color-accent)" : "rgba(255,255,255,0.1)"}`,
+          borderRadius: "16px",
+          boxShadow: hovered
+            ? "0 16px 48px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2)"
+            : "0 2px 12px rgba(0,0,0,0.15)",
+          transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+          cursor: "default",
+          height: "100%",
+        }}
+        className="p-6 flex flex-col justify-center"
       >
-        {card.title}
-      </h3>
-      <p
-        style={{ fontSize: '13px', lineHeight: '1.6', color: 'var(--color-text-secondary)', fontFamily: 'var(--font-syne)' }}
-      >
-        {card.body}
-      </p>
-    </motion.div>
+        <h3
+          className="font-display font-bold text-base mb-2"
+          style={{ color: "rgba(255,255,255,0.95)" }}
+        >
+          {card.title}
+        </h3>
+        <p
+          style={{
+            fontSize: "14px",
+            lineHeight: "1.7",
+            color: "rgba(255,255,255,0.70)",
+            fontFamily: "var(--font-syne)",
+          }}
+        >
+          {card.body}
+        </p>
+
+        {/* Glare overlay */}
+        <motion.div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "16px",
+            pointerEvents: "none",
+            opacity: glareOpacity,
+            background: glareBackground,
+            zIndex: 20,
+          }}
+        />
+      </motion.div>
+    </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// QuoteCard — venture-card style with 3D tilt + orange glare
+// ─────────────────────────────────────────────────────────────────────────────
+
+function QuoteCard({
+  text,
+  fromLeft,
+  delay,
+  inView,
+}: {
+  text: string;
+  fromLeft: boolean;
+  delay: number;
+  inView: boolean;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+
+  const rotateX = useSpring(rawY, SPRING);
+  const rotateY = useSpring(rawX, SPRING);
+  const scale = useSpring(1, SPRING);
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const el = cardRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cx = (e.clientX - rect.left) / rect.width;
+      const cy = (e.clientY - rect.top) / rect.height;
+      rawX.set((cx - 0.5) * 2 * TILT);
+      rawY.set(-((cy - 0.5) * 2) * TILT);
+      glareX.set(cx * 100);
+      glareY.set(cy * 100);
+    },
+    [rawX, rawY, glareX, glareY]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    rawX.set(0);
+    rawY.set(0);
+    scale.set(1);
+    glareOpacity.set(0);
+    setHovered(false);
+  }, [rawX, rawY, scale, glareOpacity]);
+
+  const handleMouseEnter = useCallback(() => {
+    scale.set(1.012);
+    glareOpacity.set(1);
+    setHovered(true);
+  }, [scale, glareOpacity]);
+
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(244,99,30,0.18) 0%, transparent 62%)`
+  );
+
+  return (
+    <div className="flex-1" style={{ perspective: "800px" }}>
+      <motion.div
+        ref={cardRef}
+        initial={fromLeft ? hiddenLeft : hiddenRight}
+        animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
+        transition={entranceTransition(delay)}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleMouseEnter}
+        className="flex items-center h-full"
+        style={{
+          rotateX,
+          rotateY,
+          scale,
+          transformStyle: "preserve-3d",
+          position: "relative",
+          background: "var(--color-base)",
+          border: `1px solid ${hovered ? "rgba(244,99,30,0.38)" : "rgba(0,0,0,0.08)"}`,
+          borderRadius: "16px",
+          overflow: "hidden",
+          boxShadow: hovered
+            ? "0 16px 48px rgba(0,0,0,0.28), 0 4px 12px rgba(0,0,0,0.14)"
+            : "none",
+          transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+          cursor: "default",
+        }}
+      >
+        {/* Orange cursor glare overlay */}
+        <motion.div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "16px",
+            pointerEvents: "none",
+            opacity: glareOpacity,
+            background: glareBackground,
+            zIndex: 10,
+          }}
+        />
+
+        <div className="relative p-6" style={{ zIndex: 11 }}>
+          <p
+            style={{
+              fontFamily: "var(--font-dm-serif)",
+              fontStyle: "italic",
+              fontSize: "clamp(18px, 2vw, 24px)",
+              color: "var(--color-text-primary)",
+              lineHeight: 1.5,
+            }}
+          >
+            &ldquo;{text}&rdquo;
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ParallaxImage — image with scroll-driven internal parallax
+// ─────────────────────────────────────────────────────────────────────────────
+
+function ParallaxImage({
+  src,
+  alt,
+  fromLeft,
+  delay,
+  inView,
+}: {
+  src: string;
+  alt: string;
+  fromLeft: boolean;
+  delay: number;
+  inView: boolean;
+}) {
+  const imgRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: imgRef,
+    offset: ["start end", "end start"],
+  });
+  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
+
+  return (
+    <div style={{ perspective: "800px" }}>
+      <motion.div
+        ref={imgRef}
+        initial={fromLeft ? hiddenLeft : hiddenRight}
+        animate={inView ? visibleState : fromLeft ? hiddenLeft : hiddenRight}
+        transition={entranceTransition(delay)}
+        className="relative overflow-hidden rounded-2xl h-full min-h-[420px] md:min-h-[720px]"
+        style={{
+          border: "1px solid var(--color-accent)",
+          boxShadow:
+            "0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)",
+        }}
+      >
+        <motion.div style={{ y: imgY }} className="absolute inset-0">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            className="object-cover object-top"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            style={{ transform: "scale(1.15)" }}
+          />
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CardImageRow — a single alternating row (cards + image)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function CardImageRow({
+  row,
+}: {
+  row: (typeof rows)[0];
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.15 });
+  const cardsFromLeft = row.cardsFirst;
+  const imageFromLeft = !row.cardsFirst;
+
+  const cardElements = (
+    <>
+      {row.cardIndices.map((ci, i) => (
+        <AboutParallaxCard
+          key={cards[ci].title}
+          card={cards[ci]}
+          fromLeft={cardsFromLeft}
+          delay={i * 0.1}
+          inView={inView}
+        />
+      ))}
+      {row.quote && (
+        <QuoteCard
+          text={row.quote}
+          fromLeft={cardsFromLeft}
+          delay={row.cardIndices.length * 0.1}
+          inView={inView}
+        />
+      )}
+    </>
+  );
+
+  const imageElement = (
+    <ParallaxImage
+      src={row.image.src}
+      alt={row.image.alt}
+      fromLeft={imageFromLeft}
+      delay={0.15}
+      inView={inView}
+    />
+  );
+
+  // Desktop: cardsFirst → cards col-1, image col-2. !cardsFirst → image col-1, cards col-2.
+  // Mobile: image always shows first (via order classes).
+  const cardsOrder = row.cardsFirst ? "order-2 lg:order-1" : "order-2 lg:order-2";
+  const imageOrder = row.cardsFirst ? "order-1 lg:order-2" : "order-1 lg:order-1";
+
+  return (
+    <div ref={ref} className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
+      <div className={`flex flex-col gap-5 ${cardsOrder}`}>
+        {cardElements}
+      </div>
+      <div className={imageOrder}>
+        {imageElement}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AboutPage
+// ─────────────────────────────────────────────────────────────────────────────
+
 export default function AboutPage() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const philRef = useRef<HTMLDivElement>(null);
+
+  // Page-level scroll for wordmark parallax
+  const { scrollYProgress: pageScroll } = useScroll({
+    target: pageRef,
+    offset: ["start start", "end start"],
+  });
+  const wordmarkY = useTransform(pageScroll, [0, 1], ["0%", "25%"]);
+
+  // Title parallax
+  const { scrollYProgress: titleScroll } = useScroll({
+    target: titleRef,
+    offset: ["start end", "end start"],
+  });
+  const titleY = useTransform(titleScroll, [0, 1], [0, -40]);
+
+  // Stats parallax
+  const { scrollYProgress: statsScroll } = useScroll({
+    target: statsRef,
+    offset: ["start end", "end start"],
+  });
+  const statsY = useTransform(statsScroll, [0, 1], [20, -20]);
+
+  // Philosophy parallax
+  const { scrollYProgress: philScroll } = useScroll({
+    target: philRef,
+    offset: ["start end", "end start"],
+  });
+  const philY = useTransform(philScroll, [0, 1], [60, 0]);
+
   return (
     <div
-      className="min-h-screen pt-24 pb-16"
-      style={{ background: 'var(--color-base)', position: 'relative' }}
+      ref={pageRef}
+      className="min-h-screen"
+      style={{ position: "relative", overflowX: "clip" }}
     >
-      {/* Ghost / watermark text */}
+      {/* "DEMORE" wordmark — positioned between heading and stats, overlapping both */}
       <div
         aria-hidden="true"
         style={{
-          position: 'absolute',
-          top: '60px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontFamily: 'var(--font-syne)',
-          fontWeight: 800,
-          fontSize: 'clamp(80px, 18vw, 220px)',
-          letterSpacing: '-0.04em',
-          color: 'var(--color-text-primary)',
-          opacity: 0.025,
-          pointerEvents: 'none',
-          userSelect: 'none',
-          zIndex: 0,
-          lineHeight: 1,
+          position: "absolute",
+          top: "clamp(320px, 42vh, 480px)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+          userSelect: "none",
+          zIndex: 2,
         }}
       >
-        NIC DEMORE
-      </div>
-
-      <div className="mx-auto max-w-7xl px-6" style={{ position: 'relative', zIndex: 1 }}>
-        {/* Back link */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-12"
-        >
-          <Link
-            href="/"
-            className="text-sm animated-underline transition-colors"
-            style={{ color: 'var(--color-text-secondary)' }}
-          >
-            &larr; Back to nicdemore.com
-          </Link>
-        </motion.div>
-
-        {/* Page title */}
-        <section className="pt-4 pb-12 text-center" style={{ background: 'var(--color-base)' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASING_PREMIUM }}
-            className="mb-16"
-          >
-            <p
-              className="font-mono text-xs tracking-widest uppercase mb-6"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)' }}
-            >
-              // About
-            </p>
-            <h1
-              data-neon-header="pink"
-              className="font-display font-extrabold leading-none mb-6 mx-auto"
-              style={{
-                fontSize: 'clamp(48px, 6vw, 84px)',
-                color: 'var(--color-text-primary)',
-                letterSpacing: '-0.035em',
-                maxWidth: '800px',
-              }}
-            >
-              Builder. Engineer.<br />
-              <span style={{ color: 'var(--color-accent)' }}>Founder.</span>
-            </h1>
-          </motion.div>
-        </section>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 px-2 border-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-          <CountUpStat end={10} suffix="+" label="Years Operating" />
-          <CountUpStat end={12} label="Ventures in 2026" />
-          <CountUpStat end={50} suffix="+" label="Team Members Led" />
-          <CountUpStat end={9} label="Skill Domains" />
-        </div>
-
-        {/* DESKTOP: floating cards around photo */}
-        <div className="hidden lg:block relative" style={{ minHeight: '900px' }}>
-          {/* Center photo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-            className="absolute left-1/2 top-[15%] -translate-x-1/2 w-[380px] z-[15]"
-          >
-            <div className="relative overflow-hidden" style={{ height: '440px' }}>
-              <Image
-                src="/nicdemore.jpg"
-                alt="Nic DeMore"
-                width={440}
-                height={440}
-                priority
-                style={{
-                  objectFit: 'cover',
-                  objectPosition: 'top',
-                  width: '100%',
-                  height: '440px',
-                  borderRadius: '2px',
-                  boxShadow: '0 0 0 1px var(--color-accent), 0 24px 60px rgba(0,0,0,0.15)',
-                }}
-              />
-            </div>
-          </motion.div>
-
-          {/* Floating cards */}
-          {cards.map((card, i) => (
-            <FloatingCard key={card.title} card={card} index={i} />
-          ))}
-        </div>
-
-        {/* MOBILE/TABLET: stacked grid */}
-        <div className="lg:hidden">
-          {/* Photo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: EASING_PREMIUM }}
-            className="mx-auto w-[240px] mb-12"
-          >
-            <div
-              className="relative rounded-2xl overflow-hidden"
-              style={{
-                aspectRatio: '3/4',
-                boxShadow: '0 0 30px rgba(244, 99, 30, 0.1), var(--shadow-lg)',
-                border: '2px solid var(--color-accent)',
-              }}
-            >
-              <Image
-                src="/nicdemore.jpg"
-                alt="Nic DeMore"
-                fill
-                priority
-                className="object-cover object-top"
-                sizes="240px"
-              />
-            </div>
-          </motion.div>
-
-          {/* Cards grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {cards.map((card, i) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: EASING_PREMIUM }}
-                className="p-5 rounded-2xl"
-                style={{
-                  background: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                }}
-              >
-                <h3
-                  className="font-display font-bold text-sm mb-2"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  className="text-xs leading-relaxed"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  {card.body}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Full-bleed portrait section */}
-        <div
-          className="relative mt-16 -mx-6"
           style={{
-            height: 'clamp(400px, 60vh, 700px)',
-            overflow: 'hidden',
+            y: wordmarkY,
+            fontFamily: "var(--font-syne)",
+            fontWeight: 800,
+            fontSize: "clamp(88px, 17.6vw, 220px)",
+            letterSpacing: "-0.04em",
+            color: "var(--color-text-primary)",
+            opacity: 0.054,
+            lineHeight: 1,
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
           }}
         >
-          <Image
-            src="/nicdemore.jpg"
-            alt="Nic DeMore"
-            fill
-            style={{ objectFit: 'cover', objectPosition: 'top center' }}
-            sizes="100vw"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(to bottom, transparent 40%, var(--color-base) 100%)',
-            }}
-          />
-        </div>
-
-        {/* Narrative section — below the floating cards area */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: EASING_PREMIUM }}
-          className="mt-24 mx-auto max-w-2xl"
-        >
-          <div className="h-px mb-12" style={{ background: 'var(--color-border)' }} />
-
-          <span
-            className="block text-xs tracking-widest uppercase mb-8"
-            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
-          >
-            // Philosophy
-          </span>
-
-          <div className="space-y-6" style={{ color: 'var(--color-text-secondary)', lineHeight: '1.8' }}>
-            <p className="text-base">
-              I believe the best work comes from people who genuinely care: not just about shipping, but about what the thing they&apos;re building does in the world. That&apos;s been my north star since I started my first business at 18, and it&apos;s the lens I bring to everything I build now.
-            </p>
-            <p className="text-base">
-              The mechanical engineering background wasn&apos;t just a degree. It was a way of seeing. Systems. Constraints. Forces in tension. You learn to ask: what is this thing actually doing, and will it hold? That question applies to code, to organizations, to strategy, to life.
-            </p>
-            <p className="text-base">
-              Ten years running Margle taught me that building a business is a deeply human project. You can have the best strategy in the world, but if you can&apos;t build a team that trusts each other, none of it works. I learned operations, finance, client management, and leadership the hard way: by doing all of it, at the same time, under real pressure.
-            </p>
-            <p className="text-base">
-              I&apos;ve never been interested in doing things halfway. Whether I&apos;m launching a venture, helping a client grow, or exploring a new city with a camera, I show up with intention. Behind every project is a belief in doing good work with good people, and leaving things better than I found them.
-            </p>
-            <p className="text-base">
-              Now I&apos;m building AI-native infrastructure and purpose-driven ventures. Not because it&apos;s trendy; because I genuinely believe this is the moment where the tools exist to do good work at a scale that wasn&apos;t possible before. That excites me every day.
-            </p>
-          </div>
-
-          <div className="mt-12 pt-8" style={{ borderTop: '1px solid var(--color-border)' }}>
-            <p
-              className="text-sm"
-              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-dm-serif)', fontStyle: 'italic', fontSize: '16px' }}
-            >
-              &ldquo;Always do your best. Leave things better than you found them. It really is a beautiful life.&rdquo;
-            </p>
-            <p
-              className="text-xs mt-3"
-              style={{ color: 'var(--color-text-light)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px' }}
-            >
-              — Personal operating system, circa always
-            </p>
-          </div>
+          DEMORE
         </motion.div>
       </div>
+
+      {/* Opaque header area — masks the grid glow above the stats */}
+      <div
+        className="pt-24"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          background: "var(--color-base)",
+        }}
+      >
+        <div className="mx-auto max-w-7xl px-6" style={{ position: "relative", zIndex: 3 }}>
+          {/* Page title — parallax drift */}
+          <motion.section
+            ref={titleRef}
+            style={{ y: titleY }}
+            className="pt-4 pb-4 text-center"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASING_PREMIUM }}
+              className="mb-6"
+            >
+              <p
+                className="font-mono text-xs tracking-widest uppercase mb-6"
+                style={{
+                  color: "var(--color-accent)",
+                  fontFamily: "var(--font-jetbrains)",
+                  fontSize: "11px",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                // About
+              </p>
+              <h1
+                data-neon-header="pink"
+                className="font-display font-extrabold leading-none mb-6 mx-auto"
+                style={{
+                  fontSize: "clamp(48px, 6vw, 84px)",
+                  color: "var(--color-text-primary)",
+                  letterSpacing: "-0.035em",
+                  maxWidth: "800px",
+                }}
+              >
+                Builder. Engineer.
+                <br />
+                <span style={{ color: "var(--color-accent)" }}>Founder.</span>
+              </h1>
+            </motion.div>
+          </motion.section>
+
+          {/* Stats row — parallax drift */}
+          <motion.div ref={statsRef} style={{ y: statsY }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 py-10 px-2">
+              <CountUpStat end={10} suffix="+" label="Years Operating" />
+              <CountUpStat end={12} label="Ventures in 2026" />
+              <CountUpStat end={50} suffix="+" label="Team Members Led" />
+              <CountUpStat end={9} label="Skill Domains" />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      <div
+        className="mx-auto max-w-7xl px-6"
+        style={{ position: "relative", zIndex: 1 }}
+      >
+        {/* Alternating card + image rows */}
+        <div className="mt-12 space-y-10 mx-auto max-w-6xl">
+          {rows.map((row, i) => (
+            <CardImageRow key={i} row={row} />
+          ))}
+        </div>
+      </div>
+
+      {/* Philosophy section — full-width forest-green, flush with footer */}
+      <motion.div ref={philRef} style={{ y: philY }} className="mt-12">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.8, ease: EASING_PREMIUM }}
+          className="w-full px-5 md:px-12 lg:px-16 py-14 md:py-20"
+          style={{
+            background: "var(--color-forest)",
+            borderRadius: "24px 24px 0 0",
+            boxShadow:
+              "0 24px 64px rgba(0,0,0,0.14), 0 8px 24px rgba(0,0,0,0.08)",
+            overflow: "hidden",
+          }}
+        >
+            <div className="mx-auto max-w-4xl">
+              <span
+                className="block text-xs tracking-widest uppercase mb-10"
+                style={{
+                  color: "var(--color-accent)",
+                  fontFamily: "var(--font-jetbrains)",
+                  fontSize: "11px",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                // Philosophy
+              </span>
+
+              <div className="lg:grid lg:grid-cols-2 lg:gap-12">
+                <div className="space-y-6">
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{ duration: 0.5, ease: EASING_PREMIUM }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    I believe the best work comes from people who genuinely care
+                    — not just about shipping, but about what the thing
+                    they&apos;re building does in the world. That&apos;s been my
+                    north star since I started my first business at 18, and
+                    it&apos;s the lens I bring to everything I build now.
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.08,
+                      ease: EASING_PREMIUM,
+                    }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    The mechanical engineering background wasn&apos;t just a
+                    degree. It was a way of seeing. Systems. Constraints. Forces
+                    in tension. You learn to ask: what is this thing actually
+                    doing, and will it hold? That question applies to code, to
+                    organizations, to strategy, to life.
+                  </motion.p>
+                </div>
+                <div className="space-y-6 mt-6 lg:mt-0">
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.16,
+                      ease: EASING_PREMIUM,
+                    }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    Nine years running Margle taught me that building a business
+                    is a deeply human project. You can have the best strategy in
+                    the world — but if you can&apos;t build a team that trusts
+                    each other, none of it works. I learned operations, finance,
+                    client management, and leadership the hard way: by doing all
+                    of it, at the same time, under real pressure.
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={viewportOnce}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.24,
+                      ease: EASING_PREMIUM,
+                    }}
+                    className="text-lg leading-relaxed"
+                    style={{ color: "rgba(255,255,255,0.88)" }}
+                  >
+                    Now I&apos;m building AI-native infrastructure and
+                    purpose-driven ventures. Not because it&apos;s trendy —
+                    because I genuinely believe this is the moment where the
+                    tools exist to do good work at a scale that wasn&apos;t
+                    possible before. That excites me every day.
+                  </motion.p>
+                </div>
+              </div>
+
+              <div
+                className="mt-12 pt-8"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.12)" }}
+              >
+                <p
+                  style={{
+                    color: "rgba(255,255,255,0.75)",
+                    fontFamily: "var(--font-dm-serif)",
+                    fontStyle: "italic",
+                    fontSize: "18px",
+                  }}
+                >
+                  &ldquo;Always do your best. Leave things better than you found
+                  them. It really is a beautiful life.&rdquo;
+                </p>
+                <p
+                  className="mt-3"
+                  style={{
+                    color: "rgba(255,255,255,0.4)",
+                    fontFamily: "var(--font-jetbrains)",
+                    fontSize: "11px",
+                  }}
+                >
+                  — Personal operating system, circa always
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
     </div>
   );
 }

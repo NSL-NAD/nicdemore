@@ -108,10 +108,12 @@ function SpineDot({
   dotRef,
   threshold,
   sectionProgress,
+  isRetro,
 }: {
   dotRef?: (el: HTMLDivElement | null) => void;
   threshold: number;
   sectionProgress: MotionValue<number>;
+  isRetro: boolean;
 }) {
   const [activated, setActivated] = useState(false);
 
@@ -137,16 +139,24 @@ function SpineDot({
       animate={
         activated
           ? {
-              backgroundColor: "#F4631E",
-              boxShadow: [
-                "0 0 0 0 rgba(244,99,30,0.65)",
-                "0 0 0 12px rgba(244,99,30,0)",
-                "0 0 0 0 rgba(244,99,30,0)",
-              ],
+              backgroundColor: isRetro ? "#0FEC9F" : "#F4631E",
+              boxShadow: isRetro
+                ? [
+                    "0 0 0 0 rgba(15,236,159,0.65)",
+                    "0 0 0 12px rgba(15,236,159,0)",
+                    "0 0 0 0 rgba(15,236,159,0)",
+                  ]
+                : [
+                    "0 0 0 0 rgba(244,99,30,0.65)",
+                    "0 0 0 12px rgba(244,99,30,0)",
+                    "0 0 0 0 rgba(244,99,30,0)",
+                  ],
             }
           : {
               backgroundColor: "rgba(160,155,148,0.45)",
-              boxShadow: "0 0 0 0 rgba(244,99,30,0)",
+              boxShadow: isRetro
+                ? "0 0 0 0 rgba(15,236,159,0)"
+                : "0 0 0 0 rgba(244,99,30,0)",
             }
       }
       transition={
@@ -258,7 +268,7 @@ function CardContent({
 
   return (
     <motion.div
-      className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)]"
+      className="pb-10 p-3 sm:p-4 max-w-[calc(100vw-2rem)] retro-card"
       style={{
         background: "var(--color-forest)",
         backdropFilter: "none",
@@ -278,7 +288,7 @@ function CardContent({
         <span
           className="inline-block font-mono tracking-wide px-2 py-0.5 rounded-sm"
           style={{
-            background: "var(--color-accent)",
+            background: "#F4631E",
             color: "#fff",
             fontFamily: "var(--font-jetbrains)",
             fontSize: "10px",
@@ -373,6 +383,7 @@ function TimelineCard({
   setDotRef,
   dotThreshold,
   sectionProgress,
+  isRetro,
 }: {
   item: TimelineEntry;
   index: number;
@@ -381,6 +392,7 @@ function TimelineCard({
   setDotRef: (el: HTMLDivElement | null) => void;
   dotThreshold: number;
   sectionProgress: MotionValue<number>;
+  isRetro: boolean;
 }) {
   // ref lives on the static grid row — used for scroll tracking + IntersectionObserver
   const ref = useRef<HTMLDivElement>(null);
@@ -446,6 +458,7 @@ function TimelineCard({
           dotRef={setDotRef}
           threshold={dotThreshold}
           sectionProgress={sectionProgress}
+          isRetro={isRetro}
         />
 
         {/* Bottom connector — transparent for last card */}
@@ -478,11 +491,12 @@ function TimelineCard({
 
       {/* MOBILE LAYOUT */}
       <div className="md:hidden pl-8 relative">
-        <div className="absolute left-0 top-1.5">
+        <div className="absolute top-3" style={{ left: '2px' }}>
           <SpineDot
             dotRef={undefined}
             threshold={dotThreshold}
             sectionProgress={sectionProgress}
+            isRetro={isRetro}
           />
         </div>
         <CardContent item={item} lineWidth={lineWidth} align="left" />
@@ -604,9 +618,9 @@ export function BriefHistory() {
       <span className="grid-marker" style={{ bottom: "24px", right: "16px", position: "absolute", zIndex: 1 }}>+</span>
 
       {/* ── Section header — outside overflow-x-hidden so Y transform isn't clipped ── */}
-      <motion.div className="relative px-12 mb-8" style={{ y: headerY, zIndex: 1 }}>
+      <motion.div className="relative px-5 md:px-12 mb-8" style={{ y: headerY, zIndex: 1 }}>
           <motion.span
-            className="block text-xs tracking-widest uppercase mb-4"
+            className="block text-xs tracking-widest uppercase mb-4 section-label"
             style={{
               color: "var(--color-accent)",
               fontFamily: "var(--font-jetbrains)",
@@ -623,7 +637,6 @@ export function BriefHistory() {
               fontSize: "clamp(36px, 4vw, 60px)",
               color: "var(--color-text-primary)",
               letterSpacing: "-0.03em",
-              marginLeft: "-12px",
             }}
           >
             How I Got Here
@@ -645,7 +658,7 @@ export function BriefHistory() {
       <div className="relative pt-4" style={{ overflowX: 'clip', zIndex: 3 }}>
 
         {/* ── Timeline — constrained + centered ── */}
-        <div className="mx-auto max-w-6xl px-12">
+        <div className="mx-auto max-w-6xl px-5 md:px-12">
           <div className="relative mb-8" ref={timelineRef}>
 
             {/* Orange fill overlay — bounded from first dot center to last dot center */}
@@ -685,7 +698,7 @@ export function BriefHistory() {
               />
             </div>
 
-            <div className="space-y-0">
+            <div className="space-y-4 md:space-y-0">
               {timeline.map((item, i) => (
                 <TimelineCard
                   key={item.year + item.org}
@@ -696,6 +709,7 @@ export function BriefHistory() {
                   setDotRef={(el) => { dotEls.current[i] = el; }}
                   dotThreshold={dotThresholds[i]}
                   sectionProgress={sectionProgress}
+                  isRetro={isRetro}
                 />
               ))}
             </div>

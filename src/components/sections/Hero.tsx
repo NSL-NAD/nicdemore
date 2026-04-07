@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, MotionValue } from "framer-motion";
 import { EASING_PREMIUM } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -152,12 +152,11 @@ function HeroVideoPlayer() {
     <div
       className="relative w-full group film-grain"
       style={{
-        background: 'var(--color-surface)',
+        background: '#000',
         boxShadow: '0 0 0 1px var(--color-accent), 0 38px 100px rgba(0,0,0,0.32), 0 12px 38px rgba(0,0,0,0.19)',
         borderRadius: '16px',
         overflow: 'hidden',
-        height: '100%',
-        minHeight: '460px',
+        aspectRatio: '16 / 9',
       }}
     >
       <video
@@ -273,6 +272,45 @@ export function Hero() {
   // H2 + card chase scroll at same pace as H1 — all move as a unit
   const h2Y = useTransform(scrollYProgress, [0, 1], [0, 262]);
 
+  // 3D tilt for frosted hero card
+  const heroCardRef = useRef<HTMLDivElement>(null);
+  const TILT = 4;
+  const CARD_SPRING = { stiffness: 180, damping: 22, mass: 0.5 };
+  const tiltRawX = useMotionValue(0);
+  const tiltRawY = useMotionValue(0);
+  const tiltRotateX = useSpring(tiltRawY, CARD_SPRING);
+  const tiltRotateY = useSpring(tiltRawX, CARD_SPRING);
+  const tiltScale = useSpring(1, CARD_SPRING);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+  const glareBackground = useTransform(
+    [glareX, glareY] as MotionValue<number>[],
+    ([x, y]: number[]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(244,99,30,0.18) 0%, transparent 62%)`
+  );
+  const handleCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = heroCardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width;
+    const cy = (e.clientY - rect.top) / rect.height;
+    tiltRawX.set((cx - 0.5) * 2 * TILT);
+    tiltRawY.set(-(cy - 0.5) * 2 * TILT);
+    glareX.set(cx * 100);
+    glareY.set(cy * 100);
+  }, [tiltRawX, tiltRawY, glareX, glareY]);
+  const handleCardMouseEnter = useCallback(() => {
+    glareOpacity.set(1);
+    tiltScale.set(1.012);
+  }, [glareOpacity, tiltScale]);
+  const handleCardMouseLeave = useCallback(() => {
+    tiltRawX.set(0);
+    tiltRawY.set(0);
+    glareOpacity.set(0);
+    tiltScale.set(1);
+  }, [tiltRawX, tiltRawY, glareOpacity, tiltScale]);
+
   return (
     <section
       ref={sectionRef}
@@ -281,6 +319,11 @@ export function Hero() {
       /* Reduced so green Manifesto is visible on load */
       style={{ minHeight: '80vh' }}
     >
+      {/* Scrim — softens grid visibility */}
+      <div
+        className="absolute inset-0 pointer-events-none grid-scrim"
+        style={{ zIndex: 0 }}
+      />
       <motion.div
         style={{
           opacity: heroOpacity,
@@ -288,14 +331,14 @@ export function Hero() {
           perspective: 1200,
           perspectiveOrigin: '50% 40%',
         }}
-        className="relative w-full mx-auto px-12 pt-24 pb-8 md:pt-28 md:pb-8"
+        className="relative w-full mx-auto px-5 md:px-12 pt-24 pb-8 md:pt-28 md:pb-8 z-[1]"
       >
         {/* MOBILE LAYOUT */}
         <div className="md:hidden flex flex-col gap-6" style={{ transformStyle: 'preserve-3d' }}>
           <div>
             <motion.p
               {...drop3D(T.overview.delay, T.overview.dur, -200, -60, 400, 6)}
-              className="font-mono text-xs tracking-widest uppercase mb-2"
+              className="font-mono text-xs tracking-widest uppercase mb-2 section-label"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '10px', transformStyle: 'preserve-3d' }}
             >
               // Overview
@@ -341,7 +384,7 @@ export function Hero() {
 
             <motion.div
               {...drop3DHeavy(T.card.delay, T.card.dur, -180, 200, 700)}
-              className="frosted-card rounded-xl p-5 mb-5 inline-block"
+              className="frosted-card rounded-xl p-5 mb-5 inline-block retro-card"
               style={{ boxShadow: '0 25px 75px rgba(0,0,0,0.15), 0 10px 30px rgba(0,0,0,0.1)', transformStyle: 'preserve-3d' }}
             >
               <motion.p
@@ -386,7 +429,7 @@ export function Hero() {
           {/* // Overview label */}
           <motion.p
             {...drop3D(T.overview.delay, T.overview.dur, -300, -40, 400, 5)}
-            className="text-xs tracking-widest uppercase mb-2"
+            className="text-xs tracking-widest uppercase mb-2 section-label"
             style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-jetbrains)', fontSize: '11px', transformStyle: 'preserve-3d' }}
           >
             // Overview
@@ -446,17 +489,39 @@ export function Hero() {
                   ))}
                 </motion.div>
 
-                {/* Frosted card — from SW, reduced Y offset to avoid snap */}
+                {/* Frosted card — 3D tilt on hover */}
                 <motion.div
                   {...drop3DHeavy(T.card.delay, T.card.dur, -300, 150, 700)}
-                  className="frosted-card rounded-xl p-6 inline-block"
+                  style={{ perspective: '800px', y: h2Y, maxWidth: '440px', display: 'inline-block' }}
+                >
+                <motion.div
+                  ref={heroCardRef}
+                  onMouseMove={handleCardMouseMove}
+                  onMouseEnter={handleCardMouseEnter}
+                  onMouseLeave={handleCardMouseLeave}
+                  className="frosted-card rounded-xl p-6 retro-card"
                   style={{
-                    boxShadow: '0 32px 88px rgba(0,0,0,0.18), 0 13px 38px rgba(0,0,0,0.13)',
-                    maxWidth: '440px',
+                    rotateX: tiltRotateX,
+                    rotateY: tiltRotateY,
+                    scale: tiltScale,
                     transformStyle: 'preserve-3d',
-                    y: h2Y,
+                    boxShadow: '0 32px 88px rgba(0,0,0,0.18), 0 13px 38px rgba(0,0,0,0.13)',
+                    position: 'relative',
                   }}
                 >
+                  {/* Cursor glare overlay */}
+                  <motion.div
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '12px',
+                      pointerEvents: 'none',
+                      opacity: glareOpacity,
+                      background: glareBackground,
+                      zIndex: 10,
+                    }}
+                  />
                   <motion.p
                     {...drop3D(T.subhead.delay, T.subhead.dur, -150, 0, 300, 4)}
                     className="text-lg leading-relaxed mb-6"
@@ -499,6 +564,7 @@ export function Hero() {
                       <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                     </motion.a>
                   </div>
+                </motion.div>
                 </motion.div>
               </motion.div>
 

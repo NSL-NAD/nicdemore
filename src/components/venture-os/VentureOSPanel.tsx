@@ -49,9 +49,12 @@ export function VentureOSPanel({ onClose }: Props) {
       transition={{ type: 'spring', stiffness: 280, damping: 28 }}
       style={{
         width: '280px',
+        maxHeight: 'calc(100vh - 100px)',
+        overflowY: 'auto',
         background: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
         boxShadow: 'var(--shadow-lg)',
+        borderRadius: '12px',
       }}
     >
       {/* Header — two rows in one bordered box */}

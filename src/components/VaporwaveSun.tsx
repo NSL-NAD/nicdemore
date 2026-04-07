@@ -8,80 +8,88 @@ export function VaporwaveSun() {
   if (!isRetro) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.85, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.85 }}
-      transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+    <div
       className="pointer-events-none select-none"
       aria-hidden="true"
       style={{
-        position: 'fixed',
+        position: 'absolute',
+        bottom: 0,
         left: '50%',
-        bottom: '0',
         transform: 'translateX(-50%)',
-        zIndex: 0,
-        width: 'clamp(200px, 30vw, 400px)',
-        height: 'clamp(100px, 15vw, 200px)',
-        overflow: 'hidden',
+        width: '520px',
+        height: '260px',
+        zIndex: 1,
       }}
     >
-      <svg
-        viewBox="0 0 280 140"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ width: '100%', height: '100%' }}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+      style={{ width: '100%', height: '100%', position: 'relative' }}
+    >
+      {/* Sun atmospheric glow */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '-60px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '800px',
+          height: '400px',
+          borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(255,45,123,0.18) 0%, rgba(255,107,45,0.08) 40%, transparent 70%)',
+          pointerEvents: 'none',
+          zIndex: 0,
+          filter: 'blur(20px)',
+        }}
+      />
+
+      {/* Synthwave sun — CSS semicircle matching blue-hut */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '520px',
+          height: '260px',
+          borderRadius: '520px 520px 0 0',
+          zIndex: 1,
+          background: 'linear-gradient(180deg, #FF2D7B 0%, #FF6B2D 45%, #FFD600 100%)',
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          boxShadow: `
+            0 0 60px rgba(255, 45, 123, 0.6),
+            0 0 120px rgba(255, 45, 123, 0.35),
+            0 0 200px rgba(255, 107, 45, 0.2),
+            0 0 300px rgba(255, 214, 0, 0.1)
+          `,
+        }}
       >
-        <defs>
-          <radialGradient id="sun-grad" cx="50%" cy="100%" r="100%">
-            <stop offset="0%" stopColor="#FF2D78" stopOpacity="0.9" />
-            <stop offset="35%" stopColor="#FF6B00" stopOpacity="0.8" />
-            <stop offset="65%" stopColor="#7B2FBE" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#0A0A14" stopOpacity="0.3" />
-          </radialGradient>
-          <filter id="sun-glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Sun semicircle */}
-        <path
-          d="M 0 140 A 140 140 0 0 1 280 140 Z"
-          fill="url(#sun-grad)"
-          filter="url(#sun-glow)"
+        {/* CRT scan lines */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'repeating-linear-gradient(0deg, transparent 0px, transparent 10px, rgba(11,11,26,0.55) 10px, rgba(11,11,26,0.55) 13px)',
+          }}
         />
-
-        {/* Horizontal lines creating the retro stripe effect */}
-        {[1, 2, 3, 4, 5, 6, 7].map((n) => {
-          const y = 140 - n * (140 / 8);
-          const xOffset = Math.sqrt(Math.max(0, 140 * 140 - (140 - y) * (140 - y)));
-          return (
-            <line
-              key={n}
-              x1={140 - xOffset}
-              y1={y + 2}
-              x2={140 + xOffset}
-              y2={y + 2}
-              stroke="#0A0A14"
-              strokeWidth={n < 3 ? 4 : n < 6 ? 3 : 2}
-              opacity={0.7}
-            />
-          );
-        })}
-
-        {/* Outer glow ring */}
-        <path
-          d="M 10 140 A 130 130 0 0 1 270 140"
-          fill="none"
-          stroke="#FF2D78"
-          strokeWidth="1"
-          opacity="0.4"
-          filter="url(#sun-glow)"
+        {/* Inner glow at top of sun */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '80%',
+            height: '60%',
+            background: 'radial-gradient(ellipse, rgba(255,255,200,0.18) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
         />
-      </svg>
+      </div>
     </motion.div>
+    </div>
   );
 }

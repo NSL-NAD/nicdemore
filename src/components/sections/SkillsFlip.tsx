@@ -189,8 +189,11 @@ function SkillTagBack({ skill, index }: { skill: string; index: number }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // FlipCard — forest green front + neutral back, 16px radius, smooth flip
 // ─────────────────────────────────────────────────────────────────────────────
-function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: number }) {
-  const [flipped, setFlipped] = useState(false);
+function FlipCard({ group, index, flipped, onFlip }: { group: typeof skillGroups[0]; index: number; flipped: boolean; onFlip: () => void }) {
+  const [hoverFlipped, setHoverFlipped] = useState(false);
+
+  // Desktop uses hover (independent per card), mobile uses tap (managed by parent)
+  const isFlipped = hoverFlipped || flipped;
 
   return (
     <motion.div
@@ -198,11 +201,11 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6, delay: index * 0.07, ease: [0.23, 1, 0.32, 1] }}
-      onClick={() => setFlipped((f) => !f)}
-      onMouseEnter={() => setFlipped(true)}
-      onMouseLeave={() => setFlipped(false)}
-      className="cursor-pointer"
-      style={{ perspective: "1200px", height: "360px" }}
+      onClick={onFlip}
+      onMouseEnter={() => setHoverFlipped(true)}
+      onMouseLeave={() => setHoverFlipped(false)}
+      className="cursor-pointer h-[240px] sm:h-[360px]"
+      style={{ perspective: "1200px" }}
       whileHover={{ y: -6 }}
     >
       <div
@@ -211,12 +214,13 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
           width: "100%",
           height: "100%",
           transformStyle: "preserve-3d",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+          transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
           transition: "transform 0.82s cubic-bezier(0.23, 1, 0.32, 1)",
         }}
       >
         {/* ── FRONT — deep forest green, icon + display label + skill count ── */}
         <div
+          className="retro-card"
           style={{
             position: "absolute",
             inset: 0,
@@ -269,10 +273,26 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
           >
             {group.skills.length} skills
           </span>
+
+          {/* Mobile flip hint */}
+          <span
+            className="sm:hidden"
+            style={{
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: "8px",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.4)",
+              marginTop: "4px",
+            }}
+          >
+            Tap to flip ↻
+          </span>
         </div>
 
         {/* ── BACK — neutral/cream, prominent orange header + BriefHistory-style tags ── */}
         <div
+          className="retro-card"
           style={{
             position: "absolute",
             inset: 0,
@@ -323,7 +343,7 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
 
           {/* Skill tags — pinned to bottom, remount on flip to re-fire stagger */}
           <div
-            key={flipped ? "back" : "front"}
+            key={isFlipped ? "back" : "front"}
             style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
           >
             {group.skills.map((skill, i) => (
@@ -340,10 +360,12 @@ function FlipCard({ group, index }: { group: typeof skillGroups[0]; index: numbe
 // SkillsFlip — section with full-width header (px-12) matching other sections
 // ─────────────────────────────────────────────────────────────────────────────
 export function SkillsFlip() {
+  const [activeFlip, setActiveFlip] = useState<number | null>(null);
+
   return (
     <section
       id="skills"
-      className="pt-12 sm:pt-16 pb-10 sm:pb-12"
+      className="pt-12 sm:pt-16 pb-2 sm:pb-4"
       style={{ background: "transparent", position: "relative" }}
     >
       {/* Scrim */}
@@ -354,13 +376,13 @@ export function SkillsFlip() {
 
       <div className="relative" style={{ zIndex: 1 }}>
         {/* ── Section header — full-width px-12, matching all other sections ── */}
-        <div className="px-12 mb-14">
+        <div className="px-5 md:px-12 mb-14">
           <motion.span
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
             transition={{ duration: 0.5, ease: EASING_PREMIUM }}
-            className="block text-xs tracking-widest uppercase mb-4"
+            className="block text-xs tracking-widest uppercase mb-4 section-label"
             style={{
               color: "var(--color-accent)",
               fontFamily: "var(--font-jetbrains)",
@@ -381,7 +403,6 @@ export function SkillsFlip() {
               fontSize: "clamp(36px, 4vw, 60px)",
               color: "var(--color-text-primary)",
               letterSpacing: "-0.03em",
-              marginLeft: "-12px",
             }}
           >
             What I Bring
@@ -405,10 +426,16 @@ export function SkillsFlip() {
         </div>
 
         {/* ── Cards grid — constrained to max-w-6xl ── */}
-        <div className="mx-auto max-w-6xl px-12">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+        <div className="mx-auto max-w-6xl px-5 md:px-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {skillGroups.map((group, i) => (
-              <FlipCard key={group.label} group={group} index={i} />
+              <FlipCard
+                key={group.label}
+                group={group}
+                index={i}
+                flipped={activeFlip === i}
+                onFlip={() => setActiveFlip((prev) => (prev === i ? null : i))}
+              />
             ))}
           </div>
         </div>

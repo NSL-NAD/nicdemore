@@ -179,7 +179,7 @@ export function Navigation() {
                   onClick={(e) => handleNavClick(e, section.id)}
                   className={`relative px-3 py-2 text-xs tracking-widest uppercase transition-all duration-200 nav-link-hover ${
                     isActive
-                      ? "text-primary font-bold"
+                      ? "text-primary font-bold nav-active"
                       : "text-muted font-medium"
                   }`}
                   style={{
@@ -269,46 +269,59 @@ export function Navigation() {
           </motion.div>
         </nav>
 
-        {/* Mobile overlay */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease }}
-              className="fixed inset-0 top-16 backdrop-blur-md md:hidden z-30"
-              style={{ background: 'color-mix(in srgb, var(--color-base) 96%, transparent)' }}
-              onClick={() => setMobileOpen(false)}
-            >
-              <nav className="flex flex-col items-center justify-center h-full gap-8" onClick={e => e.stopPropagation()}>
-                {sections.map((section) => {
-                  const href = isHome ? `#${section.id}` : `/#${section.id}`;
-                  return (
-                    <a
-                      key={section.id}
-                      href={href}
-                      onClick={(e) => handleNavClick(e, section.id)}
-                      className="font-display text-2xl font-bold transition-colors hover:text-accent"
-                      style={{ color: 'var(--color-text-primary)' }}
-                    >
-                      {section.label}
-                    </a>
-                  );
-                })}
-                <Link
-                  href="/about"
-                  onClick={() => setMobileOpen(false)}
-                  className="font-display text-2xl font-bold transition-colors hover:text-accent"
-                  style={{ color: 'var(--color-text-primary)' }}
-                >
-                  About
-                </Link>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </header>
+
+      {/* Mobile overlay — outside header to escape its stacking context */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease }}
+            className="fixed inset-0 md:hidden"
+            style={{ zIndex: 9999, background: 'var(--color-base)' }}
+            onClick={() => setMobileOpen(false)}
+          >
+            {/* Close button */}
+            <div className="flex items-center justify-end h-16 px-5">
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="flex flex-col justify-center gap-2 p-2"
+                style={{ minWidth: '44px', minHeight: '44px' }}
+              >
+                <span className="w-5 h-0.5 block rotate-45 translate-y-[5px]" style={{ background: 'var(--color-text-primary)' }} />
+                <span className="w-5 h-0.5 block -rotate-45 -translate-y-[5px]" style={{ background: 'var(--color-text-primary)' }} />
+              </button>
+            </div>
+            <nav className="flex flex-col items-center justify-center gap-8" style={{ height: 'calc(100% - 4rem)' }} onClick={e => e.stopPropagation()}>
+              {sections.map((section) => {
+                const href = isHome ? `#${section.id}` : `/#${section.id}`;
+                return (
+                  <a
+                    key={section.id}
+                    href={href}
+                    onClick={(e) => handleNavClick(e, section.id)}
+                    className="font-display text-3xl font-extrabold transition-colors hover:text-accent"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
+                    {section.label}
+                  </a>
+                );
+              })}
+              <Link
+                href="/about"
+                onClick={() => setMobileOpen(false)}
+                className="font-display text-3xl font-extrabold transition-colors hover:text-accent"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                About
+              </Link>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -53,7 +53,7 @@ export function Giveable() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={viewportOnce}
               transition={{ duration: 0.5, ease: EASING_SMOOTH }}
-              className="block text-xs tracking-widest uppercase mb-5"
+              className="block text-xs tracking-widest uppercase mb-5 section-label"
               style={{
                 color: 'var(--color-accent)',
                 fontFamily: 'var(--font-jetbrains)',
@@ -152,7 +152,7 @@ export function Giveable() {
               Gift-giving becomes a vehicle for doing good, without the friction of a donation ask.
               Every transaction generates measurable impact through the brands&apos; built-in giving models.
             </p>
-            <div className="flex items-center gap-8 pt-2">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-2">
               {[
                 { stat: '100%', label: 'Impact-driven brands' },
                 { stat: '20+', label: 'Causes supported' },
@@ -203,7 +203,7 @@ export function Giveable() {
                 borderColor: 'rgba(244,99,30,0.38)',
                 boxShadow: '0 0 28px rgba(244,99,30,0.22)',
               }}
-              className="p-5 flex flex-col gap-3 cursor-default"
+              className="p-5 flex flex-col gap-3 cursor-default retro-card"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(242,237,229,0.09)',

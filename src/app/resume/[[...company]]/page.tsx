@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import Link from "next/link";
+
 import { ease, viewportOnce } from "@/lib/motion";
 import { DownloadPDFButton } from "@/components/DownloadPDFButton";
 
@@ -114,21 +114,20 @@ export default function ResumePage() {
   const letter = companySlug ? coverLetters[companySlug] : null;
 
   return (
-    <div className="pt-24 pb-16">
-      <div className="mx-auto max-w-3xl px-6">
-        {/* Back link + Download */}
+    <div className="pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-16 relative">
+      {/* Scrim to mute background grid behind text */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "rgba(250, 249, 246, 0.82)", zIndex: 0 }}
+      />
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 relative" style={{ zIndex: 1 }}>
+        {/* Download button */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease }}
-          className="mb-12 flex items-center justify-between gap-4 flex-wrap no-print"
+          className="mb-12 flex items-center justify-end no-print"
         >
-          <Link
-            href="/"
-            className="text-sm text-ink-muted hover:text-ink animated-underline transition-colors"
-          >
-            &larr; Back to nicdemore.com
-          </Link>
           <DownloadPDFButton
             label={letter ? `Download Cover Letter: ${letter.company}` : "Download Resume as PDF"}
             filename={letter ? `nic-demore-cover-letter-${companySlug}` : "nic-demore-resume"}
@@ -164,7 +163,7 @@ export default function ResumePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease, delay: 0.1 }}
-            className="mb-20 bg-white rounded-lg border border-line p-8 sm:p-10"
+            className="mb-12 sm:mb-16 md:mb-20 bg-white rounded-lg border border-line p-5 sm:p-8 md:p-10"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-1 h-8 bg-accent rounded-full" />
@@ -191,14 +190,14 @@ export default function ResumePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.6, ease }}
-          className="mb-20 resume-section"
+          className="mb-12 sm:mb-16 md:mb-20 resume-section"
         >
           <h2 className="font-display text-2xl text-ink mb-10">Experience</h2>
 
           <div className="relative">
             <div className="absolute left-3 top-2 bottom-2 w-px bg-line" />
 
-            <div className="space-y-10">
+            <div className="space-y-6 sm:space-y-8 md:space-y-10">
               {timeline.map((entry, i) => (
                 <motion.div
                   key={entry.org}
@@ -233,7 +232,7 @@ export default function ResumePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={viewportOnce}
           transition={{ duration: 0.6, ease }}
-          className="mb-20 resume-section"
+          className="mb-12 sm:mb-16 md:mb-20 resume-section"
         >
           <h2 className="font-display text-2xl text-ink mb-6">The Value I Bring to the Table</h2>
           <div className="space-y-3 text-ink-muted leading-relaxed">
