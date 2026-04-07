@@ -71,40 +71,40 @@ const timeline = [
 
 const skillGroups = [
   {
-    name: "Engineering & Systems",
-    skills: ["Systems Architecture", "Mechanical Engineering", "Infrastructure Design", "Technical Operations", "Process Engineering", "Tolerance Analysis"],
-  },
-  {
     name: "Digital Marketing",
-    skills: ["Paid Search (SEM)", "Paid Social", "Organic Social", "Omnichannel Strategy", "Performance Marketing", "Media Planning", "Campaign Management", "Attribution Modeling"],
+    skills: ["Paid Search / SEM", "Paid Social", "Organic Social & SEO", "Programmatic/CTV Advertising", "Omnichannel Strategy", "Performance Marketing", "Creative Strategy", "Attribution Modeling", "Analytics & Reporting", "Website Optimization", "KPI Development & Tracking", "Customer Journey Mapping"],
   },
   {
-    name: "Operations & Finance",
-    skills: ["Business Operations", "P&L Management", "Financial Forecasting", "Budgeting", "AR/AP", "Cashflow Management", "Capacity Planning", "Vendor Management"],
+    name: "Operations",
+    skills: ["Business Operations", "Business Strategy & Planning", "Process Development", "Workflow Automation", "Capacity Planning", "Vendor Management", "SOP Development", "Leadership Team Development", "Tech Stack Management"],
   },
   {
     name: "AI & Automation",
-    skills: ["LLM Integration", "Agent Systems", "Prompt Engineering", "Autonomous Workflows", "AI Infrastructure", "MCP Protocols", "Agentic Ops"],
+    skills: ["LLM Integration", "Agent Systems", "Prompt Engineering", "Autonomous Workflows", "RAG Systems", "Agentic Workflows", "AI Product Design"],
   },
   {
-    name: "Client & Account Management",
-    skills: ["Account Management", "Client Strategy", "Client Reporting", "Relationship Management", "QBRs", "Retention Strategy", "Stakeholder Communication"],
-  },
-  {
-    name: "Business Strategy",
-    skills: ["Business Strategy", "Market Analysis", "Revenue Strategy", "OKR Frameworks", "Go-to-Market", "Pricing Strategy", "Competitive Research"],
+    name: "Client Management",
+    skills: ["Account Management", "Client Strategy", "Retention Strategy", "Stakeholder Communication", "Relationship Building", "Contract Negotiation", "Upsell Strategy", "KPI & Reporting Review", "Project Briefing", "Strategic Positioning", "Client Business Strategy"],
   },
   {
     name: "People & Leadership",
-    skills: ["Direct Reports", "Leadership Team Development", "Performance Management", "Hiring & Onboarding", "Culture Building", "Compensation Planning"],
+    skills: ["Direct Reports", "Leadership Development", "Hiring & Onboarding", "Culture Building", "Performance Management", "Compensation Design"],
   },
   {
-    name: "Product & Ventures",
-    skills: ["Product Management", "Venture Building", "MVP Development", "Growth Strategy", "Launch Strategy", "SaaS Architecture"],
+    name: "Business Strategy",
+    skills: ["Go-to-Market", "Competitive Research", "Revenue Strategy", "OKR Frameworks", "Market Analysis", "Pricing Strategy", "Partnership Development", "PRD Development", "Business Plan Creation", "Audience Research", "Growth & Scalability Planning"],
   },
   {
-    name: "Design & Architecture",
-    skills: ["Home Design Education", "Spatial Design", "Materiality", "UI/UX Design", "Brand Development", "Visual Identity"],
+    name: "Finance",
+    skills: ["P&L Management", "Financial Forecasting", "Cashflow Management", "Revenue Modeling", "AR/AP Management", "Budget Management", "Utilization Reporting"],
+  },
+  {
+    name: "Engineering",
+    skills: ["Systems Architecture", "Mechanical Engineering", "Infrastructure Design", "Process Engineering", "3D Modeling", "Technical Documentation", "Problem Solving", "Complex Math"],
+  },
+  {
+    name: "Venture Launches",
+    skills: ["Product Management", "MVP Development", "Website Design & Development", "Growth Strategy", "User Research", "Roadmap Planning", "Monetization Strategy"],
   },
 ];
 

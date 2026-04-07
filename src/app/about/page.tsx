@@ -20,31 +20,31 @@ import { CountUpStat } from "@/components/CountUpStat";
 
 const cards = [
   {
-    title: "The Foundation",
+    title: "Foundation",
     body: "Milwaukee raised. Marquette educated. Mechanical engineering gave me a systems lens I've never set down: every problem is a design problem, every process has a load it has to bear. That way of seeing has shaped everything I've built since.",
   },
   {
-    title: "The Entrepreneur",
+    title: "Entrepreneur",
     body: "Co-founded Margle Media at 22 with no clients and no playbook. Built it to seven figures. Learned that building an organization is the hardest and most rewarding design challenge there is. It changed how I think about everything.",
   },
   {
-    title: "The Operator",
+    title: "Operator",
     body: "Ten years running every dimension of a growing agency: sales, finance, ops, people, legal, creative, production. If a digital marketing agency can ask it of you, I've done it. Real-world MBA, earned the hard way.",
   },
   {
-    title: "The Student",
+    title: "Student",
     body: "Two years obsessively studying architecture to design my dream home. Watched, absorbed, applied. Turned that education into a course, because the process changed how I see space, and that was worth sharing.",
   },
   {
-    title: "The Builder",
+    title: "Builder",
     body: "Now building a studio of purpose-driven ventures under one roof. AI-native infrastructure, autonomous agents, and businesses built to do genuinely good work, at scale. The 12x12 challenge: 12 ventures in 12 months.",
   },
   {
-    title: "Primary Ethos: Doing Good, at Scale",
+    title: "Values",
     body: "Integrity isn't a policy; it's a foundation. Curiosity over certainty. Always do your best. Leave things better than you found them. I believe the best work comes from people who care about what they're building, not just that it ships.",
   },
   {
-    title: "The Personal",
+    title: "Personal",
     body: "Husband to Natasha. Dad to Leo. Deep Milwaukee roots; my grandfather fished McKinley Pier. Passionate about travel, photography, design, and building things that last. It really is a beautiful life.",
   },
 ];
@@ -756,8 +756,7 @@ export default function AboutPage() {
                     fontSize: "18px",
                   }}
                 >
-                  &ldquo;Always do your best. Leave things better than you found
-                  them. It really is a beautiful life.&rdquo;
+                  &ldquo;Ethos: Doing Good, at Scale.&rdquo;
                 </p>
                 <p
                   className="mt-3"

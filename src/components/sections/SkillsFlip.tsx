@@ -8,7 +8,7 @@ const skillGroups = [
   {
     label: "Digital Marketing",
     icon: "trending",
-    skills: ["Paid Search / SEM", "Paid Social", "Organic Social & SEO", "Programmatic Advertising", "Omnichannel Strategy", "Performance Marketing", "Creative Strategy", "Attribution Modeling", "Analytics & Reporting", "CTV Advertising", "Website Optimization", "KPI Development & Tracking", "Customer Journey Mapping"],
+    skills: ["Paid Search / SEM", "Paid Social", "Organic Social & SEO", "Programmatic/CTV Advertising", "Omnichannel Strategy", "Performance Marketing", "Creative Strategy", "Attribution Modeling", "Analytics & Reporting", "Website Optimization", "KPI Development & Tracking", "Customer Journey Mapping"],
   },
   {
     label: "Operations",
@@ -338,13 +338,17 @@ function FlipCard({ group, index, flipped, onFlip }: { group: typeof skillGroups
             />
           </div>
 
-          {/* Spacer — pushes tags to bottom of card */}
-          <div style={{ flex: 1 }} />
-
-          {/* Skill tags — pinned to bottom, remount on flip to re-fire stagger */}
+          {/* Skill tags — scrollable so they always stay within the card */}
           <div
             key={isFlipped ? "back" : "front"}
-            style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "6px",
+              flex: 1,
+              overflowY: "auto",
+              alignContent: "flex-start",
+            }}
           >
             {group.skills.map((skill, i) => (
               <SkillTagBack key={skill} skill={skill} index={i} />
