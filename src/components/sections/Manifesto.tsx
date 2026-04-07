@@ -32,9 +32,9 @@ export function Manifesto() {
             margin: '0 auto',
           }}
         >
-          Milwaukee native. Mechanical engineer turned founder.{' '}
+          Good work, done right, reaches further than you expect.{' '}
           <span style={{ color: 'var(--color-accent)' }}>
-            Building ventures that do genuinely good work — at scale.
+            The whole point is doing good at scale: building things that solve real problems, create real impact, and compound over time.
           </span>
         </p>
       </motion.div>

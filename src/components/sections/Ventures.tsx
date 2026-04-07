@@ -535,7 +535,7 @@ export function Ventures() {
                 className="max-w-2xl text-lg leading-relaxed"
                 style={{ color: 'rgba(255,255,255,0.62)' }}
               >
-                From education platforms to AI infrastructure — each venture is a bet on building something that matters.
+                From education platforms to AI infrastructure: each venture is a bet on building something that matters.
               </motion.p>
             </div>
 

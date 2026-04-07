@@ -246,7 +246,7 @@ function HeroVideoPlayer() {
           backdropFilter: 'blur(4px)',
         }}
       >
-        NIC DEMORE — INTRO
+        NIC DEMORE: INTRO
       </div>
     </div>
   );

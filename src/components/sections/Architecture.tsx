@@ -194,13 +194,13 @@ export function Architecture() {
           >
             <p>
               I&apos;m not an architect. I&apos;m an engineer who fell in love with how buildings think.
-              It started when I decided to design my dream home from scratch — and realized
+              It started when I decided to design my dream home from scratch, and realized
               I needed to learn how to see the world the way architects do.
             </p>
             <p>
               That obsession became hundreds of hours studying residential design, spatial flow,
               materiality, and the principles that make great spaces feel inevitable. I learned
-              alongside architects — as collaborators, never competitors.
+              alongside architects, as collaborators, never competitors.
             </p>
             <p>
               I built{" "}

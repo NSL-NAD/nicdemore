@@ -6,34 +6,24 @@ import { EASING_PREMIUM, viewportOnce } from "@/lib/motion";
 
 const skillGroups = [
   {
-    label: "Engineering",
-    icon: "wrench",
-    skills: ["Systems Architecture", "Mechanical Engineering", "Infrastructure Design", "Process Engineering", "Rapid Prototyping", "Technical Documentation"],
-  },
-  {
     label: "Digital Marketing",
     icon: "trending",
-    skills: ["Paid Search / SEM", "Paid Social", "Omnichannel Strategy", "Performance Marketing", "Creative Strategy", "Attribution Modeling", "Analytics & Reporting"],
+    skills: ["Paid Search / SEM", "Paid Social", "Organic Social & SEO", "Programmatic Advertising", "Omnichannel Strategy", "Performance Marketing", "Creative Strategy", "Attribution Modeling", "Analytics & Reporting", "CTV Advertising", "Website Optimization", "KPI Development & Tracking", "Customer Journey Mapping"],
   },
   {
     label: "Operations",
     icon: "sliders",
-    skills: ["Business Operations", "Process Development", "Workflow Automation", "Capacity Planning", "Vendor Management", "SOP Development", "KPI Tracking"],
+    skills: ["Business Operations", "Business Strategy & Planning", "Process Development", "Workflow Automation", "Capacity Planning", "Vendor Management", "SOP Development", "Leadership Team Development", "Tech Stack Management"],
   },
   {
-    label: "Finance",
-    icon: "bar-chart",
-    skills: ["P&L Management", "Financial Forecasting", "Cashflow Management", "Revenue Modeling", "AR/AP Management", "Budget Management", "Utilization Reporting"],
+    label: "AI & Automation",
+    icon: "cpu",
+    skills: ["LLM Integration", "Agent Systems", "Prompt Engineering", "Autonomous Workflows", "RAG Systems", "Agentic Workflows", "AI Product Design"],
   },
   {
     label: "Client Management",
     icon: "users",
-    skills: ["Account Management", "Client Strategy", "Retention Strategy", "Stakeholder Communication", "Relationship Building", "Contract Negotiation", "Upsell Strategy"],
-  },
-  {
-    label: "Business Strategy",
-    icon: "target",
-    skills: ["Go-to-Market", "Competitive Research", "Revenue Strategy", "OKR Frameworks", "Market Analysis", "Pricing Strategy", "Partnership Development"],
+    skills: ["Account Management", "Client Strategy", "Retention Strategy", "Stakeholder Communication", "Relationship Building", "Contract Negotiation", "Upsell Strategy", "KPI & Reporting Review", "Project Briefing", "Strategic Positioning", "Client Business Strategy"],
   },
   {
     label: "People & Leadership",
@@ -41,14 +31,24 @@ const skillGroups = [
     skills: ["Direct Reports", "Leadership Development", "Hiring & Onboarding", "Culture Building", "Performance Management", "Compensation Design"],
   },
   {
-    label: "AI + Automation",
-    icon: "cpu",
-    skills: ["LLM Integration", "Agent Systems", "Prompt Engineering", "Autonomous Workflows", "RAG Systems", "Agentic Workflows", "AI Product Design"],
+    label: "Business Strategy",
+    icon: "target",
+    skills: ["Go-to-Market", "Competitive Research", "Revenue Strategy", "OKR Frameworks", "Market Analysis", "Pricing Strategy", "Partnership Development", "PRD Development", "Business Plan Creation", "Audience Research", "Growth & Scalability Planning"],
   },
   {
-    label: "Product + Ventures",
+    label: "Finance",
+    icon: "bar-chart",
+    skills: ["P&L Management", "Financial Forecasting", "Cashflow Management", "Revenue Modeling", "AR/AP Management", "Budget Management", "Utilization Reporting"],
+  },
+  {
+    label: "Engineering",
+    icon: "wrench",
+    skills: ["Systems Architecture", "Mechanical Engineering", "Infrastructure Design", "Process Engineering", "3D Modeling", "Technical Documentation", "Problem Solving", "Complex Math"],
+  },
+  {
+    label: "Venture Launches",
     icon: "rocket",
-    skills: ["Product Management", "Venture Building", "MVP Development", "Growth Strategy", "User Research", "Roadmap Planning", "Monetization Strategy"],
+    skills: ["Product Management", "MVP Development", "Website Design & Development", "Growth Strategy", "User Research", "Roadmap Planning", "Monetization Strategy"],
   },
 ];
 
@@ -397,9 +397,9 @@ export function SkillsFlip() {
               color: "var(--color-text-secondary)",
             }}
           >
-            An operator with rare breadth and serious depth — across engineering,
+            An operator with rare breadth and serious depth: across engineering,
             marketing, finance, AI, and everything in between. I gravitate toward
-            hard problems, stay relentlessly curious, and have a compulsion for
+            hard problems, stay relentlessly curious, and have a knack for
             distilling complexity into clarity.
           </motion.blockquote>
         </div>

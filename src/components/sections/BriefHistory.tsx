@@ -33,10 +33,10 @@ const timeline: TimelineEntry[] = [
   },
   {
     year: "2012",
-    role: "First Business Launch — Age 18",
+    role: "First Business Launch, Age 18",
     org: "Direct Sales",
     description:
-      "Started my first business straight out of high school. Surrounded myself with mentors, absorbed everything I could, and learned the basics of what it means to build something from nothing — sales, communication, and the discipline it takes to actually execute.",
+      "Started my first business straight out of high school. Surrounded myself with mentors, absorbed everything I could, and learned the basics of what it means to build something from nothing: sales, communication, and the discipline it takes to actually execute.",
     skills: ["Sales", "Business Fundamentals", "Mentorship", "Hustle"],
   },
   {
@@ -44,7 +44,7 @@ const timeline: TimelineEntry[] = [
     role: "Mechanical Engineering",
     org: "Marquette University",
     description:
-      "Systems thinking baked in from day one. Engineering taught me to see the world as a set of forces, tolerances, and constraints — and to design solutions that hold up under pressure. That lens never left.",
+      "Systems thinking baked in from day one. Engineering taught me to see the world as a set of forces, tolerances, and constraints; and to design solutions that hold up under pressure. That lens never left.",
     skills: ["Systems Thinking", "Engineering", "Problem Solving", "Technical Design"],
     accent: true,
   },
@@ -68,13 +68,17 @@ const timeline: TimelineEntry[] = [
     role: "Running Every Dimension",
     org: "Margle Media",
     description:
-      "Nine years operating every function of a growing agency — sales, ops, finance, HR, client management, production, legal, IT. If a digital agency can ask it of you, I've done it. Built the leadership team, managed the P&L, grew the client roster, and kept the machine running.",
+      "Nine years operating every function of a growing agency: sales, ops, finance, HR, client management, production, legal, IT. If a digital agency can ask it of you, I've done it. Built the leadership team, managed the P&L, grew the client roster, and kept the machine running.",
     skills: [
       "P&L Management",
-      "Operations",
+      "Business Strategy",
+      "Scalability Planning",
       "People Management",
-      "Client Management",
       "Financial Strategy",
+      "Vendor Management",
+      "Sales Pipeline",
+      "Career Planning",
+      "Agency Training",
     ],
   },
   {
@@ -82,7 +86,7 @@ const timeline: TimelineEntry[] = [
     role: "Home Design Educator + Course Creator",
     org: "Foundations of Architecture",
     description:
-      "Spent two years learning architecture to design my dream home — obsessively. Turned that education into FOA, a course for non-architects who want to approach their space with genuine intention. Not an architect. Just someone who learned until it clicked.",
+      "Spent two years learning architecture to design my dream home. Obsessively. Turned that education into FOA, a course for non-architects who want to approach their space with genuine intention. Not an architect. Just someone who learned until it clicked.",
     skills: ["Curriculum Design", "Content Creation", "Architecture", "Teaching"],
   },
   {
@@ -90,7 +94,7 @@ const timeline: TimelineEntry[] = [
     role: "AI Builder + Venture Studio",
     org: "Good at Scale Studio",
     description:
-      "Building AI-native infrastructure and purpose-driven ventures. Autonomous agent systems, AI ops, and a studio built to do good — at scale. The 12×12 challenge: 12 ventures in 12 months.",
+      "Building AI-native infrastructure and purpose-driven ventures. Autonomous agent systems, AI ops, and a studio built to do good, at scale. The 12×12 challenge: 12 ventures in 12 months.",
     skills: ["AI Systems", "Venture Building", "Agent Infrastructure", "Product Development"],
     accent: true,
   },

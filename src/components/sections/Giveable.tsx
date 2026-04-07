@@ -143,13 +143,13 @@ export function Giveable() {
             style={{ color: 'rgba(242, 237, 229, 0.72)' }}
           >
             <p>
-              Traveling through Kenya, I saw small local brands creating profound community impact —
-              women learning to sew, artisans preserving traditional crafts. Back home, I noticed the gap:
+              Traveling through Kenya, my wife and I saw small local brands creating profound community impact:
+              women learning to sew, artisans preserving traditional crafts. Back home, I noticed the gap;
               conscious consumers wanted to give gifts that meant something, but no registry was built for it.
             </p>
             <p>
               Giveable is the curated registry where 100% of brands are impact-driven.
-              Gift-giving becomes a vehicle for doing good — without the friction of a donation ask.
+              Gift-giving becomes a vehicle for doing good, without the friction of a donation ask.
               Every transaction generates measurable impact through the brands&apos; built-in giving models.
             </p>
             <div className="flex items-center gap-8 pt-2">

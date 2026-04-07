@@ -11,31 +11,31 @@ import { CountUpStat } from "@/components/CountUpStat";
 const cards = [
   {
     title: "The Foundation",
-    body: "Milwaukee raised. Marquette educated. Mechanical engineering gave me a systems lens I've never set down — every problem is a design problem, every process has a load it has to bear.",
+    body: "Milwaukee raised. Marquette educated. Mechanical engineering gave me a systems lens I've never set down: every problem is a design problem, every process has a load it has to bear. That way of seeing has shaped everything I've built since.",
   },
   {
     title: "The Entrepreneur",
-    body: "Co-founded Margle Media at 22 with no clients and no playbook. Built it to seven figures. Learned that building an organization is the hardest and most rewarding design challenge there is.",
+    body: "Co-founded Margle Media at 22 with no clients and no playbook. Built it to seven figures. Learned that building an organization is the hardest and most rewarding design challenge there is. It changed how I think about everything.",
   },
   {
     title: "The Operator",
-    body: "Nine years running every dimension of a growing agency — sales, finance, ops, people, legal, creative, production. If a digital marketing agency can ask it of you, I've done it.",
+    body: "Ten years running every dimension of a growing agency: sales, finance, ops, people, legal, creative, production. If a digital marketing agency can ask it of you, I've done it. Real-world MBA, earned the hard way.",
   },
   {
     title: "The Student",
-    body: "Two years obsessively studying architecture to design my dream home. Watched, absorbed, applied. Turned that education into a course — because the process changed how I see space, and that was worth sharing.",
+    body: "Two years obsessively studying architecture to design my dream home. Watched, absorbed, applied. Turned that education into a course, because the process changed how I see space, and that was worth sharing.",
   },
   {
     title: "The Builder",
-    body: "Now building a studio of purpose-driven ventures under one roof. AI-native infrastructure, autonomous agents, and businesses built to do genuinely good work — at scale.",
+    body: "Now building a studio of purpose-driven ventures under one roof. AI-native infrastructure, autonomous agents, and businesses built to do genuinely good work, at scale. The 12x12 challenge: 12 ventures in 12 months.",
   },
   {
-    title: "The Values",
-    body: "Integrity isn't a policy — it's a foundation. Curiosity over certainty. Always do your best. Leave things better than you found them. It really is a beautiful life.",
+    title: "Primary Ethos: Doing Good, at Scale",
+    body: "Integrity isn't a policy; it's a foundation. Curiosity over certainty. Always do your best. Leave things better than you found them. I believe the best work comes from people who care about what they're building, not just that it ships.",
   },
   {
     title: "The Personal",
-    body: "Husband to Natasha. Dad to Leo. Deep Milwaukee roots — my grandfather fished McKinley Pier. Passionate about travel, photography, design, and building things that last.",
+    body: "Husband to Natasha. Dad to Leo. Deep Milwaukee roots; my grandfather fished McKinley Pier. Passionate about travel, photography, design, and building things that last. It really is a beautiful life.",
   },
 ];
 
@@ -206,10 +206,10 @@ export default function AboutPage() {
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16 px-2 border-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
-          <CountUpStat end={9} suffix="+" label="Years Operating" />
-          <CountUpStat end={12} label="Ventures in 2025" />
+          <CountUpStat end={10} suffix="+" label="Years Operating" />
+          <CountUpStat end={12} label="Ventures in 2026" />
           <CountUpStat end={50} suffix="+" label="Team Members Led" />
-          <CountUpStat end={8} label="Skill Domains" />
+          <CountUpStat end={9} label="Skill Domains" />
         </div>
 
         {/* DESKTOP: floating cards around photo */}
@@ -347,16 +347,19 @@ export default function AboutPage() {
 
           <div className="space-y-6" style={{ color: 'var(--color-text-secondary)', lineHeight: '1.8' }}>
             <p className="text-base">
-              I believe the best work comes from people who genuinely care — not just about shipping, but about what the thing they&apos;re building does in the world. That&apos;s been my north star since I started my first business at 18, and it&apos;s the lens I bring to everything I build now.
+              I believe the best work comes from people who genuinely care: not just about shipping, but about what the thing they&apos;re building does in the world. That&apos;s been my north star since I started my first business at 18, and it&apos;s the lens I bring to everything I build now.
             </p>
             <p className="text-base">
               The mechanical engineering background wasn&apos;t just a degree. It was a way of seeing. Systems. Constraints. Forces in tension. You learn to ask: what is this thing actually doing, and will it hold? That question applies to code, to organizations, to strategy, to life.
             </p>
             <p className="text-base">
-              Nine years running Margle taught me that building a business is a deeply human project. You can have the best strategy in the world — but if you can&apos;t build a team that trusts each other, none of it works. I learned operations, finance, client management, and leadership the hard way: by doing all of it, at the same time, under real pressure.
+              Ten years running Margle taught me that building a business is a deeply human project. You can have the best strategy in the world, but if you can&apos;t build a team that trusts each other, none of it works. I learned operations, finance, client management, and leadership the hard way: by doing all of it, at the same time, under real pressure.
             </p>
             <p className="text-base">
-              Now I&apos;m building AI-native infrastructure and purpose-driven ventures. Not because it&apos;s trendy — because I genuinely believe this is the moment where the tools exist to do good work at a scale that wasn&apos;t possible before. That excites me every day.
+              I&apos;ve never been interested in doing things halfway. Whether I&apos;m launching a venture, helping a client grow, or exploring a new city with a camera, I show up with intention. Behind every project is a belief in doing good work with good people, and leaving things better than I found them.
+            </p>
+            <p className="text-base">
+              Now I&apos;m building AI-native infrastructure and purpose-driven ventures. Not because it&apos;s trendy; because I genuinely believe this is the moment where the tools exist to do good work at a scale that wasn&apos;t possible before. That excites me every day.
             </p>
           </div>
 
