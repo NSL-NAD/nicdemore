@@ -120,7 +120,7 @@ export default function ResumePage() {
         className="absolute inset-0 pointer-events-none"
         style={{ background: "rgba(250, 249, 246, 0.82)", zIndex: 0 }}
       />
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 relative" style={{ zIndex: 1 }}>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 relative" style={{ zIndex: 1 }}>
         {/* Download button */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
