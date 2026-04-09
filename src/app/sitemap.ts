@@ -8,6 +8,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
+    {
+      url: "https://nicdemore.com/about",
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
   ];
-  // NOTE: /resume, /resume/anthropic, /resume/apple excluded intentionally — noindex pages
+  // NOTE: /resume and cover letter pages excluded intentionally (noindex)
 }
