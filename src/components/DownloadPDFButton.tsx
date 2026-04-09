@@ -5,31 +5,25 @@ interface Props {
   filename?: string;
 }
 
-export function DownloadPDFButton({ label = "Download as PDF", filename = "nic-demore-resume" }: Props) {
-  const handleDownload = () => {
-    const originalTitle = document.title;
-    document.title = filename;
-    setTimeout(() => {
-      window.print();
-      setTimeout(() => {
-        document.title = originalTitle;
-      }, 500);
-    }, 300);
-  };
-
+export function DownloadPDFButton({
+  label = "Download as PDF",
+  filename = "nic-demore-resume",
+}: Props) {
   return (
-    <button
-      onClick={handleDownload}
+    <a
+      href={`/pdfs/${filename}.pdf`}
+      download={`${filename}.pdf`}
       className="no-print inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold transition-all hover:scale-[1.03] hover:shadow-lg"
       style={{
-        background: 'var(--color-accent)',
-        color: '#fff',
-        fontFamily: 'var(--font-syne)',
-        fontSize: '13px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 20px rgba(244,99,30,0.32)',
+        background: "var(--color-accent)",
+        color: "#fff",
+        fontFamily: "var(--font-syne)",
+        fontSize: "13px",
+        borderRadius: "8px",
+        boxShadow: "0 4px 20px rgba(244,99,30,0.32)",
+        textDecoration: "none",
       }}
-      aria-label="Download this page as PDF"
+      aria-label={`Download ${label}`}
     >
       <svg
         width="14"
@@ -48,6 +42,6 @@ export function DownloadPDFButton({ label = "Download as PDF", filename = "nic-d
         />
       </svg>
       {label}
-    </button>
+    </a>
   );
 }
