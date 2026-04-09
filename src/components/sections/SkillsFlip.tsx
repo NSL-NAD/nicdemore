@@ -172,11 +172,11 @@ function SkillTagBack({ skill, index }: { skill: string; index: number }) {
         fontFamily: "var(--font-jetbrains)",
         fontSize: "10px",
         letterSpacing: "0.04em",
-        color: "rgba(0,0,0,0.55)",
+        color: "var(--color-text-secondary)",
         padding: "3px 8px",
-        border: "1px solid rgba(0,0,0,0.14)",
+        border: "1px solid var(--color-border)",
         borderRadius: "4px",
-        background: "rgba(0,0,0,0.05)",
+        background: "var(--color-surface)",
         cursor: "default",
         whiteSpace: "nowrap" as const,
       }}
@@ -347,7 +347,7 @@ function FlipCard({ group, index, flipped, onFlip }: { group: typeof skillGroups
               gap: "6px",
               flex: 1,
               overflowY: "auto",
-              alignContent: "flex-start",
+              alignContent: "flex-end",
             }}
           >
             {group.skills.map((skill, i) => (
