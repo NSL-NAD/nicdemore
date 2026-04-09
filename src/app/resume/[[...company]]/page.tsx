@@ -192,10 +192,10 @@ export default function ResumePage() {
   const letter = companySlug ? coverLetters[companySlug] : null;
 
   return (
-    <div className="pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-16 relative">
+    <div className="resume-page-wrapper pt-16 sm:pt-20 md:pt-24 pb-10 sm:pb-16 relative">
       {/* Scrim to mute background grid behind text */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="no-print absolute inset-0 pointer-events-none"
         style={{ background: "rgba(250, 249, 246, 0.82)", zIndex: 0 }}
       />
       <div className="mx-auto max-w-5xl px-4 sm:px-6 relative" style={{ zIndex: 1 }}>
@@ -266,7 +266,7 @@ export default function ResumePage() {
                         rel="noopener noreferrer"
                         className="font-mono text-xs text-ink-muted hover:text-accent transition-colors"
                       >
-                        {letter.role} &nearr;
+                        {letter.role}
                       </a>
                     ) : (
                       <span className="font-mono text-xs text-ink-muted">{letter.role}</span>
@@ -324,7 +324,7 @@ export default function ResumePage() {
           <h2 className="font-display text-2xl text-ink mb-10">Experience</h2>
 
           <div className="relative">
-            <div className="absolute left-3 top-2 bottom-2 w-px bg-line" />
+            <div className="no-print absolute left-3 top-2 bottom-2 w-px bg-line" />
 
             <div className="space-y-6 sm:space-y-8 md:space-y-10">
               {timeline.map((entry, i) => (
@@ -336,7 +336,7 @@ export default function ResumePage() {
                   transition={{ duration: 0.5, ease, delay: i * 0.05 }}
                   className="relative pl-10"
                 >
-                  <div className="absolute left-1.5 top-1.5 w-3 h-3 rounded-full bg-accent border-2 border-background" />
+                  <div className="no-print absolute left-1.5 top-1.5 w-3 h-3 rounded-full bg-accent border-2 border-background" />
                   <span className="font-mono text-xs text-accent tracking-wide">
                     {entry.year}
                   </span>

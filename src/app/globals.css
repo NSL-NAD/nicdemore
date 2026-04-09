@@ -399,14 +399,9 @@ body {
   animation: pulse-load 0.8s ease-in-out 3;
 }
 
-/* No-print class for PDF */
-@media print {
-  .no-print { display: none !important; }
-  nav, footer, .grain-overlay { display: none !important; }
-  body { background: white; color: black; font-size: 11pt; }
-  @page { margin: 0.75in; }
-  .resume-section { page-break-inside: avoid; }
-}
+/* No-print helper — works on screen too (e.g. for JS checks), hides in print */
+.no-print { display: revert; }
+@media print { .no-print { display: none !important; } }
 
 /* ===================================================
    POLISH — Focus improvements and accessibility
@@ -669,15 +664,28 @@ img {
 }
 
 /* ===================================================
-   PRINT STYLESHEET — Resume PDF (1-2 pages max)
+   PRINT STYLESHEET — Resume / Cover Letter PDF
    =================================================== */
 @media print {
+
+  /* ── Kill all motion and decoration ── */
   * {
     animation: none !important;
     transition: none !important;
+    transform: none !important;
     opacity: 1 !important;
     visibility: visible !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
   }
+
+  /* ── Page geometry ── */
+  @page {
+    margin: 0.55in 0.65in;
+    size: letter;
+  }
+
+  /* ── Body reset ── */
   body {
     background: white !important;
     color: #1C1917 !important;
@@ -687,67 +695,184 @@ img {
     margin: 0 !important;
     padding: 0 !important;
   }
-  @page {
-    margin: 0.5in 0.6in;
-    size: letter;
-  }
-  nav, footer, .grain-overlay, .no-print,
-  .grid-lines, [class*="venture-os"],
-  [class*="cookie"] {
+
+  /* ── Hide all chrome / decorative elements ── */
+  nav,
+  footer,
+  .grain-overlay,
+  .no-print,
+  .grid-lines,
+  .section-glow,
+  .section-glow::after,
+  .film-grain::after,
+  .animated-underline::after,
+  .underline-reveal::after,
+  [class*="cookie"],
+  [class*="venture-os"] {
     display: none !important;
   }
-  h1 {
-    font-family: Georgia, serif !important;
-    font-size: 22pt !important;
-    margin-bottom: 2pt !important;
-    color: #1C1917 !important;
-    letter-spacing: normal !important;
-  }
-  h2 {
-    font-family: Georgia, serif !important;
-    font-size: 13pt !important;
-    margin-bottom: 6pt !important;
-    color: #1C1917 !important;
-    border-bottom: 0.5pt solid #ccc;
-    padding-bottom: 3pt;
-    letter-spacing: normal !important;
-  }
-  h3 {
-    font-family: Georgia, serif !important;
-    font-size: 11pt !important;
-    color: #1C1917 !important;
-  }
-  .resume-section {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-    margin-bottom: 12pt !important;
-  }
-  .pt-24, .pb-16 {
+
+  /* ── Container ── */
+  .resume-page-wrapper {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
   }
-  .mb-20, .mb-16, .mb-12, .mb-10 {
+
+  .max-w-5xl,
+  .max-w-3xl {
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* ── Typography ── */
+  h1 {
+    font-family: Georgia, serif !important;
+    font-size: 22pt !important;
+    font-weight: bold !important;
+    color: #1C1917 !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.1 !important;
+    margin-bottom: 2pt !important;
+  }
+
+  h2 {
+    font-family: Georgia, serif !important;
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    color: #1C1917 !important;
+    letter-spacing: normal !important;
+    line-height: 1.3 !important;
+    border-bottom: 0.75pt solid #CCCCCC !important;
+    padding-bottom: 2pt !important;
+    margin-top: 14pt !important;
+    margin-bottom: 5pt !important;
+  }
+
+  h3 {
+    font-family: Georgia, serif !important;
+    font-size: 10.5pt !important;
+    font-weight: bold !important;
+    color: #1C1917 !important;
+    margin-bottom: 1pt !important;
+  }
+
+  p {
+    margin-bottom: 5pt !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ── Resume sections ── */
+  .resume-section {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
     margin-bottom: 10pt !important;
   }
-  .space-y-10 > * + * {
+
+  .mb-20, .mb-16, .mb-12, .mb-10 {
+    margin-bottom: 8pt !important;
+  }
+
+  .mb-8, .mb-6 {
+    margin-bottom: 5pt !important;
+  }
+
+  /* ── Cover letter card — strip card chrome ── */
+  .bg-white.rounded-lg {
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  /* ── Timeline ── */
+  .space-y-10 > * + *,
+  .space-y-8 > * + *,
+  .space-y-6 > * + * {
     margin-top: 8pt !important;
   }
+
+  /* Remove left indent from timeline entries */
+  .pl-10 {
+    padding-left: 0 !important;
+  }
+
+  /* Year label */
+  .font-mono.text-xs.text-accent {
+    color: #F4631E !important;
+    display: block !important;
+    font-family: monospace !important;
+    font-size: 7.5pt !important;
+    letter-spacing: 0.03em !important;
+    margin-bottom: 1pt !important;
+  }
+
+  /* ── Skill tags — clean flat tags ── */
+  .flex.flex-wrap.gap-2 {
+    gap: 3pt !important;
+    row-gap: 3pt !important;
+  }
+
+  .flex.flex-wrap.gap-2 > span {
+    background: transparent !important;
+    border: 0.5pt solid #999 !important;
+    box-shadow: none !important;
+    padding: 1.5pt 4pt !important;
+    font-size: 7.5pt !important;
+    font-family: monospace !important;
+    color: #333 !important;
+    border-radius: 2pt !important;
+  }
+
+  /* ── Skill group name headers ── */
+  .grid > div > h3 {
+    border-bottom: 0.5pt solid #DDDDDD !important;
+    padding-bottom: 1pt !important;
+    margin-bottom: 3pt !important;
+  }
+
+  /* ── Links ── */
   a {
     color: #1C1917 !important;
     text-decoration: none !important;
   }
-  a::after {
+
+  /* Show full URL for external links */
+  a[href^="http"]::after,
+  a[href^="https"]::after {
     content: " (" attr(href) ")" !important;
-    font-size: 8pt !important;
+    font-size: 7pt !important;
     color: #666 !important;
+    word-break: break-all;
   }
+
+  /* Don't expand internal / anchor / mailto */
   a[href^="mailto"]::after,
   a[href^="/"]::after,
   a[href^="#"]::after {
     display: none !important;
   }
-  .max-w-3xl {
-    max-width: 100% !important;
+
+  /* Cover letter job role link — don't show raw URL */
+  .flex.items-center.gap-1\.5 a::after {
+    display: none !important;
+  }
+
+  /* ── Muted text — readable on white ── */
+  .text-ink-muted {
+    color: #444 !important;
+  }
+
+  /* ── GAS Orange preserved for year labels / accent marks ── */
+  .text-accent {
+    color: #F4631E !important;
+  }
+
+  /* ── Separator pipe ── */
+  .text-line {
+    color: #CCC !important;
   }
 }
 
