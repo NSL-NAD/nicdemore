@@ -73,7 +73,7 @@ export function Footer() {
                 letterSpacing: '0.06em',
               }}
             >
-              Builder. Engineer. Founder. — Milwaukee, WI
+              Builder. Engineer. Founder. / Milwaukee, WI
             </p>
           </div>
 

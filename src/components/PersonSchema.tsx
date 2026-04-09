@@ -54,7 +54,7 @@ export function PersonSchema() {
         url: "https://nicdemore.com",
         name: "Nic DeMore",
         description:
-          "Personal site of Nic DeMore — founder, builder, and operator based in Milwaukee, WI.",
+          "Personal site of Nic DeMore: founder, builder, and operator based in Milwaukee, WI.",
         author: { "@id": "https://nicdemore.com/#person" },
       },
     ],

@@ -42,7 +42,7 @@ const pressStart2P = Press_Start_2P({
 export const metadata: Metadata = {
   metadataBase: new URL("https://nicdemore.com"),
   title: {
-    default: "Nic DeMore — Builder. Engineer. Founder.",
+    default: "Nic DeMore: Builder. Engineer. Founder.",
     template: "%s | Nic DeMore",
   },
   description:
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://nicdemore.com",
     siteName: "Nic DeMore",
-    title: "Nic DeMore — Builder. Engineer. Founder.",
+    title: "Nic DeMore: Builder. Engineer. Founder.",
     description:
       "Co-founder of Margle Media and Good at Scale Studio. Building AI-native products and purpose-driven ventures from Milwaukee, WI.",
     images: [
@@ -61,13 +61,13 @@ export const metadata: Metadata = {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Nic DeMore — Builder. Engineer. Founder.",
+        alt: "Nic DeMore: Builder. Engineer. Founder.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Nic DeMore — Builder. Engineer. Founder.",
+    title: "Nic DeMore: Builder. Engineer. Founder.",
     description:
       "Co-founder of Margle Media and Good at Scale Studio.",
     images: ["/og-image.jpg"],

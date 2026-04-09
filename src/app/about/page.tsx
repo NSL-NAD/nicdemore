@@ -678,8 +678,8 @@ export default function AboutPage() {
                     className="text-lg leading-relaxed"
                     style={{ color: "rgba(255,255,255,0.88)" }}
                   >
-                    I believe the best work comes from people who genuinely care
-                    — not just about shipping, but about what the thing
+                    I believe the best work comes from people who genuinely care,
+                    not just about shipping, but about what the thing
                     they&apos;re building does in the world. That&apos;s been my
                     north star since I started my first business at 18, and
                     it&apos;s the lens I bring to everything I build now.
@@ -718,7 +718,7 @@ export default function AboutPage() {
                   >
                     Nine years running Margle taught me that building a business
                     is a deeply human project. You can have the best strategy in
-                    the world — but if you can&apos;t build a team that trusts
+                    the world, but if you can&apos;t build a team that trusts
                     each other, none of it works. I learned operations, finance,
                     client management, and leadership the hard way: by doing all
                     of it, at the same time, under real pressure.
@@ -736,8 +736,8 @@ export default function AboutPage() {
                     style={{ color: "rgba(255,255,255,0.88)" }}
                   >
                     Now I&apos;m building AI-native infrastructure and
-                    purpose-driven ventures. Not because it&apos;s trendy —
-                    because I genuinely believe this is the moment where the
+                    purpose-driven ventures. Not because it&apos;s trendy.
+                    Because I genuinely believe this is the moment where the
                     tools exist to do good work at a scale that wasn&apos;t
                     possible before. That excites me every day.
                   </motion.p>
@@ -766,7 +766,7 @@ export default function AboutPage() {
                     fontSize: "11px",
                   }}
                 >
-                  — Personal operating system, circa always
+                  Personal operating system, circa always
                 </p>
               </div>
             </div>
