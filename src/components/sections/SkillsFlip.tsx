@@ -338,16 +338,18 @@ function FlipCard({ group, index, flipped, onFlip }: { group: typeof skillGroups
             />
           </div>
 
-          {/* Skill tags — scrollable so they always stay within the card */}
+          {/* Skill tags — scrollable so they always stay within the card.
+              Mobile: content-start so scroll begins at top (natural read order).
+              Desktop: sm:content-end so tags build up from the bottom visually. */}
           <div
             key={isFlipped ? "back" : "front"}
+            className="content-start sm:content-end"
             style={{
               display: "flex",
               flexWrap: "wrap",
               gap: "6px",
               flex: 1,
               overflowY: "auto",
-              alignContent: "flex-end",
             }}
           >
             {group.skills.map((skill, i) => (
