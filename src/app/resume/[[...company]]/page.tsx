@@ -15,51 +15,19 @@ interface CoverLetter {
   closing: string;
 }
 
-// ── Logo SVGs ────────────────────────────────────────────────────────────────
+// ── Company badge ─────────────────────────────────────────────────────────────
 
-function AppleLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      viewBox="0 0 814 1000"
-      fill="currentColor"
-      style={{ width: size * 0.88, height: size }}
-    >
-      <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 582.6 1 511.3 1 442.8 1 301.2 105.1 234 207.9 234c52.6 0 96.7 36.1 128.4 36.1 30.5 0 78.4-37.2 138.3-37.2 21.5 0 130.3 1.9 204.3 97.7zm-234.5-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" />
-    </svg>
-  );
-}
-
-function AnthropicLogo({ size = 22 }: { size?: number }) {
-  return (
-    <svg
-      viewBox="0 0 100 95"
-      fill="currentColor"
-      style={{ width: size, height: size * 0.95 }}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M50 5 L93 90 H73 L50 36 L27 90 H7 Z M37 64 H63 L50 32 Z"
-      />
-    </svg>
-  );
-}
-
-function CompanyBadge({ slug, company }: { slug: string; company: string }) {
-  const isApple = slug.startsWith("apple");
-  const isAnthropic = slug === "anthropic";
-
+function CompanyBadge({ company }: { company: string }) {
   return (
     <div
       className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
       style={{ background: "var(--color-ink)" }}
     >
-      <span style={{ color: "var(--color-background)" }}>
-        {isApple && <AppleLogo size={20} />}
-        {isAnthropic && <AnthropicLogo size={20} />}
-        {!isApple && !isAnthropic && (
-          <span className="font-display font-bold text-base">{company[0]}</span>
-        )}
+      <span
+        className="font-display font-bold text-base"
+        style={{ color: "var(--color-background)" }}
+      >
+        {company[0]}
       </span>
     </div>
   );
@@ -274,7 +242,7 @@ export default function ResumePage() {
           >
             {/* Company badge */}
             <div className="flex items-start gap-4 mb-8">
-              <CompanyBadge slug={companySlug!} company={letter.company} />
+              <CompanyBadge company={letter.company} />
               <div>
                 <p
                   className="font-mono text-xs tracking-widest uppercase mb-0.5"
