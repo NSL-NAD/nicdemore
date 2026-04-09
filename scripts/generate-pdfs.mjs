@@ -1,11 +1,11 @@
 /**
  * generate-pdfs.mjs
  * Generates resume + cover letter PDFs from the live nicdemore.com site.
- * Captures in screen media (full brand design: Syne, JetBrains Mono, GAS Orange).
+ * Captures in screen media (Syne, JetBrains Mono, GAS Orange brand design).
  *
  * Usage:
  *   node scripts/generate-pdfs.mjs
- *   node scripts/generate-pdfs.mjs --url http://localhost:3000   (local dev)
+ *   node scripts/generate-pdfs.mjs --url http://localhost:3000
  *
  * Output: public/pdfs/*.pdf
  */
@@ -19,67 +19,131 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const OUTPUT_DIR = join(ROOT, "public", "pdfs");
 
-// ── Parse CLI flags ────────────────────────────────────────────────────────────
+// ── CLI flags ─────────────────────────────────────────────────────────────────
 const args = process.argv.slice(2);
-const urlFlag = args.find((a) => a.startsWith("--url="))?.split("=")[1]
-  ?? args[args.indexOf("--url") + 1];
+const urlFlag =
+  args.find((a) => a.startsWith("--url="))?.split("=")[1] ??
+  args[args.indexOf("--url") + 1];
 const BASE_URL = urlFlag?.replace(/\/$/, "") ?? "https://nicdemore.com";
 
-// ── Pages to export ────────────────────────────────────────────────────────────
+// ── Pages ─────────────────────────────────────────────────────────────────────
 const PAGES = [
-  { path: "/resume",                   file: "nic-demore-resume" },
-  { path: "/resume/anthropic",         file: "nic-demore-cover-letter-anthropic" },
-  { path: "/resume/apple",             file: "nic-demore-cover-letter-apple" },
-  { path: "/resume/apple-app-review",  file: "nic-demore-cover-letter-apple-app-review" },
-  { path: "/resume/apple-ads",         file: "nic-demore-cover-letter-apple-ads" },
-  { path: "/resume/apple-social",      file: "nic-demore-cover-letter-apple-social" },
+  { path: "/resume",                  file: "nic-demore-resume",                        type: "resume" },
+  { path: "/resume/anthropic",        file: "nic-demore-cover-letter-anthropic",         type: "cover"  },
+  { path: "/resume/apple",            file: "nic-demore-cover-letter-apple",             type: "cover"  },
+  { path: "/resume/apple-app-review", file: "nic-demore-cover-letter-apple-app-review",  type: "cover"  },
+  { path: "/resume/apple-ads",        file: "nic-demore-cover-letter-apple-ads",         type: "cover"  },
+  { path: "/resume/apple-social",     file: "nic-demore-cover-letter-apple-social",      type: "cover"  },
 ];
 
-// ── CSS injected into every page before capture ────────────────────────────────
-// Strips chrome, nav, footer, grid overlay, grain, cookie banner.
-// Keeps ALL brand design: Syne, JetBrains Mono, GAS Orange, card layouts.
-const CLEANUP_CSS = `
-  /* ── Hide chrome & decorative overlays ── */
+// ── Shared CSS (both types) ────────────────────────────────────────────────────
+const SHARED_CSS = `
+  /* Pure white background — eliminates cream #FAF9F6 framing effect */
+  html, body {
+    background: white !important;
+  }
+
+  /* Hide all page chrome */
   nav,
   footer,
   .grain-overlay,
   .no-print,
   .grid-lines,
-  [class*="cookie"],
-  [class*="venture-os"] {
+  .section-glow,
+  .film-grain::after,
+  .fixed {
     display: none !important;
   }
 
-  /* ── Remove page top/bottom padding ── */
+  /* Remove page wrapper padding */
   .resume-page-wrapper {
-    padding-top: 20px !important;
-    padding-bottom: 20px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 
-  /* ── Freeze all animations ── */
+  /* Freeze all Framer Motion / CSS animations */
   *, *::before, *::after {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
     transition-duration: 0s !important;
   }
 
-  /* ── Force elements visible (Framer Motion sets opacity:0 on mount) ── */
+  /* Force all motion-hidden elements visible */
   [style*="opacity: 0"],
   [style*="opacity:0"] {
     opacity: 1 !important;
   }
-
-  /* ── Remove transform offsets left by enter animations ── */
   [style*="translateY"] {
     transform: none !important;
   }
 
-  /* ── Ensure background renders ── */
-  body {
-    background: #FAF9F6 !important;
+  /* Preserve brand colors on print */
+  * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+`;
+
+// ── Resume-specific: compress spacing to hit ~2 pages ─────────────────────────
+const RESUME_CSS = `
+  /* Tighter base typography */
+  body {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+
+  h1 { font-size: 34px !important; margin-bottom: 4px !important; }
+  h2 { font-size: 17px !important; margin-bottom: 8px !important; margin-top: 0 !important; }
+  h3 { font-size: 13.5px !important; margin-bottom: 2px !important; }
+
+  /* Section spacing */
+  .mb-16, .mb-20 { margin-bottom: 18px !important; }
+  .mb-12          { margin-bottom: 14px !important; }
+  .mb-10, .mb-8   { margin-bottom: 10px !important; }
+  .mb-6           { margin-bottom: 8px !important; }
+  .mt-4           { margin-top: 6px !important; }
+
+  /* Stack spacing */
+  .space-y-10 > * + * { margin-top: 12px !important; }
+  .space-y-8  > * + * { margin-top: 10px !important; }
+  .space-y-6  > * + * { margin-top: 8px !important; }
+  .space-y-4  > * + * { margin-top: 6px !important; }
+  .space-y-3  > * + * { margin-top: 4px !important; }
+
+  /* Gap utility compression */
+  .gap-8 { gap: 12px !important; }
+  .gap-4 { gap: 8px !important; }
+  .gap-2 { gap: 3px !important; }
+
+  /* Force 3-column skills grid regardless of breakpoint */
+  .grid.grid-cols-1 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Compact skill tags */
+  .flex.flex-wrap.gap-2 { gap: 3px !important; row-gap: 3px !important; }
+  .font-mono.text-xs    { font-size: 10px !important; }
+
+  /* Cover letter card padding */
+  .p-5, .sm\\:p-8, .md\\:p-10 { padding: 14px !important; }
+
+  /* Timeline indent */
+  .pl-10 { padding-left: 28px !important; }
+
+  /* Relax line-height on body copy */
+  .leading-relaxed { line-height: 1.42 !important; }
+
+  /* Header contact strip */
+  .flex.flex-wrap.gap-4 { gap: 12px !important; }
+`;
+
+// ── Cover letter: tighten up but don't need aggressive compression ─────────────
+const COVER_CSS = `
+  body { font-size: 14px !important; line-height: 1.55 !important; }
+  .mb-8 { margin-bottom: 16px !important; }
+  .space-y-4 > * + * { margin-top: 12px !important; }
+  .p-5, .sm\\:p-8, .md\\:p-10 { padding: 28px !important; }
 `;
 
 // ── Main ───────────────────────────────────────────────────────────────────────
@@ -95,52 +159,71 @@ async function main() {
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
-      "--disable-web-security",
       "--font-render-hinting=medium",
     ],
   });
 
-  for (const { path: pagePath, file } of PAGES) {
+  for (const { path: pagePath, file, type } of PAGES) {
+    const isResume = type === "resume";
     const url = `${BASE_URL}${pagePath}`;
     console.log(`  → ${url}`);
 
     const page = await browser.newPage();
-
-    // Wide viewport so layout doesn't collapse
-    await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
-
-    // Stay in screen media so full brand design renders (not @media print CSS)
+    await page.setViewport({ width: 1200, height: 900, deviceScaleFactor: 1 });
     await page.emulateMediaType("screen");
-
     await page.goto(url, { waitUntil: "networkidle0", timeout: 45_000 });
 
-    // Give web fonts + Framer Motion entrance animations time to settle
+    // Wait for fonts + Framer Motion entrances to settle
     await new Promise((r) => setTimeout(r, 2500));
 
-    // Inject cleanup CSS (hides nav/footer/overlays, freezes motion)
-    await page.addStyleTag({ content: CLEANUP_CSS });
+    // ── 1. Dismiss cookie banner (click "Got it" if visible) ──────────────────
+    await page.evaluate(() => {
+      document.querySelectorAll("button").forEach((btn) => {
+        if (btn.textContent?.trim() === "Got it") btn.click();
+      });
+    });
+    await new Promise((r) => setTimeout(r, 200));
 
-    // One more tick for any reflow
-    await new Promise((r) => setTimeout(r, 300));
-
-    // Get the full content height after cleanup so we paginate correctly
-    const contentHeight = await page.evaluate(() => {
-      const el = document.querySelector(".resume-page-wrapper");
-      return el ? el.scrollHeight + 40 : document.body.scrollHeight;
+    // ── 2. Remove the cream scrim overlay (only hidden via @media print, ──────
+    //       but we're capturing in screen mode)
+    await page.evaluate(() => {
+      document
+        .querySelectorAll('[style*="rgba(250, 249, 246"]')
+        .forEach((el) => el.remove());
     });
 
-    const outputPath = join(OUTPUT_DIR, `${file}.pdf`);
+    // ── 3. For cover letters: strip the resume sections below the letter ───────
+    //       so each cover letter outputs as a clean single page
+    if (!isResume) {
+      await page.evaluate(() => {
+        // .resume-section[0] = header, [1]+ = Value I Bring / Experience / Skills
+        const sections = document.querySelectorAll(".resume-section");
+        for (let i = 1; i < sections.length; i++) {
+          sections[i].remove();
+        }
+      });
+    }
 
+    // ── 4. Inject CSS ─────────────────────────────────────────────────────────
+    await page.addStyleTag({ content: SHARED_CSS });
+    await page.addStyleTag({ content: isResume ? RESUME_CSS : COVER_CSS });
+
+    // Short reflow pause
+    await new Promise((r) => setTimeout(r, 400));
+
+    // ── 5. Generate PDF ───────────────────────────────────────────────────────
     await page.pdf({
-      path: outputPath,
+      path: join(OUTPUT_DIR, `${file}.pdf`),
       format: "Letter",
       printBackground: true,
-      // Use screen media render, no forced @page styles
+      // scale: shrinks the web content to fit page — 0.73 for dense resume,
+      // 0.82 for cover letters (less content)
+      scale: isResume ? 0.73 : 0.82,
       margin: {
-        top: "0.5in",
-        right: "0.55in",
-        bottom: "0.5in",
-        left: "0.55in",
+        top: "0.45in",
+        right: "0.5in",
+        bottom: "0.45in",
+        left: "0.5in",
       },
     });
 
@@ -150,9 +233,7 @@ async function main() {
 
   await browser.close();
   console.log("\n✅  All PDFs saved to public/pdfs/\n");
-  console.log(
-    "Next: git add public/pdfs/*.pdf && git commit -m 'Add generated resume PDFs'\n"
-  );
+  console.log("Next: git add public/pdfs && git commit -m 'Regenerate PDFs'\n");
 }
 
 main().catch((err) => {
