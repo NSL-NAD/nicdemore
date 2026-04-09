@@ -18,10 +18,11 @@ const coverLetters: Record<string, CoverLetter> = {
     company: "Anthropic",
     greeting: "To the team at Anthropic,",
     paragraphs: [
-      "I\u2019ve been building AI-native infrastructure since early 2025. Not because it was strategic; because I couldn\u2019t stop. I built Alfred, a persistent AI chief-of-staff who manages my ventures, runs autonomous agents, and helps me operate at a scale that shouldn\u2019t be possible for a solo founder. I built The Grid, a venture operations dashboard where the agent team works. I wrote SOUL.md and MEMORY.md, the files that give AI systems continuity and character. I\u2019ve been living inside the problem Anthropic is trying to solve, and I\u2019ve built a body of work that proves it.",
-      "What draws me to Anthropic isn\u2019t just the technology; it\u2019s the posture. Building powerful AI and taking safety seriously isn\u2019t a contradiction; it\u2019s the only version of this that works. I\u2019ve seen firsthand what happens when AI systems operate autonomously in real business contexts. The alignment questions aren\u2019t theoretical to me. They\u2019re Tuesday.",
-      "I bring an unusual combination: a mechanical engineering foundation that trained me to think in systems and constraints, a decade of entrepreneurship that taught me to ship under pressure, and a year of deep, daily work building with Claude at the systems level. I don\u2019t just use the API. I build infrastructure on top of it: agent orchestration, persistent memory, autonomous workflows.",
-      "I want to help build the tools and systems that make AI useful, safe, and genuinely aligned with the people who use it. I\u2019ve been doing that independently. I\u2019d like to do it with the team that\u2019s setting the standard.",
+      "I\u2019ve been building AI-native infrastructure since early 2025 \u2014 not because it was strategic, but because I couldn\u2019t stop. I built Alfred, a persistent AI chief-of-staff who manages my ventures, runs autonomous agents, and helps me operate at a scale that shouldn\u2019t be possible for a solo founder. I built The Grid, a venture operations dashboard where the agent team works. I wrote SOUL.md and MEMORY.md, the files that give AI systems continuity and character. And yes \u2014 this portfolio site and resume were built with Claude Code. I thought you\u2019d appreciate the transparency.",
+      "I came across Anthropic\u2019s post on harness design for long-running applications and smiled in recognition. I had been wrestling with the exact same problems before it was published: context windows collapsing under extended sessions, agents losing coherence over time, the challenge of clean handoffs in multi-agent orchestration. The solutions I was building independently aligned closely with the architecture you were articulating. That kind of convergence tells me I\u2019m thinking in the right direction.",
+      "What draws me to the AI Safety Fellowship isn\u2019t just the technical work \u2014 it\u2019s the posture. Building powerful AI and taking safety seriously aren\u2019t in tension; that\u2019s the only version of this that holds up. The research areas this cohort focuses on \u2014 scalable oversight, adversarial robustness, mechanistic interpretability \u2014 aren\u2019t abstract to me. I\u2019ve seen firsthand what happens when AI systems operate autonomously in real business contexts. The alignment questions are Tuesday, not theoretical. My ethos \u2014 doing good, at scale \u2014 maps directly onto what Anthropic is building.",
+      "I bring a mechanical engineering foundation that trained me to think in systems and constraints, a decade of operational experience that taught me to ship under pressure, and a year of deep daily work building on top of Claude at the systems level. I don\u2019t just use the API. I build infrastructure on top of it: agent orchestration, persistent memory, autonomous workflows. The problems you\u2019re researching are the problems I\u2019ve been living.",
+      "I\u2019d like to spend the next four months contributing focused, serious work to research that matters. The alignment problem is the most important engineering challenge of our generation, and Anthropic is the team I\u2019d want to be working alongside to address it.",
     ],
     closing: "\u2014 Nic DeMore",
   },
@@ -29,10 +30,10 @@ const coverLetters: Record<string, CoverLetter> = {
     company: "Apple",
     greeting: "To the team at Apple,",
     paragraphs: [
-      "I build things that are complete: not just functional, but considered. The gap between something that works and something that feels right is where I live. That\u2019s a gap I\u2019ve been closing my entire career, from mechanical engineering to digital products to the AI-native systems I build today.",
-      "My training is in engineering, but my instinct is design. I fell in love with architecture, the discipline of making spaces that serve people beautifully. I studied it obsessively, built a course to teach others what I learned, and apply that same eye to every product I touch. The way a great building balances structure and beauty, load and light; that\u2019s the same tension that makes great software.",
-      "I co-founded and operated a 7-figure digital agency, learning what it takes to serve the world\u2019s most demanding brands at scale. Now I\u2019m building AI-native infrastructure: autonomous agent systems, venture operations platforms, and tools that let small teams operate with the precision and reach of much larger ones. The common thread is craft; the conviction that how something is built matters as much as what it does.",
-      "Apple\u2019s standard is the one I grew up with and the one I hold myself to. I\u2019d like to bring my engineering foundation, my design eye, and my builder\u2019s instinct to a team that refuses to ship anything less than excellent.",
+      "There are companies you respect and companies you believe in. Apple is one of the few I\u2019ve believed in my entire life \u2014 as a user, as someone who pays close attention to how things are made, and as someone who holds his own work to the same standard of craft and finish that Apple has always set. That alignment isn\u2019t a talking point. It\u2019s just the truth.",
+      "My background moved through mechanical engineering, a decade of agency operations, and into AI-native product development. The common thread isn\u2019t any single skill \u2014 it\u2019s the approach: understand the system deeply, ask the right questions without ego, and don\u2019t ship until it\u2019s right. I\u2019ve never been afraid to be the least experienced person in the room. That\u2019s often where the best learning happens, and I\u2019ve built a career on staying in that posture.",
+      "What I bring isn\u2019t just technical range \u2014 it\u2019s reliability. Over ten years of client work with brands like Frito-Lay, Johnsonville, and Cousins Subs, I showed up every day, solved difficult problems, earned trust through consistent results, and led teams to outcomes the clients didn\u2019t know were possible. I know what it means to execute deep, focused work over sustained periods \u2014 not just when the problem is exciting, but when it\u2019s Tuesday and the path forward isn\u2019t obvious. I\u2019m good with people, good at leading, and good at keeping teams informed, aligned, and moving.",
+      "Apple\u2019s standard is the one I grew up with and the one I hold myself to. The precision, the restraint, the relentless focus on what the user actually experiences \u2014 those aren\u2019t abstract values to me. They\u2019re the way I work. It would be a genuine honor to contribute to a team that refuses to ship anything less than excellent.",
     ],
     closing: "\u2014 Nic DeMore",
   },
@@ -44,14 +45,14 @@ const timeline = [
     title: "Founder",
     org: "Good at Scale Studio",
     description:
-      "Building AI-native operational infrastructure: autonomous agents, venture automation, intelligence systems. Running a 12x12 venture studio: 12 ventures in 12 months. Designing agent systems, MCP protocols, and the operational layer for how small teams scale.",
+      "Building AI-native operational infrastructure: autonomous agents, venture automation, intelligence systems. Running a 12x12 venture studio: 12 ventures in 12 months. Designing agent systems, leveraging the MCP, and the operational layer for how small teams scale. The entire site and platform was designed, developed, and built by me with the support of Claude Code and other technology integrations.",
   },
   {
     year: "2025\u2013Present",
     title: "Course Creator",
     org: "Foundations of Architecture",
     description:
-      "Built and launched an online architecture education platform as a self-funded, solo-built product. Curriculum design, content production, e-commerce, and growth. 0 to live in 8 weeks.",
+      "Built and launched an online architecture education platform as a self-funded, solo-built product. Curriculum design, content production, e-commerce, and growth. Built with Claude Code, Next.js, Supabase, Stripe, and other autonomous and third-party integrations, this platform teaches students how to design their own dream home or space. On the backend, the platform was built to support an Admin Dashboard, with a Strategy Co-Pilot, Social Hub, Community Engagement, and a Course Content Editor, among other features.",
   },
   {
     year: "2017\u2013Present",
@@ -65,7 +66,7 @@ const timeline = [
     title: "B.S. Mechanical Engineering",
     org: "Marquette University",
     description:
-      "Engineering fundamentals: thermodynamics, materials science, systems design, tolerance analysis, process engineering. The training that taught me to think in constraints and design solutions that hold up under pressure.",
+      "Engineering fundamentals: thermodynamics, materials science, systems design, tolerance analysis, process engineering. The training that taught me to think in constraints and design solutions that hold up under pressure. My personal biggest takeaways from my time at Marquette were learning how to learn \u2014 quickly and efficiently \u2014 and the cultural exposure that came from a study abroad semester in Florence, Italy.",
   },
 ];
 
@@ -165,11 +166,30 @@ export default function ResumePage() {
             transition={{ duration: 0.6, ease, delay: 0.1 }}
             className="mb-12 sm:mb-16 md:mb-20 bg-white rounded-lg border border-line p-5 sm:p-8 md:p-10"
           >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-1 h-8 bg-accent rounded-full" />
-              <h2 className="font-display text-xl text-ink">
-                A note for {letter.company}
-              </h2>
+            {/* Company badge */}
+            <div className="flex items-center gap-3 mb-8">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                style={{ background: "var(--color-ink)" }}
+              >
+                <span
+                  className="font-display font-bold text-base"
+                  style={{ color: "var(--color-background)" }}
+                >
+                  {letter.company[0]}
+                </span>
+              </div>
+              <div>
+                <p
+                  className="font-mono text-xs tracking-widest uppercase mb-0.5"
+                  style={{ color: "var(--color-accent)" }}
+                >
+                  Cover Letter
+                </p>
+                <h2 className="font-display text-xl text-ink leading-none">
+                  {letter.company}
+                </h2>
+              </div>
             </div>
 
             <p className="text-ink-muted italic mb-6">{letter.greeting}</p>
@@ -183,6 +203,31 @@ export default function ResumePage() {
             <p className="mt-8 font-medium text-ink">{letter.closing}</p>
           </motion.div>
         )}
+
+        {/* Value I Bring — summary / professional profile */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOnce}
+          transition={{ duration: 0.6, ease }}
+          className="mb-12 sm:mb-16 md:mb-20 resume-section"
+        >
+          <h2 className="font-display text-2xl text-ink mb-6">The Value I Bring to the Table</h2>
+          <div className="space-y-3 text-ink-muted leading-relaxed">
+            <p>
+              A mechanical engineering foundation means I think in systems and constraints; I see the structure underneath things. A decade of agency work means I know how to operate under pressure, serve demanding stakeholders, and ship. And a year of daily, deep work building AI-native infrastructure means I&apos;m not just using these tools. I&apos;m building on top of them.
+            </p>
+            <p>
+              I bring the unusual combination of builder, operator, and strategic thinker to every problem. I can go deep technically and surface commercially. I&apos;ve built things from zero, run teams, served enterprise clients, and built the kind of AI infrastructure most people are still theorizing about.
+            </p>
+            <p>
+              What makes me effective isn&apos;t just the range of skills \u2014 it&apos;s how I operate. I&apos;m reliable and consistent: I set clear goals, manage my time and priorities across competing workstreams, and follow through. I&apos;ve led teams through ambiguity, built goal-setting frameworks that keep everyone aligned, and earned trust by being the person who always comes prepared and always delivers. Teamwork isn&apos;t just something I participate in \u2014 it&apos;s something I actively build. Strong task and time management, a bias toward clarity, and genuine accountability are at the core of how I work.
+            </p>
+            <p>
+              Above all, I have a talent for distilling complexity into clarity \u2014 reading a complicated situation, organizing what matters, and keeping the team informed, aligned, and moving forward even when the path isn&apos;t obvious. That combination of technical depth, management experience, and people-first leadership is what I bring to every role.
+            </p>
+          </div>
+        </motion.div>
 
         {/* Timeline */}
         <motion.div
@@ -226,25 +271,6 @@ export default function ResumePage() {
           </div>
         </motion.div>
 
-        {/* Value section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={viewportOnce}
-          transition={{ duration: 0.6, ease }}
-          className="mb-12 sm:mb-16 md:mb-20 resume-section"
-        >
-          <h2 className="font-display text-2xl text-ink mb-6">The Value I Bring to the Table</h2>
-          <div className="space-y-3 text-ink-muted leading-relaxed">
-            <p>
-              A mechanical engineering foundation means I think in systems and constraints; I see the structure underneath things. A decade of agency work means I know how to operate under pressure, serve demanding stakeholders, and ship. And a year of daily, deep work building AI-native infrastructure means I&apos;m not just using these tools. I&apos;m building on top of them.
-            </p>
-            <p>
-              I bring the unusual combination of builder, operator, and strategic thinker to every problem. I can go deep technically and surface commercially. I&apos;ve built things from zero, run teams, served enterprise clients, and built the kind of AI infrastructure most people are still theorizing about.
-            </p>
-          </div>
-        </motion.div>
-
         {/* Skills */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -263,12 +289,21 @@ export default function ResumePage() {
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {group.skills.map((skill) => (
-                    <span
+                    <motion.span
                       key={skill}
-                      className="font-mono text-xs text-ink-muted bg-surface border border-line px-2.5 py-1.5 rounded"
+                      className="font-mono text-xs bg-surface border border-line px-2.5 py-1.5 rounded cursor-default"
+                      style={{ color: "var(--color-ink-muted)" }}
+                      whileHover={{
+                        y: -2,
+                        color: "#F4631E",
+                        borderColor: "rgba(244,99,30,0.45)",
+                        backgroundColor: "rgba(244,99,30,0.08)",
+                        boxShadow: "0 0 10px rgba(244,99,30,0.22)",
+                        transition: { duration: 0.15 },
+                      }}
                     >
                       {skill}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
               </div>
