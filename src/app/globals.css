@@ -399,8 +399,7 @@ body {
   animation: pulse-load 0.8s ease-in-out 3;
 }
 
-/* No-print helper — works on screen too (e.g. for JS checks), hides in print */
-.no-print { display: revert; }
+/* No-print helper — hidden in print only, normal display on screen */
 @media print { .no-print { display: none !important; } }
 
 /* ===================================================
