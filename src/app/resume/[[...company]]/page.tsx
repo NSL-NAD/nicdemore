@@ -10,6 +10,7 @@ interface CoverLetter {
   company: string;
   role?: string;
   applyUrl?: string;
+  combined?: boolean; // true = download is cover letter + full resume in one PDF
   greeting: string;
   paragraphs: string[];
   closing: string;
@@ -40,6 +41,7 @@ const coverLetters: Record<string, CoverLetter> = {
     company: "Anthropic",
     role: "AI Safety Fellow",
     applyUrl: "https://job-boards.greenhouse.io/anthropic/jobs/5023394008",
+    combined: true,
     greeting: "To the team at Anthropic,",
     paragraphs: [
       "I\u2019ve been building AI-native infrastructure since early 2025, not because it was strategic, but because I couldn\u2019t stop. I built myself a persistent AI chief-of-staff who manages my ventures, runs autonomous agents, and helps me operate at a scale that shouldn\u2019t be possible for a solo founder. I have now built my own venture operations dashboard where the agent team works, I have created my own digital course platform from scratch, launched a studio website, have learned Next.js at a high level, WebGL, GSAP, and a whole list of additional development tools and skills. And yes: this portfolio site and resume were built with Claude Code. I thought you\u2019d appreciate the transparency.",
@@ -54,6 +56,7 @@ const coverLetters: Record<string, CoverLetter> = {
 
   apple: {
     company: "Apple",
+    combined: true,
     greeting: "To the team at Apple,",
     paragraphs: [
       "There are companies you respect and companies you believe in. Apple is one of the few I\u2019ve believed in my entire adult life: as a user, an entrepreneur following the Steve Jobs story, as someone who pays close attention to how things are made, and as someone who holds his own work to the same standard of craft and finish that Apple has always set. That alignment isn\u2019t a talking point. It\u2019s just the truth.",
@@ -68,6 +71,7 @@ const coverLetters: Record<string, CoverLetter> = {
     company: "Apple",
     role: "Senior Manager, App Review",
     applyUrl: "https://jobs.apple.com/en-us/details/200625930-3956/senior-manager-app-review?team=MKTG",
+    combined: true,
     greeting: "To the team at Apple,",
     paragraphs: [
       "Thank you for taking the time to consider me as a candidate for this role. I have applied for multiple roles at Apple, all of which I strongly believe that I would excel at given my background and experience. I would be honored at the opportunity to have a discussion with the hiring team for this position.",
@@ -83,6 +87,7 @@ const coverLetters: Record<string, CoverLetter> = {
     company: "Apple",
     role: "Apple Ads Platform Operations Business Manager",
     applyUrl: "https://jobs.apple.com/en-us/details/200651344-0836/apple-ads-platform-operations-business-manager?team=MKTG",
+    combined: true,
     greeting: "To the team at Apple,",
     paragraphs: [
       "Thank you for taking the time to consider me as a candidate for this role. I have applied for multiple roles at Apple, all of which I strongly believe that I would excel at given my background and experience. I would be honored at the opportunity to have a discussion with the hiring team for this position.",
@@ -98,6 +103,7 @@ const coverLetters: Record<string, CoverLetter> = {
     company: "Apple",
     role: "Senior Social Strategist",
     applyUrl: "https://jobs.apple.com/en-us/details/200649054-0836/senior-social-strategist?team=MKTG",
+    combined: true,
     greeting: "To the team at Apple,",
     paragraphs: [
       "Thank you for taking the time to consider me as a candidate for this role. I have applied for multiple roles at Apple, all of which I strongly believe that I would excel at given my background and experience. I would be honored at the opportunity to have a discussion with the hiring team for this position.",
@@ -208,8 +214,14 @@ export default function ResumePage() {
           className="mb-12 flex items-center justify-end no-print"
         >
           <DownloadPDFButton
-            label={letter ? `Download Cover Letter: ${letter.role ?? letter.company}` : "Download Resume as PDF"}
-            filename={letter ? `nic-demore-cover-letter-${companySlug}` : "nic-demore-resume"}
+            label="Download Resume"
+            filename={
+              letter?.combined
+                ? `nic-demore-${companySlug}-application`
+                : letter
+                ? `nic-demore-cover-letter-${companySlug}`
+                : "nic-demore-resume"
+            }
           />
         </motion.div>
 

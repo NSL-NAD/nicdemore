@@ -27,13 +27,16 @@ const urlFlag =
 const BASE_URL = urlFlag?.replace(/\/$/, "") ?? "https://nicdemore.com";
 
 // ── Pages ─────────────────────────────────────────────────────────────────────
+// type "resume"   — full resume, aggressive compression, ~2 pages
+// type "cover"    — cover letter + header only, ~1 page
+// type "combined" — cover letter + full resume in one PDF (Apple applications)
 const PAGES = [
-  { path: "/resume",                  file: "nic-demore-resume",                        type: "resume" },
-  { path: "/resume/anthropic",        file: "nic-demore-cover-letter-anthropic",         type: "cover"  },
-  { path: "/resume/apple",            file: "nic-demore-cover-letter-apple",             type: "cover"  },
-  { path: "/resume/apple-app-review", file: "nic-demore-cover-letter-apple-app-review",  type: "cover"  },
-  { path: "/resume/apple-ads",        file: "nic-demore-cover-letter-apple-ads",         type: "cover"  },
-  { path: "/resume/apple-social",     file: "nic-demore-cover-letter-apple-social",      type: "cover"  },
+  { path: "/resume",                  file: "nic-demore-resume",                         type: "resume"   },
+  { path: "/resume/anthropic",        file: "nic-demore-anthropic-application",           type: "combined" },
+  { path: "/resume/apple",            file: "nic-demore-apple-application",               type: "combined" },
+  { path: "/resume/apple-app-review", file: "nic-demore-apple-app-review-application",    type: "combined" },
+  { path: "/resume/apple-ads",        file: "nic-demore-apple-ads-application",           type: "combined" },
+  { path: "/resume/apple-social",     file: "nic-demore-apple-social-application",        type: "combined" },
 ];
 
 // ── Shared CSS (both types) ────────────────────────────────────────────────────
@@ -164,9 +167,11 @@ async function main() {
   });
 
   for (const { path: pagePath, file, type } of PAGES) {
-    const isResume = type === "resume";
+    const isResume   = type === "resume";
+    const isCover    = type === "cover";
+    const isCombined = type === "combined";
     const url = `${BASE_URL}${pagePath}`;
-    console.log(`  → ${url}`);
+    console.log(`  → ${url}  [${type}]`);
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 900, deviceScaleFactor: 1 });
@@ -176,7 +181,7 @@ async function main() {
     // Wait for fonts + Framer Motion entrances to settle
     await new Promise((r) => setTimeout(r, 2500));
 
-    // ── 1. Dismiss cookie banner (click "Got it" if visible) ──────────────────
+    // ── 1. Dismiss cookie banner ──────────────────────────────────────────────
     await page.evaluate(() => {
       document.querySelectorAll("button").forEach((btn) => {
         if (btn.textContent?.trim() === "Got it") btn.click();
@@ -184,29 +189,28 @@ async function main() {
     });
     await new Promise((r) => setTimeout(r, 200));
 
-    // ── 2. Remove the cream scrim overlay (only hidden via @media print, ──────
-    //       but we're capturing in screen mode)
+    // ── 2. Remove cream scrim overlay (screen mode, not affected by @media print)
     await page.evaluate(() => {
       document
         .querySelectorAll('[style*="rgba(250, 249, 246"]')
         .forEach((el) => el.remove());
     });
 
-    // ── 3. For cover letters: strip the resume sections below the letter ───────
-    //       so each cover letter outputs as a clean single page
-    if (!isResume) {
+    // ── 3. Strip resume sections for cover-only pages ─────────────────────────
+    //       combined + resume keep all sections
+    if (isCover) {
       await page.evaluate(() => {
-        // .resume-section[0] = header, [1]+ = Value I Bring / Experience / Skills
+        // index 0 = header, 1+ = Value I Bring / Experience / Skills
         const sections = document.querySelectorAll(".resume-section");
-        for (let i = 1; i < sections.length; i++) {
-          sections[i].remove();
-        }
+        for (let i = 1; i < sections.length; i++) sections[i].remove();
       });
     }
 
     // ── 4. Inject CSS ─────────────────────────────────────────────────────────
     await page.addStyleTag({ content: SHARED_CSS });
-    await page.addStyleTag({ content: isResume ? RESUME_CSS : COVER_CSS });
+    await page.addStyleTag({
+      content: isCover ? COVER_CSS : RESUME_CSS, // combined uses same compression as resume
+    });
 
     // Short reflow pause
     await new Promise((r) => setTimeout(r, 400));
@@ -216,9 +220,7 @@ async function main() {
       path: join(OUTPUT_DIR, `${file}.pdf`),
       format: "Letter",
       printBackground: true,
-      // scale: shrinks the web content to fit page — 0.73 for dense resume,
-      // 0.82 for cover letters (less content)
-      scale: isResume ? 0.73 : 0.82,
+      scale: isCover ? 0.82 : 0.73, // cover = more whitespace; resume/combined = dense
       margin: {
         top: "0.45in",
         right: "0.5in",
