@@ -86,6 +86,12 @@ const SHARED_CSS = `
     print-color-adjust: exact !important;
   }
 
+  /* ── Cover letter card — inset margins so it reads narrower than the resume body ── */
+  .bg-white.rounded-lg {
+    margin-left: 5% !important;
+    margin-right: 5% !important;
+  }
+
   /* ── Closing signature — orange pill button (PDF only) ── */
   .cover-letter-closing {
     display: inline-block !important;
