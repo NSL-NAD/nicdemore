@@ -86,12 +86,6 @@ const SHARED_CSS = `
     print-color-adjust: exact !important;
   }
 
-  /* ── Cover letter card — inset margins so it reads narrower than the resume body ── */
-  .bg-white.rounded-lg {
-    margin-left: 5% !important;
-    margin-right: 5% !important;
-  }
-
   /* ── Closing signature — orange pill button (PDF only) ── */
   .cover-letter-closing {
     display: inline-block !important;
@@ -215,7 +209,19 @@ async function main() {
         .forEach((el) => el.remove());
     });
 
-    // ── 3. Strip resume sections for cover-only pages ─────────────────────────
+    // ── 3. Inset cover letter card margins (combined pages only) ─────────────
+    //       Direct inline style — higher specificity than any CSS injection
+    if (isCombined) {
+      await page.evaluate(() => {
+        const card = document.querySelector(".bg-white.rounded-lg");
+        if (card) {
+          card.style.setProperty("margin-left", "7.5%", "important");
+          card.style.setProperty("margin-right", "7.5%", "important");
+        }
+      });
+    }
+
+    // ── 4. Strip resume sections for cover-only pages ─────────────────────────
     //       combined + resume keep all sections
     if (isCover) {
       await page.evaluate(() => {
