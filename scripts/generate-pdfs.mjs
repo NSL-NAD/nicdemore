@@ -215,8 +215,8 @@ async function main() {
       await page.evaluate(() => {
         const card = document.querySelector(".bg-white.rounded-lg");
         if (card) {
-          card.style.setProperty("margin-left", "10%", "important");
-          card.style.setProperty("margin-right", "10%", "important");
+          card.style.setProperty("margin-left", "12%", "important");
+          card.style.setProperty("margin-right", "12%", "important");
         }
       });
     }
