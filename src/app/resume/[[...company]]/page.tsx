@@ -293,12 +293,13 @@ export default function ResumePage() {
               ))}
             </div>
 
-            <p className="mt-8 font-medium text-ink">
+            <p className="mt-8 text-ink-muted italic">Respectfully,</p>
+            <p className="mt-2 font-medium text-ink">
               <a
                 href="https://nicdemore.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent transition-colors"
+                className="cover-letter-closing hover:text-accent transition-colors"
                 style={{ color: "inherit", textDecoration: "none" }}
               >
                 {letter.closing}

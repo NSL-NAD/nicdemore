@@ -85,6 +85,19 @@ const SHARED_CSS = `
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+
+  /* ── Closing signature — orange pill button (PDF only) ── */
+  .cover-letter-closing {
+    display: inline-block !important;
+    background: #F4631E !important;
+    color: white !important;
+    padding: 5px 16px !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    text-decoration: none !important;
+  }
 `;
 
 // ── Resume-specific: compress spacing to hit ~2 pages ─────────────────────────
