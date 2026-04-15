@@ -59,10 +59,10 @@ const coverLetters: Record<string, CoverLetter> = {
     combined: true,
     greeting: "To the team at Apple,",
     paragraphs: [
-      "There are companies you respect and companies you believe in. Apple is one of the few I\u2019ve believed in my entire adult life: as a user, an entrepreneur following the Steve Jobs story, as someone who pays close attention to how things are made, and as someone who holds his own work to the same standard of craft and finish that Apple has always set. That alignment isn\u2019t a talking point. It\u2019s just the truth.",
-      "My background moved through mechanical engineering, a decade of agency operations, and into AI-native venture and systems development. The common thread isn\u2019t any single skill: it\u2019s the approach. Understand the system deeply, ask the right questions without ego, and don\u2019t ship anything until it\u2019s right. I\u2019ve never been afraid to be the least experienced person in the room. That\u2019s often where the best learning happens, and I\u2019ve built a career on staying in that posture.",
+      "There are companies you respect and companies you believe in. Apple is one of the few I\u2019ve believed in my entire adult life: as a user, an entrepreneur following the Steve Jobs story, as someone who pays close attention to how things are made, and as someone who holds his own work to the same standard of craft and finish that Apple has always set. I am honored to be able to apply at Apple. I have applied to three positions; I felt I could genuinely provide value in all of the roles, succeed in them, and they would also stretch my capabilities.",
+      "My background moved through mechanical engineering, a decade of agency operations, and into AI-native venture and systems development. The common thread isn\u2019t any single skill: it\u2019s the approach. Understand the system deeply, ask the right questions without ego, and don\u2019t complete anything until it\u2019s right. I\u2019ve never been afraid to be the least experienced person in the room. That\u2019s often where the best learning happens, and I\u2019ve built a career on staying in that posture.",
       "What I bring isn\u2019t just technical range: it\u2019s reliability. Over ten years of client work with brands like Frito-Lay, Johnsonville, QDOBA, Humana, and Post Consumer Brands, I showed up every day, solved difficult problems, earned trust through consistent results, and led teams to outcomes the clients didn\u2019t know were possible. I know what it means to execute deep, focused work over sustained periods, not just when the problem is exciting, but when it\u2019s Tuesday and the path forward isn\u2019t obvious. I\u2019m good with people, good at leading, and good at keeping teams informed, aligned, and moving.",
-      "Apple\u2019s standard is the one I grew up with and the one I hold myself to. The precision, the restraint, the relentless focus on what the user actually experiences: those aren\u2019t abstract values to me. They\u2019re the way I work. It would be a genuine honor to contribute to a team that refuses to ship anything less than excellent.",
+      "Apple\u2019s standard is the one I grew up with and the one I hold myself to. The precision, the restraint, the relentless focus on what the user actually experiences: those aren\u2019t abstract values to me. They\u2019re the way I work. It would be a genuine honor to contribute to a team that \u201cbelieve[s] that business, at its best, serves the public good, empowers people around the world, and binds us together as never before\u201d.",
     ],
     closing: "Nic DeMore",
   },
@@ -124,28 +124,28 @@ const timeline = [
     title: "Founder",
     org: "Good at Scale Studio",
     description:
-      "Building AI-native operational infrastructure: autonomous agents, venture automation, intelligence systems. Running a 12x12 venture studio: 12 ventures in 12 months. Designing agent systems, leveraging the MCP, and the operational layer for how small teams scale. The entire site and platform was designed, developed, and built by me with the support of Claude Code and other technology integrations.",
+      "Building AI-native operational infrastructure: autonomous agents, venture automation, intelligence systems. Running a 12x12 venture studio: 12 ventures in 12 months. Designing agent systems, leveraging the MCP, and the operational layer for how small teams scale. The entire site and platform was designed, developed, and built by me with the support of Claude Code and other technology integrations. This is my personal platform for learning and implementing AI and automation, testing new tools and software, and a creative outlet for ideas that create more good (my version of \u201cserving the public good\u201d).",
   },
   {
     year: "2025\u2013Present",
     title: "Course Creator",
     org: "Foundations of Architecture",
     description:
-      "Built and launched an online architecture education platform as a self-funded, solo-built product. Curriculum design, content production, e-commerce, and growth. Built with Claude Code, Next.js, Supabase, Stripe, and other autonomous and third-party integrations, this platform teaches students how to design their own dream home or space. On the backend, the platform was built to support an Admin Dashboard, with a Strategy Co-Pilot, Social Hub, Community Engagement, and a Course Content Editor, among other features.",
+      "Built and launched an online architecture education platform as a self-funded, solo-built product. Curriculum design, content production, e-commerce integration, and automated organic content. Built with Claude Code, Next.js, Supabase, Stripe, and other autonomous and third-party integrations, this platform teaches students how to design their own dream home or space. On the backend, the platform was built to support an Admin Dashboard, with a Strategy Co-Pilot, Social Hub, Community Engagement, and a Course Content Editor, among other features.",
   },
   {
     year: "2017\u2013Present",
     title: "Co-Founder, President & COO",
     org: "Margle Media",
     description:
-      "Built the agency from zero to seven figures. Directly managed or built every function: sales pipeline, account management, P&L, financial forecasting, cashflow, AR/AP, invoicing, utilization and margin reporting. Grew and managed a leadership team with direct reports across creative, media, strategy, and operations. Clients include Cousins Subs, Johnsonville, Frito-Lay, Florsheim, Instant Pot, Stella & Chewy\u2019s, Quest Products. Personally managed client strategy for Fortune 500 and regional brands across paid search, paid social, organic social, and omnichannel. Built agency operating systems, reporting infrastructure, and client-facing analytics frameworks. Handled HR, IT, vendor relationships, legal coordination, and agency contracts. Ten years of touching every aspect of a full-service agency. This is the operating credential.",
+      "Built the agency from zero to seven figures. Directly managed or built every function: sales pipeline, account management, accounting, financial forecasting, cashflow, AR/AP, invoicing, annual planning, project management, creative production, utilization and margin reporting. Grew and managed a leadership team with direct reports across creative, digital, strategy, projects, and operations. Clients include Cousins Subs, Johnsonville, Frito-Lay, Florsheim, Instant Pot, Stella & Chewy\u2019s, Quest Products, Humana, PETCO, QDOBA, Post Consumer Brands, Weyco Group, and many others over the years. Personally managed client strategy for Fortune 500 and regional brands across paid search, paid social, organic social, and omnichannel. Built agency operating systems, reporting infrastructure, and client-facing analytics frameworks. Handled HR, IT, vendor relationships, legal coordination, and agency contracts. Ten years of touching every aspect of a full-service agency. This is the operating credential and has been the best method of education I could have possibly pursued.",
   },
   {
     year: "2012\u20132016",
     title: "B.S. Mechanical Engineering",
     org: "Marquette University",
     description:
-      "Engineering fundamentals: thermodynamics, materials science, systems design, tolerance analysis, process engineering. The training that taught me to think in constraints and design solutions that hold up under pressure. My personal biggest takeaways from my time at Marquette were learning how to learn, quickly and efficiently, and the cultural exposure that came from a study abroad semester in Florence, Italy.",
+      "Engineering fundamentals: thermodynamics, materials science, systems design, tolerance analysis, process engineering. The training that taught me to think in constraints and design solutions that hold up under pressure. My personal biggest takeaways from my time at Marquette were learning how to learn, quickly and efficiently, and the cultural exposure that came from a study abroad semester in Florence, Italy. During my time at Marquette I held various positions in manufacturing (Quad Graphics), aerospace engineering (Ace Precision), and fitness (YMCA).",
   },
 ];
 
@@ -311,13 +311,13 @@ export default function ResumePage() {
           <h2 className="font-display text-2xl text-ink mb-6">The Value I Bring to the Table</h2>
           <div className="space-y-3 text-ink-muted leading-relaxed">
             <p>
-              A mechanical engineering foundation means I think in systems and constraints; I see the structure underneath things. A decade of agency work means I know how to operate under pressure, serve demanding stakeholders, and ship. And a year of daily, deep work building AI-native infrastructure means I&apos;m not just using these tools. I&apos;m building on top of them.
+              A mechanical engineering foundation means I think in systems and constraints; I see the structure underneath things. A decade of agency work means I know how to operate under pressure, serve demanding stakeholders, and solve problems. And a year of daily, deep work building AI-native infrastructure means I&apos;m not just using these tools, I&apos;m building with them.
             </p>
             <p>
-              I bring the unusual combination of builder, operator, and strategic thinker to every problem. I can go deep technically and surface commercially. I&apos;ve built things from zero, run teams, served enterprise clients, and built the kind of AI infrastructure most people are still theorizing about.
+              I bring the unusual combination of builder, operator, and strategic thinker to every problem. I can go deep technically with the team and summarize concisely for stakeholders. I&apos;ve built a business from zero, ran teams, served enterprise clients, and built the kind of AI infrastructure most people are still theorizing about.
             </p>
             <p>
-              What makes me effective isn&apos;t just the range of skills: it&apos;s how I operate. I&apos;m reliable and consistent. I set clear goals, manage my time and priorities across competing workstreams, and follow through. I&apos;ve led teams through ambiguity, built goal-setting frameworks that keep everyone aligned, and earned trust by being the person who always comes prepared and always delivers. Teamwork isn&apos;t just something I participate in: it&apos;s something I actively build. Strong task and time management, a bias toward clarity, and genuine accountability are at the core of how I work.
+              What makes me effective isn&apos;t just the range of skills: it&apos;s how I operate. I&apos;m reliable and consistent. I set clear goals, manage my time and priorities across competing work streams, and follow through. I&apos;ve led teams through ambiguity, built goal-setting frameworks that keep everyone aligned, and earned trust by being the person who always comes prepared and always delivers. For me, teamwork has always been the core of producing quality. Strong task and time management, reliability, hard work, and genuine accountability are the foundation of how I operate.
             </p>
             <p>
               Above all, I have a talent for distilling complexity into clarity: reading a complicated situation, organizing what matters, and keeping the team informed, aligned, and moving forward even when the path isn&apos;t obvious. That combination of technical depth, management experience, and people-first leadership is what I bring to every role.
