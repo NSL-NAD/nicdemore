@@ -229,6 +229,13 @@ export default function ResumePage() {
           transition={{ duration: 0.6, ease }}
           className="mb-16 resume-section"
         >
+          <div className="flex items-center gap-6">
+            <img
+              src="/imagery/nic-headshot.jpg"
+              alt="Nic DeMore"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover object-top flex-shrink-0"
+            />
+            <div>
           <h1 className="font-display text-4xl sm:text-5xl text-ink mb-2">
             Nic DeMore
           </h1>
@@ -242,6 +249,8 @@ export default function ResumePage() {
             >
               nademore@gmail.com
             </a>
+          </div>
+            </div>
           </div>
         </motion.div>
 
