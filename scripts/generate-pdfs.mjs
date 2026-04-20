@@ -231,6 +231,21 @@ async function main() {
       });
     }
 
+    // ── 4b. Force Skills section to start on a new page (standard resume only)
+    if (isResume) {
+      await page.evaluate(() => {
+        const sections = document.querySelectorAll(".resume-section");
+        for (const section of sections) {
+          const h2 = section.querySelector("h2");
+          if (h2 && h2.textContent?.trim() === "Skills") {
+            section.style.setProperty("page-break-before", "always", "important");
+            section.style.setProperty("break-before", "page", "important");
+            break;
+          }
+        }
+      });
+    }
+
     // ── 4. Inject CSS ─────────────────────────────────────────────────────────
     await page.addStyleTag({ content: SHARED_CSS });
     await page.addStyleTag({
