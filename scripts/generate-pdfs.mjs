@@ -246,6 +246,21 @@ async function main() {
       });
     }
 
+    // ── 4c. Force "Good at Scale Studio" timeline entry onto a new page
+    //       (combined PDFs only — resume-only doesn't have this overflow issue)
+    if (isCombined) {
+      await page.evaluate(() => {
+        const entries = document.querySelectorAll(".resume-section .pl-10");
+        for (const entry of entries) {
+          if (entry.textContent?.includes("Good at Scale Studio")) {
+            entry.style.setProperty("page-break-before", "always", "important");
+            entry.style.setProperty("break-before", "page", "important");
+            break;
+          }
+        }
+      });
+    }
+
     // ── 4. Inject CSS ─────────────────────────────────────────────────────────
     await page.addStyleTag({ content: SHARED_CSS });
     await page.addStyleTag({
