@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Nic DeMore: Builder. Engineer. Founder.";
+export const alt = "Nic DeMore: Builder. Operator. Founder.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -70,7 +70,7 @@ export default function OGImage() {
             marginBottom: "32px",
           }}
         >
-          Builder. Engineer. Founder.
+          Builder. Operator. Founder.
         </div>
 
         {/* Subtext */}

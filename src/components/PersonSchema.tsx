@@ -10,7 +10,7 @@ export function PersonSchema() {
         image: "https://nicdemore.com/nicdemore.jpg",
         jobTitle: "Founder & Entrepreneur",
         description:
-          "Co-founder of Margle Media and Good at Scale Studio. Builder, engineer, and entrepreneur based in Milwaukee, WI.",
+          "Co-founder of Margle Media and Good at Scale Studio. Builder, operator, and entrepreneur based in Milwaukee, WI.",
         sameAs: [
           "https://www.linkedin.com/in/nic-demore",
           "https://www.instagram.com/nicdemore/",

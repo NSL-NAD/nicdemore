@@ -608,7 +608,7 @@ export default function AboutPage() {
                   maxWidth: "800px",
                 }}
               >
-                Builder. Engineer.
+                Builder. Operator.
                 <br />
                 <span style={{ color: "var(--color-accent)" }}>Founder.</span>
               </h1>

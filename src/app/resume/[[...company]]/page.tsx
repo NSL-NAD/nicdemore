@@ -239,7 +239,7 @@ export default function ResumePage() {
           <h1 className="font-display text-4xl sm:text-5xl text-ink mb-2">
             Nic DeMore
           </h1>
-          <p className="text-ink-muted text-lg">Builder. Engineer. Founder.</p>
+          <p className="text-ink-muted text-lg">Builder. Operator. Founder.</p>
           <div className="flex flex-wrap gap-4 mt-4 text-sm text-ink-muted">
             <span>Milwaukee, WI</span>
             <span className="text-line">|</span>

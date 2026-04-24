@@ -193,7 +193,7 @@ export function Architecture() {
             style={{ color: 'rgba(242, 237, 229, 0.75)' }}
           >
             <p>
-              I&apos;m not an architect. I&apos;m an engineer who fell in love with how buildings think.
+              I&apos;m not an architect. I&apos;m an operator who fell in love with how buildings think.
               It started when I decided to design my dream home from scratch, and realized
               I needed to learn how to see the world the way architects do.
             </p>

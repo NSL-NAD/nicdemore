@@ -6,7 +6,7 @@ import { EASING_PREMIUM } from "@/lib/motion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const words = ["Builder.", "Engineer.", "Founder."];
+const words = ["Builder.", "Operator.", "Founder."];
 
 // Smooth expo-out — fast start, genuinely smooth landing, no snap
 const LAND_EASE = [0.16, 1, 0.3, 1] as const;
@@ -392,7 +392,7 @@ export function Hero() {
                 className="text-base leading-relaxed mb-5"
                 style={{ color: 'var(--color-text-secondary)', maxWidth: '360px', transformStyle: 'preserve-3d' }}
               >
-                Milwaukee native. Mechanical engineer turned entrepreneur.
+                Milwaukee native. Engineering mind turned entrepreneur.
                 Building AI-native ventures and tools for the builders.
               </motion.p>
               <div className="flex flex-wrap gap-4">
@@ -527,7 +527,7 @@ export function Hero() {
                     className="text-lg leading-relaxed mb-6"
                     style={{ color: 'var(--color-text-secondary)', transformStyle: 'preserve-3d' }}
                   >
-                    Milwaukee native. Mechanical engineer turned entrepreneur.
+                    Milwaukee native. Engineering mind turned entrepreneur.
                     Building AI-native ventures and tools that let small teams
                     operate at scale.
                   </motion.p>
