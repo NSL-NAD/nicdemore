@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     }
 
     await resend.emails.send({
-      from: "nicdemore.com <onboarding@resend.dev>",
+      from: "nicdemore.com <hello@goodatscale.co>",
       to: "nademore@gmail.com",
       subject: `[nicdemore.com] ${subject} — from ${name}`,
       replyTo: businessEmail,
